@@ -9,7 +9,10 @@
     }
     else
     {
-        <h4>@Model?.DetailArticleData.Title</h4>
+        if (@Model.DetailArticleData.IsShowTitle)
+        {
+            <h4>@Model?.DetailArticleData.Title</h4>
+        }
         if (!String.IsNullOrWhiteSpace(@Model?.DetailArticleData.Labels))
         {
             <figure class="text-end">
