@@ -13,9 +13,6 @@
     <ProjectReference Include="..\CommonObject\CommonObject.csproj" />
     <ProjectReference Include="..\ComponentsServices\ComponentsServices.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="wwwroot\articleImgs\" />
-  </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 <PropertyGroup>

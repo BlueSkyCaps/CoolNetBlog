@@ -121,5 +121,17 @@ namespace CoolNetBlog.Controllers.AdminAccess
         {
             return View(spassVm);
         }
+
+        /// <summary>
+        /// 退出登录 去除cookie 跳转登录页
+        /// </summary>
+        /// <param name="pt"></param>
+        /// <returns></returns>
+        public IActionResult LoginOut(string? pt)
+        {
+            HttpContext.Response.Cookies.Delete("coolnetblogadminloginxiyuaneightfourone");
+            spassVm = null;
+            return RedirectToAction("Login", "Admin");
+        }
     }
 }

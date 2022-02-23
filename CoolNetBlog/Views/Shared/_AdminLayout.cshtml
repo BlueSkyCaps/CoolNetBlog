@@ -19,7 +19,12 @@
 <body>
     <div class="text-center">
         <h7 class="display-7">后台管理员 ~喵咪呼啦！~</h7>
-        <a class="text text-primary" asp-route-pt="@Model?.PassToken" asp-action="AdminHome" asp-controller="Admin">返回后台面板</a>
+        @if (!string.IsNullOrWhiteSpace(@Model?.PassToken))
+        {
+            // 登录页没有PassToken 成功登陆后才有 不显示"返回后台面板"
+            <a class="text text-primary" asp-route-pt="@Model?.PassToken" asp-action="AdminHome" asp-controller="Admin">返回后台面板</a>
+            <a class="text text-primary" asp-route-pt="@Model?.PassToken" asp-action="LoginOut" asp-controller="Admin">登出</a>
+        }
         @{
             //若是在登陆界面，不具有PassToken，此样式不会显示。否则后台主页具有token，因为验证通过了
             if (!String.IsNullOrWhiteSpace(@Model?.PassToken))
