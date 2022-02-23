@@ -1,0 +1,52 @@
+﻿@model HomeViewModel
+<!--主页文章列表视图 包含分页-->
+
+
+<!--文章列表-->
+@foreach (var item in Model?.HomeArticleViewModels)
+{
+<div class="card text-center">
+@*<div class="card-header">来自：@(item.Ig_MenuName)</div>*@
+<div class="card-body">
+@if (item.IsShowTitle)
+{
+<h4 class="card-title ">@item.Title</h4>
+}
+<p class="card-text"><span class="badge rounded-pill bg-light text-dark">摘要</span>@(item.Abstract)...</p>
+@if (!string.IsNullOrWhiteSpace(@item.CustUri))
+{   
+    // 若自定义uri不为空 指定uri获取文章，否则，用文章Id
+    <a class="btn btn-outline-dark" asp-route-custUri="@item.CustUri" asp-controller="Detail" asp-action="Index" >阅读更多</a>
+}else{
+    <a class="btn btn-outline-dark" asp-route-articleId="@item.Id" asp-controller="Detail" asp-action="Index" >阅读更多</a>
+}
+</div>
+<div class="card-footer text-muted"><span class="badge bg-success">@(item.Ig_MenuName)</span> <small class="text-primary"><span class="badge rounded-pill bg-info text-dark">@(item.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss"))</span></small>
+@if (item.IsLock)
+{
+    <svg t="1645106164793" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1873" width="16" height="16"><path d="M512 170.666667c70.314667 0 128 57.685333 128 128v128H384V298.666667c0-70.314667 57.685333-128 128-128z m213.333333 256V298.666667c0-117.418667-95.914667-213.333333-213.333333-213.333334S298.666667 181.248 298.666667 298.666667v128H256a85.333333 85.333333 0 0 0-85.333333 85.333333v341.333333a85.333333 85.333333 0 0 0 85.333333 85.333334h512a85.333333 85.333333 0 0 0 85.333333-85.333334v-341.333333a85.333333 85.333333 0 0 0-85.333333-85.333333h-42.666667zM256 512h512v341.333333H256v-341.333333z" fill="#d4237a" p-id="1874"></path></svg>
+}    
+</div>
+</div>
+}
+<!--分页-->
+<div class="row">
+<nav aria-label="...">
+<ul class="pagination">
+
+<li class="page-item @(Model.PageCompute.ShowPreIndex?"":"disabled")">
+    @{
+        //获取上下文查询参数 直接传递当前from参数的值 且获取menuId和kw关键字的值，因为当前是菜单分页的话，kw就是null，反之亦然，控制器逻辑已经判断
+    }
+    <a class="page-link" asp-route-from="@Context.Request.Query["from"].FirstOrDefault()" asp-route-menuId="@Context.Request.Query["menuId"].FirstOrDefault()" asp-route-kw="@Context.Request.Query["kw"].FirstOrDefault()" asp-action="Index" asp-controller="Home" asp-route-PageIndex="@Model.PageCompute.PreIndex">上翻</a>
+</li>
+
+<li class="page-item"><a class="page-link text-black-50">@Model.PageCompute.PageIndex</a></li>
+
+<li class="page-item @(Model.PageCompute.ShowNextIndex?"":"disabled")">
+    <a class="page-link" asp-route-from="@Context.Request.Query["from"].FirstOrDefault()" asp-route-menuId="@Context.Request.Query["menuId"].FirstOrDefault()" asp-route-kw="@Context.Request.Query["kw"].FirstOrDefault()" asp-action="Index" asp-controller="Home" asp-route-PageIndex="@Model.PageCompute.NextIndex">下翻</a>
+
+</li>
+</ul>
+</nav>
+</div>

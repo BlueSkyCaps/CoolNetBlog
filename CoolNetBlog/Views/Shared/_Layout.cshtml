@@ -1,0 +1,257 @@
+﻿@{
+
+// 主页全局视图 列表分页、文章详细都寄生使用此视图
+}
+@model HomeViewModel
+@functions {
+    public async Task RecDeal(List<HomeMenuViewModel> subs)
+    {
+                
+        <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+            @foreach (var m in subs)
+            {
+                @if (m.Subs.Any())
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-success" asp-route-from='menu' asp-route-menuId='@m.Id' asp-controller='Home' asp-action='Index' id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        @m.Name
+                        </a>
+                        @{
+                            await RecDeal(m.Subs);
+                        }
+                    </li>
+                }else
+                {
+                    <li><a class="dropdown-item text-success" asp-route-from='menu' asp-route-menuId='@m.Id' asp-controller='Home' asp-action='Index'>@m.Name</a></li>
+                }
+            }
+        </ul>
+       
+    }
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@Model?.HomeSiteSettingData.SiteName</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @*<link rel="stylesheet" href="~/CoolNetBlog.styles.css" asp-append-version="true" />*@
+    <link href="/favicon.png" rel="icon" type="image/x-ico">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <style>
+        @{
+            //心愿图片div固定尺寸
+        }
+        .wishPicture{
+            width:150px;
+            height:150px;
+            object-fit:contain;
+        }
+    </style>
+</head>
+<body>
+    <!--全局头部-->
+    <header>
+        <!--菜单栏-->
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <button class="navbar-toggler text-success" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav  mx-auto">
+                        @foreach (var m in Model?.HomeMenusData)
+                        {
+                            if (m.Subs.Any())
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-success" asp-route-from='menu' asp-route-menuId='@m.Id' asp-controller='Home' asp-action='Index' id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @m.Name
+                                    </a>
+                                    @{
+                                        await RecDeal(m.Subs);
+                                    }
+                                </li>
+                            }
+                            else
+                            {
+                                // 主页菜单一定是顶级菜单(链接到Index首页第一页) 否则是常规顶级菜单 
+                                if (m.IsHome)
+                                {
+                                    <li class='nav-item'><a class='nav-link text-success' asp-controller='Home' asp-action='Index'>@m.Name</a></li>
+                                }
+                                else
+                                {
+                                    <li class='nav-item'><a class='nav-link text-success' asp-route-from='menu' asp-route-menuId='@m.Id' asp-controller='Home' asp-action='Index'>@m.Name</a></li>
+                                }
+                            }
+                        }
+                    </ul>
+                    <!--搜索栏组件-->
+                    <form method="get" class="d-flex">
+                    <input name="kw" class="form-control me-2" type="search" placeholder="可输入关键字.." aria-label="Search">
+                    <input hidden name="from" value="keyword">
+                    <button id="searchMenuCom" class="btn btn-outline-primary toSearchBtn" type="button">搜</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+        <div class="text-center">
+            <!--站点名和个性签名-->
+            @if (@Model != null)
+            {
+                 <figure class="text-center">
+                    <blockquote class="blockquote">
+                    @if (@Model.HomeSiteSettingData.IsShowSiteName)
+                    {
+                        <a class="text-black" asp-action="Index" asp-controller="Home">
+                        <p class="h2"><small><span class="badge rounded-pill bg-secondary">╹▽╹</span></small>@Model.HomeSiteSettingData.SiteName</p>
+                        </a>
+                    }
+                    </blockquote>
+                    <figcaption class="blockquote-footer">
+                    @if (@Model.HomeSiteSettingData.IsShowQutoes)
+                    {
+                        @Model.HomeSiteSettingData.FashionQuotes
+                    }
+                    </figcaption>
+                </figure>
+                
+                
+            }
+        </div>
+    </header>
+    <!-- 左侧依据局部渲染显示文章列表或者详情等 右侧有一些组件(外链、一张图片...) 尾部有分页-->
+    <div class="container">
+        <main role="main" class="pb-3">
+            <div class="text-center">
+            <div class="row">
+            <!--col-sm-12是整行 局部视图占8 右侧边栏占4，但若不显示任何一个侧边栏 col-sm-8局部视图会偏左 因此判断是否没有显示任何一个侧边栏组件-->
+            @{
+                var colPaddingValue = "col-sm-8";
+                if(Model.IsNotShowAnyOneCom){
+                    colPaddingValue = "col-sm-12";
+                }
+            }
+            <div class="@colPaddingValue">
+            <!--若有 显示位置文本(点击了菜单、关键字搜索 或某篇具体文章)，主页分页浏览不会显示位置文本-->
+            @if (!String.IsNullOrWhiteSpace(@Model?.LocationTip))
+            {
+                <div class="row">
+                <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                @if(@Model?.Location.ToLower()=="menu"){
+                    <li class="breadcrumb-item">正在检索</li>
+                    <li class="breadcrumb-item active text-success" aria-current="page">@Model?.LocationTip
+                    <a asp-action="Index" asp-controller="Home">
+                    <svg t="1645106022653" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1428" width="16" height="16"><path d="M341.333333 341.333333c-95.914667 0-170.666667 74.752-170.666666 170.666667s74.752 170.666667 170.666666 170.666667h85.333334a42.666667 42.666667 0 1 1 0 85.333333H341.333333c-143.018667 0-256-112.981333-256-256s112.981333-256 256-256h85.333334a42.666667 42.666667 0 1 1 0 85.333333H341.333333z m213.333334-42.666666a42.666667 42.666667 0 0 1 42.666666-42.666667h85.333334c143.018667 0 256 112.981333 256 256s-112.981333 256-256 256h-85.333334a42.666667 42.666667 0 1 1 0-85.333333h85.333334c95.914667 0 170.666667-74.752 170.666666-170.666667s-74.752-170.666667-170.666666-170.666667h-85.333334a42.666667 42.666667 0 0 1-42.666666-42.666666z m-256 213.333333a42.666667 42.666667 0 0 1 42.666666-42.666667h341.333334a42.666667 42.666667 0 1 1 0 85.333334H341.333333a42.666667 42.666667 0 0 1-42.666666-42.666667z" fill="#1296db" p-id="1429"></path></svg>
+                    </a>
+                    </li>
+                }else if(@Model?.Location.ToLower()=="keyword"){
+                    <li class="breadcrumb-item">正在显示</li>
+                    <li class="breadcrumb-item active text-info" aria-current="page">@Model?.LocationTip
+                    <a asp-action="Index" asp-controller="Home">
+                    <svg t="1645106022653" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1428" width="16" height="16"><path d="M341.333333 341.333333c-95.914667 0-170.666667 74.752-170.666666 170.666667s74.752 170.666667 170.666666 170.666667h85.333334a42.666667 42.666667 0 1 1 0 85.333333H341.333333c-143.018667 0-256-112.981333-256-256s112.981333-256 256-256h85.333334a42.666667 42.666667 0 1 1 0 85.333333H341.333333z m213.333334-42.666666a42.666667 42.666667 0 0 1 42.666666-42.666667h85.333334c143.018667 0 256 112.981333 256 256s-112.981333 256-256 256h-85.333334a42.666667 42.666667 0 1 1 0-85.333333h85.333334c95.914667 0 170.666667-74.752 170.666666-170.666667s-74.752-170.666667-170.666666-170.666667h-85.333334a42.666667 42.666667 0 0 1-42.666666-42.666666z m-256 213.333333a42.666667 42.666667 0 0 1 42.666666-42.666667h341.333334a42.666667 42.666667 0 1 1 0 85.333334H341.333333a42.666667 42.666667 0 0 1-42.666666-42.666667z" fill="#1296db" p-id="1429"></path></svg>
+                    </a>
+                    </li>
+                }else{
+                    <li class="breadcrumb-item">正在阅读</li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">@Model?.LocationTip
+                    <a asp-action="Index" asp-controller="Home">
+                    <svg t="1645106022653" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1428" width="16" height="16"><path d="M341.333333 341.333333c-95.914667 0-170.666667 74.752-170.666666 170.666667s74.752 170.666667 170.666666 170.666667h85.333334a42.666667 42.666667 0 1 1 0 85.333333H341.333333c-143.018667 0-256-112.981333-256-256s112.981333-256 256-256h85.333334a42.666667 42.666667 0 1 1 0 85.333333H341.333333z m213.333334-42.666666a42.666667 42.666667 0 0 1 42.666666-42.666667h85.333334c143.018667 0 256 112.981333 256 256s-112.981333 256-256 256h-85.333334a42.666667 42.666667 0 1 1 0-85.333333h85.333334c95.914667 0 170.666667-74.752 170.666666-170.666667s-74.752-170.666667-170.666666-170.666667h-85.333334a42.666667 42.666667 0 0 1-42.666666-42.666666z m-256 213.333333a42.666667 42.666667 0 0 1 42.666666-42.666667h341.333334a42.666667 42.666667 0 1 1 0 85.333334H341.333333a42.666667 42.666667 0 0 1-42.666666-42.666667z" fill="#1296db" p-id="1429"></path></svg>
+                    </a>
+                    </li>
+                }
+                
+
+                </ol>
+                </nav>
+            </div>
+            }
+           
+            <!--局部视图渲染 显示文章列表或者详情等-->
+            @RenderBody()
+            </div>
+        
+            <!--右侧组件-->
+            <div class="col-sm-4">
+            @if (Model.HomeSiteSettingData.IsShowEdgeSearch)
+            {
+                // 侧边搜索框
+                <div class="row">
+                <form method="get" class="d-flex">
+                <input name="kw" class="form-control me-2" type="search" placeholder="可输入关键字.." aria-label="Search">
+                <input hidden name="from" value="keyword">
+                <button id="searchRightCom" class="btn btn-outline-primary toSearchBtn" type="button">搜</button>
+                </form>
+                </div>
+                <br/>
+            }
+            @if (Model.HomeSiteSettingData.IsShowLoveLook)
+            {
+                // 链接显示("看看这些")
+                var scheme = Context.Request.Scheme+"://";
+                var currentHost = Context.Request.Host.Host;
+                var port = Context.Request.Host.Port;
+                var hostV = scheme+currentHost + (port == null ? "" : ":"+port);
+                hostV = hostV.TrimEnd('/');
+                <div class="card">
+                    <div class="card-header">
+                    @Model.HomeSiteSettingData.LoveLookTitle
+                    </div>
+                    <ul class="list-group list-group-flush">
+                    @foreach (var item in @Model.HomeLoveLookData)
+                    {
+                         @if (item.Type==3)
+                         {
+                            // 若是3外部链接类型 不必加host 因为外部是完整地址
+                            //  target="_blank"在新窗口打开链接 因为当前窗口打开会导致异步Layout页面错误
+                            <li class="list-group-item"><a class="text text-dark" target="_blank" href="@item.RelHref">●@item.LinkName</a></li>
+                        }else{
+                            <li class="list-group-item"><a class="text text-dark" target="_blank" href="@(hostV+item.RelHref)">♥@item.LinkName</a></li>
+                        }
+                    }
+                    </ul>
+                </div> 
+                <br/>
+            }
+            @if (Model.HomeSiteSettingData.IsShowWishPicture){
+                // 心愿图片
+                <div class="card ">
+                <img class="wishPicture rounded mx-auto d-block" src="/articleImgs/@(Model.HomeSiteSettingData.WishPictureRelPath)"  alt="">
+                <div class="card-body">
+                <p class="card-text">@Model.HomeSiteSettingData.WishPictureName</p>
+                </div>
+                </div>
+            }
+            </div>
+            </div>
+            </div>
+        </main>
+    </div>
+
+    <!--全局尾巴-->
+    <footer class="border-top footer text-muted">
+        <div class="container text-center">
+            @Html.Raw(Model.HomeSiteSettingData.TailContent)
+        </div>
+    </footer>
+</body>
+</html>
+<script>
+ $('.toSearchBtn').click(function (event) {  
+    // 若搜索框输入值不是空白 get跳转搜索
+    var kwValue = $('#'+event.target.id).parent('form').children(':input[name="kw"]').val();
+    if(kwValue==undefined||kwValue=='undefined'||$.trim(kwValue)=='')
+    {
+        return;
+    }
+    var getSearchUri = '/Home/Index/?kw=' + $.trim(kwValue) + '&from=keyword';
+    $(location).attr('href', getSearchUri);
+});
+</script>

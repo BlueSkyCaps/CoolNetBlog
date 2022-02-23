@@ -1,0 +1,115 @@
+﻿@model HomeViewModel
+@{
+    // 此局部视图Detail/Index/，是文章详细局部视图，文章详细视图模型与主页分页一样，直接继承自视图模型HomeViewModel，
+    if (Model?.DetailArticleData == null)
+    {
+        <div class="alert alert-warning" role="alert">
+         @Model?.NotTips
+        </div>
+    }
+    else
+    {
+        <h4>@Model?.DetailArticleData.Title</h4>
+        if (!String.IsNullOrWhiteSpace(@Model?.DetailArticleData.Labels))
+        {
+            <figure class="text-end">
+            <blockquote class="blockquote">
+            <p>
+            <small>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-award" viewBox="0 0 16 16">
+              <path d="M9.669.864 8 0 6.331.864l-1.858.282-.842 1.68-1.337 1.32L2.6 6l-.306 1.854 1.337 1.32.842 1.68 1.858.282L8 12l1.669-.864 1.858-.282.842-1.68 1.337-1.32L13.4 6l.306-1.854-1.337-1.32-.842-1.68L9.669.864zm1.196 1.193.684 1.365 1.086 1.072L12.387 6l.248 1.506-1.086 1.072-.684 1.365-1.51.229L8 10.874l-1.355-.702-1.51-.229-.684-1.365-1.086-1.072L3.614 6l-.25-1.506 1.087-1.072.684-1.365 1.51-.229L8 1.126l1.356.702 1.509.229z"/>
+              <path d="M4 11.794V16l4-1 4 1v-4.206l-2.018.306L8 13.126 6.018 12.1 4 11.794z"/>
+            </svg>
+            @foreach (var item in @Model.DetailArticleData.LabelsList)
+            {
+                // 让标签成为关键字搜索
+                <mark>·<a class="text-dark" asp-action="Index" asp-controller="Home" asp-route-from="keyword" asp-route-kw="@item">@(item)</a></mark>
+            }
+            </small>
+            </p>
+            </blockquote>
+            </figure>
+
+        }
+        if (@Model.DetailArticleData.IsLock)
+        {
+            <div id="lockFormDiv">
+                <div>
+                    <div class="alert alert-dark" role="alert">这篇文章已被上锁，你需要输入专属密码才能阅读。</div>
+                    <div hidden class="alert alert-warning" role="alert" id="pwErrorTipDiv">验证错误，尝试重输或者返回看看别的吧？！</div>
+                    <input hidden type="number" class="form-control" id="inputArticleId" value="@Model.DetailArticleData.Id">
+                    <div class="input-group mb-3">
+                    <input type="text" class="form-control input-group-sm" id="inputPassword" placeholder="专属密码" aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <button class="btn btn-outline-primary" type="button" id="toUnlockBtn">解锁</button>
+                    </div>
+                </div>
+            </div>
+            <div class="text-start">
+            <p id="unLockContentP" class="text-start"></p>
+            </div>
+
+        }else
+        {
+            <div class="text-start">
+            <p>@Html.Raw(@Model?.DetailArticleData.Content)</p>
+            </div>
+        }
+  
+        <div>
+        <small>
+        <span class="badge rounded-pill bg-success">来自：@Model?.DetailArticleData.Ig_MenuName</span>
+        <br/>
+        <span class="badge rounded-pill bg-info text-dark">更新于@(Model?.DetailArticleData.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss"))</span>
+        <br/>
+        <span class="badge rounded-pill bg-info text-dark">发表于@(Model?.DetailArticleData.CreatedTime.ToString("yyyy-MM-dd HH:mm:ss"))</span>
+        </small>
+        </div>
+        <br/>
+        <div>
+        <button onClick="javascript:history.back(-1);" type="button" class="btn btn-outline-primary btn-sm">回到之前</button>
+        </div>
+        <br/>
+    }
+}
+
+<script>
+$("#toUnlockBtn").click(
+    function()
+    {
+        var v = $('#inputPassword').val();
+        if(v==null||v==""){
+            return;
+        }
+        $.ajax (
+            {
+                url: "/BlogApi/ArticleUnLock",
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    "ArticleId":$('#inputArticleId').val(),
+                    "Password":$('#inputPassword').val()
+                }),
+                success: function(data, status){
+                    if(data['code']==1){
+                        // 密码正确隐藏表单div 显示返回后的主体内容
+                        $('#lockFormDiv').hide();
+                        $('#unLockContentP').html(data['content']);
+                    }else{
+                        // 错误显示提示文本
+                        $('#pwErrorTipDiv').removeAttr('hidden');
+                    }
+                },
+                error: function(err){
+                    $('#pwErrorTipDiv').removeAttr('hidden');
+                }
+            }
+        );
+
+    }
+    
+);
+
+</script>
+
+

@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>小翻译</title>
+    <!--<link rel="icon" sizes="50x50" href="resource/site-logo.png">-->
+
+    <!-- Bootstrap -->
+    <link href="/transOldlib/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
+    <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        /*注意: bootstrap已为移动设备响应布局, body中两个._input类的样式由bs自动响应*/
+        /*适配670(包含所有低于此设备像素宽的媒体屏幕)*/
+        @media screen and (max-device-width: 670px){
+            html{
+                font-size: 14px;
+            }
+            body{
+            // 手机横屏时需要垂直滚动条
+            height: 100%;
+                overflow-y: auto;
+            }
+            /*底部分行显示, 不合并一行*/
+            ._foot ._foot-left, ._foot ._foot-right, ._foot ._blank-inline-block-div{
+                display: block;
+            }
+            span, button, small, a{
+                font-size: 14px;
+            }
+            /*隐藏桌面翻译按钮，显示mobile翻译按钮*/
+            #_in-pc-trans-btn{
+                display: none;
+            }
+            #_in-mobile-trans-btn-div{
+                display: initial;
+            }
+            #_in-mobile-trans-btn{
+                display: initial;
+            }
+            ._input{
+                width: 300px;
+                height: 100px;
+            }
+        }
+        /*@*/
+        /*必须为其他条件设置@media*/
+        /*适配iPad及iPad Pro等平板设备*/
+        @media screen and (min-device-width: 670px) and (max-device-width: 1025px){
+            html{
+                font-size: 16px;
+            }
+            body{
+                width: 100%;
+                height: 100%;
+                overflow-y: auto;
+                /*放大输入文本的字体大小*/
+                font-size: 2rem;
+            }
+            /*放大span, button等标签的字体大小*/
+            ._iPad-lg{
+                font-size: 2rem;
+            }
+            a{
+                font-size: 1.5rem;
+            }
+            /*底部分行显示, 不合并一行*/
+            ._foot ._foot-left, ._foot ._foot-right, ._foot ._blank-inline-block-div{
+                display: block;
+            }
+            /*隐藏桌面翻译按钮，显示mobile翻译按钮*/
+            #_in-pc-trans-btn{
+                display: none;
+            }
+            #_in-mobile-trans-btn-div{
+                display: initial;
+            }
+            #_in-mobile-trans-btn{
+                display: initial;
+            }
+            ._input{
+                border: #5e5e5e solid 1px;
+                width: 600px;
+                height: 300px;
+            }
+        }
+        /*@*/
+        /*适配桌面端*/
+        @media screen and (min-device-width: 1025px){
+            html{
+                font-size: 16px;
+            }
+            body{
+                min-width: 1500px;
+                overflow-x: auto;
+                min-height: 700px;
+                overflow-y: auto;
+            }
+            span, button, small, a{
+                font-size: 16px;
+            }
+            /*显示桌面翻译按钮，隐藏mobile翻译按钮*/
+            #_in-pc-trans-btn{
+                display: initial;
+            }
+            #_in-mobile-trans-btn-div{
+                display: none;
+            }
+            #_in-mobile-trans-btn{
+                display: none;
+            }
+            ._input{
+                font-size: medium;
+                width: 500px;
+                height: 200px;
+            }
+            ._foot ._foot-left{
+                display: inline-block;
+            }
+            ._foot ._foot-right{
+                display: inline-block;
+            }
+            ._foot ._blank-inline-block-div{
+                display: inline-block;
+            }
+        }
+
+    </style>
+</head>
+<body>
+<!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+<!--<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>-->
+<script src="/lib/jquery/dist/jquery.min.js"></script>
+<!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+<script src="/transOldlib/js/bootstrap.js"></script>
+<div class="container-fluid">
+    <div class="_header-navigation" align="right">
+        <button type="button" class="btn btn-default" aria-label="我的主页导航">
+            <a href="/epLinks/go" target="_blank"><span class="glyphicon glyphicon-send" aria-hidden="true"></span></a>
+        </button>
+        <button type="button" class="btn btn-default" aria-label="友情链接">
+            <a href="https://glyphicons.com/" target="_blank"><span class="glyphicon glyphicon-magnet" aria-hidden="true"></span></a>
+        </button>
+    </div>
+    <div class="_base-center-div" align="center">
+        <div class="_header-title">
+            <div class="page-header">
+                <h1>小翻译 <small>来自MyHeartWillGoOn</small></h1>
+                <h3><small>这只是个页面,提供了翻译功能</small></h3>
+                <h3><small>源语言可自动检测出语种哦,目前仅可以中英文发音</small></h3>
+            </div>
+        </div>
+        <div class="_select-language-option">
+            <div class="row">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8 col-md-12">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12">
+                            <span class="label label-default _iPad-lg">源语言(Original)：</span>
+                            <div class="btn-group">
+                                <button id="_original-btn" type="button" class="btn btn-default dropdown-toggle _iPad-lg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    选择语言<span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li lgc="auto"><a href="#" id="_auto">自动识别-Detection</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li lgc="zh"><a href="#">中文</a></li>
+                                    <li lgc="cht"><a href="#">繁體中文</a></li>
+                                    <li lgc="en"><a href="#">English(英语)</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li lgc="jp"><a href="#">日本語(日语-Japanese)</a></li>
+                                    <li lgc="kor"><a href="#">한국어(韩语-Korean)</a></li>
+                                    <li lgc="wyw"><a href="#">文言文</a></li>
+                                    <li lgc="fra"><a href="#">Français(法语-French)</a></li>
+                                    <li lgc="ru"><a href="#">русский язык(俄语-Russian)</a></li>
+                                    <li lgc="pt"><a href="#">Português(葡萄牙语-Portuguese)</a></li>
+                                    <li lgc="de"><a href="#">Deutsch(德语-German)</a></li>
+                                    <li lgc="it"><a href="#">Italiano(意大利语-Italian)</a></li>
+                                    <li lgc="th"><a href="#">ภาษาไทย(泰语-Thai)</a></li>
+                                    <li lgc="spa"><a href="#">Español(西班牙语-Spanish)</a></li>
+                                    <li dir="rtl" lgc="ara"><a href="#">(阿拉伯语-Arabic)لغة عربية</a></li>
+                                </ul>
+                                <button type="button" id="_in-pc-trans-btn" class="btn btn-primary" onclick="transBtnClicked()">翻译 Translate <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span></button>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-12">
+                            <span class="label label-default _iPad-lg">目标语言(Target)</span>
+                            <div class="btn-group">
+                                <button id="_to-btn" type="button" class="btn btn-default dropdown-toggle _iPad-lg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    选择语言<span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li lgc="zh" lgct=""><a href="#">中文</a></li>
+                                    <li lgc="cht" lgct=""><a href="#">繁體中文</a></li>
+                                    <li lgc="en" lgct=""><a href="#">English(英语)</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li lgc="jp" lgct=""><a href="#">日本語(日语-Japanese)</a></li>
+                                    <li lgc="kor" lgct=""><a href="#">한국어(韩语-Korean)</a></li>
+                                    <li lgc="wyw" lgct=""><a href="#">文言文</a></li>
+                                    <li lgc="fra" lgct><a href="#">Français(法语-French)</a></li>
+                                    <li lgc="ru" lgct=""><a href="#">русский язык(俄语-Russian)</a></li>
+                                    <li lgc="pt" lgct=""><a href="#">Português(葡萄牙语-Portuguese)</a></li>
+                                    <li lgc="de" lgct=""><a href="#">Deutsch(德语-German)</a></li>
+                                    <li lgc="it" lgct=""><a href="#">Italiano(意大利语-Italian)</a></li>
+                                    <li lgc="th" lgct=""><a href="#">ภาษาไทย(泰语-Thai)</a></li>
+                                    <li lgc="spa" lgct=""><a href="#">Español(西班牙语-Spanish)</a></li>
+                                    <li dir="rtl" lgc="ara" lgct=""><a href="#">(阿拉伯语-Arabic)لغة عربية</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+        </div>
+        <div id="_in-mobile-trans-btn-div">
+            <button type="button" id="_in-mobile-trans-btn" class="btn btn-primary _iPad-lg" onclick="transBtnClicked()">翻译 Translate <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span></button>
+        </div>
+        <div class="_text-input-double">
+            <div class="row">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8 col-md-12">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12">
+                            <div class="input-group input-group-lg">
+                                <label>
+                                    <textarea id="_original-text" class="_input" placeholder=" 请输入要翻译的内容...&#10; Please enter what you want to translate..." style="resize: none; word-wrap: break-word" onkeyup="limitMaxLength()" onchange="originalInputChange()"></textarea>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-12">
+                            <div>
+                                <label id="_to-text" class="_input" style="color: #757575; font-family:'Times New Roman',sans-serif; text-align: left; border: #5e5e5e solid 1px;
+                                word-wrap: break-word; overflow-x: hidden;overflow-y: auto">&nbsp;等待翻译...<br/>&nbsp;Waiting for translation...</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+        </div>
+        <div class="_control-controls">
+            <div class="row">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 _align-control" align="right">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-info _iPad-lg" align="left" onclick="clearText()">清空</button>
+                                <button type="button" id="_original-copy" class="btn btn-default _iPad-lg" align="left" onclick="copyTextToClipBoard(this)">复制原文本</button>
+                                <button type="button" class="btn btn-success _iPad-lg" onclick="speakBtnClicked('_original-text')">原文发音 <span class="glyphicon glyphicon-headphones"></span></button>
+                                <button id="_exchange" type="button" class="btn btn-default _iPad-lg" onclick="exchangeClicked()"><span class="glyphicon glyphicon-retweet"></span></button>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-12 _align-control" align="right">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-success _iPad-lg" onclick="speakBtnClicked('_to-text')">翻译发音 <span class="glyphicon glyphicon-headphones"></span></button>
+                                <button id="_to-copy" type="button" class="btn btn-default _iPad-lg" onclick="copyTextToClipBoard(this)">复制翻译内容</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+            <div class="_no-important-Tips">
+                <br/>
+                <h4><small>(手机浏览器下发音仅支持chrome,firefox,edge和safari浏览器,其他的手机浏览器后续可能会统一开发)</small></h4>
+            </div>
+        </div>
+        <div class="_foot">
+            <br/>
+            <div class="_foot-left"><h3>
+                    <small>使用其他翻译：
+                        <a href="https://fanyi.baidu.com/" target="_blank">百度翻译</a>
+                        <a href="https://cn.bing.com/translator/" target="_blank">必应翻译</a>
+                        <a href="https://translate.google.com/?hl=zh-CN" target="_blank">Google翻译</a>
+                    </small>
+                </h3></div><div class="_blank-inline-block-div" style="width: 20%"></div><div
+                class="_foot-right">
+                <h3 style="font-style: italic"><small>2022.MyHeartWillGoOn.Just for fun</small>
+                </h3></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    if((window.innerWidth) <= 1200){
+        changeAlignControlCenter();
+    }
+
+    (function() {
+        var throttle = function(type, name, obj) {
+            var obj = obj || window;
+            var running = false;
+            var func = function() {
+                if (running) { return; }
+                running = true;
+                requestAnimationFrame(function() {
+                    if (!(window.innerWidth <= 1200)){
+                        running = false;
+                        return;
+                    }
+                    // start custom event
+                    obj.dispatchEvent(new CustomEvent(name));
+                    running = false;
+                });
+            };
+            obj.addEventListener(type, func);
+        };
+
+        /* init - browserZoomResize event was built by built-in resize event */
+        throttle("resize", "browserInnerWidthResize");
+    })();
+
+    // listener the event: 当浏览器InnerWidth <= 1200时触发事件，执行此callback
+    // 解决桌面浏览器缩小时，更正样式
+    window.addEventListener("browserInnerWidthResize", function() {
+        changeAlignControlCenter();
+    });
+
+    function changeAlignControlCenter() {
+        var alignControlElements = document.getElementsByClassName("_align-control");
+        for (let i = 0; i < document.getElementsByClassName("_align-control").length; i++){
+            alignControlElements[i].style.textAlign = "center";
+        }
+    }
+
+    // 定义最终语言代码
+    let ORIGINAL_LG_CODE = null;
+    let TO_LG_CODE = null;
+
+    // 为选择语言添加事件
+    let li_select_items = document.getElementsByTagName('li');
+    for (let i = 0; i < li_select_items.length; i++)
+    {
+        if (li_select_items[i].innerText == '' || li_select_items[i].innerText == null) {continue}
+        li_select_items[i].onclick = function () {
+            languageSelected(li_select_items[i]);
+        }
+    }
+
+    function languageSelected(getLiElement) {
+        // 更改语言选择项button显示内容
+        // getLiElement.parentElement.previousElementSibling.innerHTML = getLiElement.firstElementChild.innerHTML + "<span class=\"caret\"></span>";
+        /*
+        * 注: 更改语言选择项button显示内容, Android和ios端前一行代码无效
+        * */
+        if (getLiElement.hasAttribute('lgct')){
+            document.getElementById('_to-btn').innerHTML = getLiElement.firstElementChild.innerHTML+"<span class=\"caret\"></span>";
+        }else {
+            document.getElementById('_original-btn').innerHTML = getLiElement.firstElementChild.innerHTML+"<span class=\"caret\"></span>";
+        }
+
+        // attr lgct是目标语言选择项的标识属性
+        if (getLiElement.hasAttribute('lgct')){
+            TO_LG_CODE = getLiElement.getAttribute('lgc');
+        }
+        else {
+            ORIGINAL_LG_CODE = getLiElement.getAttribute('lgc');
+        }
+    }
+
+    function clearText() {
+        document.getElementById('_original-text').value = '';
+    }
+
+    function copyTextToClipBoard(formBtnObj) {
+        if (formBtnObj.getAttribute('id') == "_original-copy"){
+            let original_text = document.getElementById('_original-text');
+            if (original_text.value.trim() == '')
+                return;
+            original_text.focus();
+            original_text.select();
+            document.execCommand("copy", false, null);
+        }else {
+            let to_text = document.getElementById('_to-text');
+            if (to_text.innerHTML == initToTextInputHtml)
+                return;
+            // 显示翻译文本的元素为label, 将元素放入选区执行copy命令
+            let sectionObj = document.getSelection();
+            let textRange = document.createRange();
+            textRange.selectNodeContents(to_text);
+            if (sectionObj.rangeCount > 0) { sectionObj.removeAllRanges(); }
+            sectionObj.addRange(textRange);
+            document.execCommand("copy", false, null);
+        }
+    }
+
+    const initToTextInputHtml = document.getElementById('_to-text').innerHTML;
+
+
+    function exchangeClicked() {
+        // 互换两框文字
+        var originalTextInput = document.getElementById('_original-text');
+        var toTextInput = document.getElementById('_to-text');
+        if (toTextInput.innerHTML != initToTextInputHtml){
+            let tmp_original_text_value = originalTextInput.value;
+            originalTextInput.value = toTextInput.innerText.toString();
+            toTextInput.innerText = tmp_original_text_value;
+            // 互换后, 如果有翻译结果框为空的情况, 翻译结果框需要显示初始内容
+            if (toTextInput.innerHTML.trim() == ''){
+                toTextInput.innerHTML = initToTextInputHtml;
+            }
+        }
+
+        let original_btn = document.getElementById('_original-btn');
+        let to_btn = document.getElementById('_to-btn');
+        let tmp_original_btn_html;
+        /*
+        * 互换语言选择项
+        * 如果两个语言项最初都没被选择, return; 否则互换
+        * */
+        if (ORIGINAL_LG_CODE == null && TO_LG_CODE == null){
+            return;
+        }else if (original_btn.innerHTML == document.getElementById('_auto').innerText + "<span class=\"caret\"></span>"){
+            // 选择了自动识别项, 不能互换
+            return;
+        }
+        else if (ORIGINAL_LG_CODE == null || TO_LG_CODE == null){
+            // 如果只选择了一个语言项, 互换button标签内容(html)
+            tmp_original_btn_html = original_btn.innerHTML;
+            original_btn.innerHTML = to_btn.innerHTML;
+            to_btn.innerHTML = tmp_original_btn_html;
+        }else {
+            // 互换标签内容, 且互换语言代码
+            tmp_original_btn_html = original_btn.innerHTML;
+            original_btn.innerHTML = to_btn.innerHTML;
+            to_btn.innerHTML = tmp_original_btn_html;
+            let tmp = ORIGINAL_LG_CODE;
+            ORIGINAL_LG_CODE = TO_LG_CODE;
+            TO_LG_CODE = tmp;
+        }
+    }
+
+    let limitNum = 2000;
+    let overLimitNum = false;
+    /*
+    * textarea任何字符都为1 length
+    * */
+    function limitMaxLength() {
+        if (document.getElementById('_original-text').value.length > limitNum){
+            overLimitNum = true;
+        }
+    }
+
+    function originalInputChange() {
+        // 当原文输入框失去焦点, 避免输入的length超过最大值
+        document.getElementById('_original-text').value = document.getElementById('_original-text').value.substring(0, limitNum);
+        overLimitNum = false;
+    }
+
+
+
+    // 获取Web_Speech_API语音合成接口
+    var synthesis = window.speechSynthesis;
+    // 控制当正在发音时, 避免连续按下按钮使之后队列继续发音
+    let IS_SPEAKING = false;
+    // 用户设备是否有en-us语音包(默认的cn-zh能够中英文混音, 但英文发音不标准)
+    let IS_HAVE_EN_US = false;
+
+    function initVoicesObj() {
+        console.log("onvoiceschanged");
+        var obj_voices = synthesis.getVoices();
+        console.log(obj_voices.length);
+        // 如果带有en-us语音包, 英文发音首选它 否则 default
+        for(let i = 0; i < obj_voices.length ; i++) {
+            if(obj_voices[i].lang === 'en-us') {
+                IS_HAVE_EN_US = true;
+            }
+        }
+    }
+    initVoicesObj();
+
+    /*
+    * 注: chrome需要触发onvoiceschanged事件时, getVoices()才会返回对象,
+    * 所以在chrome首次调用时initVoicesObj()函数会执行两次
+    * */
+    if (synthesis.onvoiceschanged !== undefined){
+        synthesis.onvoiceschanged = initVoicesObj;
+    }
+
+    // 发音按钮按下时
+    function speakBtnClicked(id_str) {
+        /*
+        * 当语言选择项过多时不建议获取用户选择的select值赋值给SpeechSynthesisUtterance.voice
+        * 因为js SpeechSynthesis接口存在许多本地化问题(依据设备的默认语音),
+        * 即使SpeechSynthesis.getVoices()方法返回SpeechSynthesisVoice代表当前设备上所有可用语音的对象列表，
+        * 但非设备默认语音被设置, 可能会使程序产生无错误输出的问题(如果用户设备语音包并没有正常安装).例如,
+        * 桌面chrome浏览器会返回除默认语音(zh-cn)和en-us之外的语言包, 而edge只有zh-cn
+        * 国产浏览器均不支持Web_Speech_API语音合成接口, 请调用其他第三方API, 如百度语音技术
+        *
+        * Web_Speech_API(Speech recognition and synthesis)目前处于实验性阶段,
+        * 使用它, 建议使用其默认语音(例如忽略SpeechSynthesisUtterance.voice)
+        */
+        var synthesisUtterance = new SpeechSynthesisUtterance();
+        function startSpeak() {
+            if (IS_SPEAKING)
+                return;
+            // 传入要发声的文本
+            if (id_str === '_original-text'){
+                synthesisUtterance.text = document.getElementById(id_str).value;
+            }else {
+                if (document.getElementById(id_str).innerHTML === initToTextInputHtml)
+                    return;
+                synthesisUtterance.text = document.getElementById(id_str).innerText.toString();
+            }
+
+            // 建议忽略synthesisUtterance.voice, 将采取设备默认语音
+            // 发声, 忽略rate, volume等属性, 其将采取默认值.
+            synthesis.speak(synthesisUtterance);
+            IS_SPEAKING = true;
+        }
+        startSpeak();
+
+        synthesisUtterance.onend = function(){
+            // 当前发音结束后重置标志
+            IS_SPEAKING = false;
+            console.log("this once speak end.");
+        };
+
+        synthesisUtterance.onpause = function(event) {
+            var pause_index_char = event.utterance.text.charAt(event.charIndex);
+            console.log('Speech paused char is ' + pause_index_char + '.');
+        };
+    }
+
+    function transBtnClicked() {
+        let originalText = document.getElementById('_original-text');
+        let toText = document.getElementById('_to-text');
+        const sourceString = originalText.value.trim();
+        if (sourceString != ''){
+            if (ORIGINAL_LG_CODE == null || TO_LG_CODE == null)
+                return;
+        }else { return; }
+        alert(12)
+
+        if (overLimitNum){
+            originalText.value = originalText.value.substring(0, limitNum);
+            overLimitNum = false;
+        }
+        var sourceStringT = originalText.value.trim();
+        $.ajax({
+            type:"post",
+            contentType:'application/x-www-form-urlencoded; charset=utf-8',
+            url:"2ba916d188dfbb2d8ee26d15fc9c6fc3.php",
+            data:{'all': {'m': 'p', 'q': sourceStringT, 'from': ORIGINAL_LG_CODE, 'to': TO_LG_CODE}},
+            dataType:'json',
+            success:function(data){
+                if (data['msg'] == 'ok'){
+                    // 更新翻译结果
+                    toText.innerText = data['ret'];
+                }
+            },
+            error:function (data) {
+                toText.innerHTML = "&nbsp;翻译失败...<br/>&nbsp;Translation failed...";
+                console.log(data);
+            }
+        });
+    }
+</script>
+</body>
+</html>

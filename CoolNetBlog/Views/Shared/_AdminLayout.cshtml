@@ -1,0 +1,45 @@
+﻿@model PassBaseViewModel
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>后台-光之使者</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/CoolNetBlog.styles.css" asp-append-version="true" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <style>
+
+    </style>
+</head>
+<body>
+    <div class="text-center">
+        <h7 class="display-7">后台管理员 ~喵咪呼啦！~</h7>
+        <a class="text text-primary" asp-route-pt="@Model?.PassToken" asp-action="AdminHome" asp-controller="Admin">返回后台面板</a>
+        @{
+            //若是在登陆界面，不具有PassToken，此样式不会显示。否则后台主页具有token，因为验证通过了
+            if (!String.IsNullOrWhiteSpace(@Model?.PassToken))
+            {
+                <h6 class="display-6">大侠你好, @Model?.AccountName</h6>
+            }
+        }
+    </div>
+
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &后台猫🐱尾巴
+        </div>
+    </footer>
+</body>
+</html>
