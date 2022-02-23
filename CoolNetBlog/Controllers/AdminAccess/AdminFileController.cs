@@ -83,8 +83,11 @@ namespace CoolNetBlog.Controllers.AdminAccess
                     {
                         TempData["Tips"] = "上传失败 图片大小大于200kb！";
                         return RedirectToAction("FileAmManagement", "AdminFile", new { pt = sfvm.PassToken });
-
-
+                    }
+                    if (!Directory.Exists(Path.Combine(_environment.WebRootPath, "articleImgs")))
+                    {
+                        // 不存在articleImgs图片目录则创建
+                        Directory.CreateDirectory(Path.Combine(_environment.WebRootPath, "articleImgs"));
                     }
                     // 实际保存物理路径
                     fileRoot = Path.Combine(_environment.WebRootPath, "articleImgs", helpName+'.'+format);
@@ -112,6 +115,12 @@ namespace CoolNetBlog.Controllers.AdminAccess
                         return RedirectToAction("FileAmManagement", "AdminFile", new { pt = sfvm.PassToken });
 
                     }
+                    if (!Directory.Exists(Path.Combine(_environment.WebRootPath, "epLinks")))
+                    {
+                        // 不存在epLinks链接目录则创建
+                        Directory.CreateDirectory(Path.Combine(_environment.WebRootPath, "epLinks"));
+                    }
+
                     // 实际保存物理路径
                     fileRoot = Path.Combine(_environment.WebRootPath, "epLinks", file.FileName);
                     // 保存到数据库中的对应相对物理文件路径的名称
@@ -124,7 +133,6 @@ namespace CoolNetBlog.Controllers.AdminAccess
 
                     }
                 }
-
                 using (var stream = file?.OpenReadStream())
                 {
                     byte[] bytes = new byte[stream.Length];
