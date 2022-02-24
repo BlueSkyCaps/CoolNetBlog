@@ -8,7 +8,7 @@ namespace ComponentsServices.Base
 {
     public class BaseSugar
     {
-        public readonly SqlSugar.SqlSugarClient _dbHandler;
+        public readonly SqlSugar.SqlSugarScope _dbHandler;
         public BaseSugar(DataBaseTypes dataBaseType = DataBaseTypes.MySql)
         {
             _dbHandler = new SugarDbConfiged(dataBaseType).DbHandler;
@@ -16,7 +16,7 @@ namespace ComponentsServices.Base
     }
     public class SugarDataBaseStorage<TEntity, TKey> : IDateBaseStorage<TEntity, TKey> where TEntity : class, new()
     {
-        public readonly SqlSugar.SqlSugarClient _dbHandler;
+        public readonly SqlSugar.SqlSugarScope _dbHandler;
         public SugarDataBaseStorage(DataBaseTypes dataBaseType = DataBaseTypes.MySql)
         {
             _dbHandler = new SugarDbConfiged(dataBaseType).DbHandler;

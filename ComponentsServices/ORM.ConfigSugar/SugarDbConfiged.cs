@@ -7,12 +7,12 @@ namespace ComponentsServices.ORM.ConfigSugar
     public class SugarDbConfiged
     {
         private DataBaseTypes DataBaseType;
-        public SqlSugarClient DbHandler { get; set; }
+        public SqlSugarScope DbHandler { get; set; }
         public SugarDbConfiged(DataBaseTypes dataBaseType = DataBaseTypes.MySql)
         {
             this.DataBaseType = dataBaseType;
             //创建数据库对象
-            SqlSugarClient db = new SqlSugarClient(new ConnectionConfig()
+            SqlSugarScope db = new SqlSugarScope(new ConnectionConfig()
             {
                 ConnectionString = FindConnStr(),
                 DbType = FindType(),
