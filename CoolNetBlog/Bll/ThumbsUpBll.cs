@@ -48,7 +48,7 @@ namespace CoolNetBlog.Bll
             try
             {
                 _articleSet.TransBegin();
-                articleAble.ThumbUpStart += articleAble.ThumbUpStart;
+                articleAble.ThumbUpStart = articleAble.ThumbUpStart+1;
                 await _articleSet.UpdateAsync(articleAble);
                 await _thumbUpSet.InsertAsync(new ArticleThumbUp { ArticleId = articleId,ClientIp = cip});
                 _articleSet.TransCommit();
@@ -63,6 +63,7 @@ namespace CoolNetBlog.Bll
             }
             result.Code = ValueCodes.Success;
             result.TipMessage = "~谢谢你的赞！";
+            result.Data = articleAble.ThumbUpStart;
             return result;
         }
     }

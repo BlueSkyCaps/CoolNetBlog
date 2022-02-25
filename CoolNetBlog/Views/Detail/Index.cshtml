@@ -68,6 +68,15 @@
         </small>
         </div>
         
+        <div>
+        <br/>
+        <small>
+        <button type="button" class="btn btn-dark btn-sm position-relative">👍
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">@Model?.DetailArticleData.ThumbUpStart<span class="visually-hidden"></span></span>
+        </button>
+        <button class="btn btn-outline-primary btn-sm" id="thumbUpBtn" onclick="thumbUpBtnClick(@Model?.DetailArticleData.Id)" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">点个赞ᶘᵒᴥᵒᶅ↗</button>
+        </small>
+        </div>
 
         <br/>
 
@@ -111,31 +120,45 @@ $("#toUnlockBtn").click(
                 }
             }
         );
-
     }
-    
 );
 
 //文章点赞按钮点击
 function thumbUpBtnClick(id){
     $('#thumbUpBtn').attr("disabled", "true");
-           $.ajax (
-            {
-                url: "/ThumbsUp/ThumbsUp",
-                type: "POST",
-                dataType: "json",
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify({
-                    "ArticleId":id,
-                }),
-                success: function(data, status){
-                    alert(data['TipMessage']);
-                },
-                error: function(err){
-                    alert("点赞失败，好意心领啦。");
+    $.ajax (
+        {
+            url: "/ThumbsUp/ThumbsUp",
+            type: "POST",
+            dataType: "json",
+            contentType: "application/x-www-form-urlencoded; charset=utf-8",
+            data: {
+                "ArticleId":id,
+            },
+            success: function(data, status){
+                if(data['code']==1){
+                    // 点赞成功 将点赞数重显 
+                    $('#thumbUpStartEle').text(data['data'])
                 }
+                // bootstrap显示按钮弹出层 作为提示
+                $('#thumbUpBtn').attr('data-bs-content', data['tipMessage']);
+                var popover = new bootstrap.Popover($('#thumbUpBtn'), {trigger: 'focus'});
+                popover.show();
+                setTimeout(function(){popover.hide();}, 2500);
+            },
+            error: function(err){
+                $('#thumbUpBtn').attr('data-bs-content', "点赞失败，好意心领啦err。");
+                var popover = new bootstrap.Popover($('#thumbUpBtn'), {trigger: 'focus'});
+                popover.show();
+                setTimeout(function(){popover.hide();}, 2500);
             }
-        );
+        }
+    );
+    
+}
+function HideThumpUpTipBtn(){
+    // 3秒后 bootstrap隐藏按钮弹出层 无论如何 执行此代码
+    
 }
 </script>
 
