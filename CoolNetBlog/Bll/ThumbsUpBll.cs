@@ -8,9 +8,11 @@ namespace CoolNetBlog.Bll
     public class ThumbsUpBll
     {
         private readonly SugarDataBaseStorage<Article, int> _articleSet;
+        private readonly SugarDataBaseStorage<ArticleThumbUp, int> _thumbUpSet;
         public ThumbsUpBll()
         {
             _articleSet = new SugarDataBaseStorage<Article,int>();
+            _thumbUpSet = new SugarDataBaseStorage<ArticleThumbUp, int>();
         }
 
         public async Task<ValueResult> DealThumbsUpArticleAsync(int articleId, HttpContext httpContext) 
@@ -31,13 +33,32 @@ namespace CoolNetBlog.Bll
                 return result;
             }
             var cip = httpContext.Request.HttpContext.Connection.RemoteIpAddress;
-            if (cip is null )
+            if (cip is null)
             {
                 result.HideMessage = "获取不到客户端ip";
                 result.TipMessage = "点赞失败了呢，你的好意我心领啦";
                 return result;
             }
+            var exd = await _thumbUpSet.AnyAsync(u => u.ArticleId == articleId && u.ClientIp == cip.Address.ToString());
+            if (exd)
+            {
+                result.TipMessage = "你已经点过赞啦";
+                return result;
+            }
+            try
+            {
+                await _thumbUpSet.InsertAsync(new ArticleThumbUp { ArticleId = articleId,ClientIp = cip.Address.ToString()});
+            }
+            catch (Exception e)
+            {
+                result.Code = ValueCodes.Error;
+                result.HideMessage = "点赞文章，执行插入数据报错:"+e.Message;
+                result.TipMessage = "点赞失败了呢，你的好意我心领啦";
+                return result;
+            }
             result.Code = ValueCodes.Success;
+            result.TipMessage = "~谢谢你的赞！";
+            return result;
         }
     }
 }
