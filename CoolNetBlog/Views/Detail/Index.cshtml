@@ -67,7 +67,10 @@
         <span class="badge rounded-pill bg-info text-dark">发表于@(Model?.DetailArticleData.CreatedTime.ToString("yyyy-MM-dd HH:mm:ss"))</span>
         </small>
         </div>
+        
+
         <br/>
+
         <div>
         <button onClick="javascript:history.back(-1);" type="button" class="btn btn-outline-primary btn-sm">回到之前</button>
         </div>
@@ -85,7 +88,7 @@ $("#toUnlockBtn").click(
         }
         $.ajax (
             {
-                url: "/BlogApi/ArticleUnLock",
+                url: "/Detail/ArticleUnLock",
                 type: "POST",
                 dataType: "json",
                 contentType: "application/json; charset=utf-8",
@@ -113,6 +116,27 @@ $("#toUnlockBtn").click(
     
 );
 
+//文章点赞按钮点击
+function thumbUpBtnClick(id){
+    $('#thumbUpBtn').attr("disabled", "true");
+           $.ajax (
+            {
+                url: "/ThumbsUp/ThumbsUp",
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    "ArticleId":id,
+                }),
+                success: function(data, status){
+                    alert(data['TipMessage']);
+                },
+                error: function(err){
+                    alert("点赞失败，好意心领啦。");
+                }
+            }
+        );
+}
 </script>
 
 

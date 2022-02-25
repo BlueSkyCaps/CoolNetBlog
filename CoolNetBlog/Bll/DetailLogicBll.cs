@@ -1,5 +1,6 @@
 ﻿using ComponentsServices.Base;
 using CoolNetBlog.Models;
+using CoolNetBlog.ViewModels.Api;
 using CoolNetBlog.ViewModels.Detail;
 
 namespace CoolNetBlog.Bll
@@ -59,6 +60,41 @@ namespace CoolNetBlog.Bll
                 _homeGlobalView.DetailArticleData.Content = _homeGlobalView.DetailArticleData.IsLock ? 
                     "" : _homeGlobalView.DetailArticleData.Content;
             }
+        }
+
+        /// <summary>
+        /// 隐私文章解锁
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public ArticleUnLockViewModel DealArticleUnLock(ArticleUnLockViewModel data)
+        {
+            try
+            {
+                data.Code = 0;
+                data.Content = "";
+                SugarDataBaseStorage<Article, int> articleSet = new SugarDataBaseStorage<Article, int>();
+                var article = articleSet.FindOneById(data.ArticleId);
+                if (article is null)
+                {
+                    return data;
+                }
+                // 若已经不是隐私文章或密码正确
+                if ((!article.IsLock) || data.Password == article.LockPassword)
+                {
+                    data.Content = article.Content;
+                    data.Code = 1;
+                    return data;
+                }
+
+                return data;
+
+            }
+            catch (Exception)
+            {
+                return data;
+            }
+
         }
     }
 }
