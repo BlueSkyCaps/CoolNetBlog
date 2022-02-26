@@ -19,7 +19,6 @@
         public bool IsShowWishPicture { get; set; }
         public string? WishPictureName { get; set; }
         public string? WishPictureRelPath { get; set; }
-
-
+        public bool IsOpenDetailThumb { get; set; }
     }
 }

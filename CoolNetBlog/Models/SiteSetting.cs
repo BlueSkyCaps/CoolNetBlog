@@ -109,6 +109,12 @@ namespace CoolNetBlog.Models
             /// "心愿图片"标题祝福语
             /// </summary>
             public string? WishPictureName { get; set; }
+            /// <summary>
+            /// Desc:是否开启文章点赞表态功能
+            /// Default:b'0'
+            /// Nullable:false
+            /// </summary>      
+            public bool IsOpenDetailThumb { get; set; }
 
     }
 }

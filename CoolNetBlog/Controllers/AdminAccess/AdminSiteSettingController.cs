@@ -67,6 +67,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 WishPictureRelPath = vm.WishPictureRelPath,
                 IsShowWishPicture = vm.IsShowWishPicture,
                 WishPictureName = vm.WishPictureName,
+                IsOpenDetailThumb = vm.IsOpenDetailThumb,
             };
 
             _siteSettingSet.TransBegin();
@@ -113,6 +114,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 WishPictureRelPath = eny.WishPictureRelPath,
                 IsShowWishPicture = eny.IsShowWishPicture,
                 WishPictureName = eny.WishPictureName,
+                IsOpenDetailThumb = eny.IsOpenDetailThumb,
             };
             // 自动封装已有的数据
             org = (SiteSettingViewModel)WrapMustNeedPassFields(org);
