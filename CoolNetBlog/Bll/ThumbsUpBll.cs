@@ -42,7 +42,7 @@ namespace CoolNetBlog.Bll
             var exd = await _thumbUpSet.AnyAsync(u => u.ArticleId == articleId && u.ClientIp == cip);
             if (exd)
             {
-                result.TipMessage = "你已经表过态啦！";
+                result.TipMessage = "该文章你已经表过态啦！";
                 return result;
             }
             try
