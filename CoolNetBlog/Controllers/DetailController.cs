@@ -32,11 +32,13 @@ namespace CoolNetBlog.Controllers.Home
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
+        /// 指定路由为{Controller}/UnLock/ArticleUnLock，否则{Controller}/ArticleUnLock直接走Index方法自定义文章uri了
         [HttpPost]
-        public JsonResult ArticleUnLock([FromBody] ArticleUnLockViewModel data)
+        [Route("{Controller}/UnLock/ArticleUnLock")]
+        public JsonResult ArticleUnLock([FromBody]ArticleUnLockViewModel data)
         {
             var res = _detailBll.DealArticleUnLock(data);
-            return Json(res);
+            return new JsonResult(res);
         }
     }
 }
