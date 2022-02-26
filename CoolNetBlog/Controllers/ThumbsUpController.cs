@@ -9,6 +9,7 @@ namespace CoolNetBlog.Controllers
     public class ThumbsUpController : Controller
     {
         private readonly ThumbsUpBll _thumbsUpBll;
+
         public ThumbsUpController()
         {
             _thumbsUpBll = new ThumbsUpBll();

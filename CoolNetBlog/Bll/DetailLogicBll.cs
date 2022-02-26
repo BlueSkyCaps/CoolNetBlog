@@ -62,6 +62,8 @@ namespace CoolNetBlog.Bll
             _homeGlobalView.DetailArticleData.Content = _homeGlobalView.DetailArticleData.IsLock ? 
                 "" : _homeGlobalView.DetailArticleData.Content;
             // 处理文章点赞数
+            // 获取文章Id，因为有可能是用文章自定义uri访问文章，此时方法参数articleId是null，而需要用id去文章点赞表找当前文章的点赞数
+            articleId = _homeGlobalView.DetailArticleData.Id;
             var theAllArticleThumb = await _thumbUpSet.GetListByExpAsync(x => x.ArticleId == articleId);
             // 文章表态类型数量，文章点赞数ThumbUpStart；文章"有被笑到"数ThumbUpFun；文章"不敢苟同"数ThumbUpSilence
             int thumbUpStart,thumbUpFun, thumbUpSilence = 0;
