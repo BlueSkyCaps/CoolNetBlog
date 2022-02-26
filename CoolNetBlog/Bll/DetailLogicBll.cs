@@ -12,11 +12,13 @@ namespace CoolNetBlog.Bll
     {
         private SugarDataBaseStorage<DetailArticleViewModel, int> _articleVmSet;
         private SugarDataBaseStorage<Menu, int> _menuSet;
+        private SugarDataBaseStorage<ArticleThumbUp, int> _thumbUpSet;
 
         public DetailLogicBll()
         {
             _articleVmSet = new SugarDataBaseStorage<DetailArticleViewModel, int>();
             _menuSet = new SugarDataBaseStorage<Menu, int>();
+            _thumbUpSet = new SugarDataBaseStorage<ArticleThumbUp, int>();
         }
 
         /// <summary>
@@ -43,24 +45,38 @@ namespace CoolNetBlog.Bll
             if (_homeGlobalView.DetailArticleData is null)
             {
                 _homeGlobalView.NotTips = "找不到文章！返回重试一下，或者关键字重新搜搜吧？！";
+                return;
             }
-            else
+
+            _homeGlobalView.DetailArticleData.Ig_MenuName = (await _menuSet.FindOneByIdAsync(_homeGlobalView.DetailArticleData.MenuId)).Name;
+            _homeGlobalView.Location = "Detail";
+            _homeGlobalView.LocationTip = "文章(帖子)";
+            // 将标签组成字符串列表
+            if (!string.IsNullOrWhiteSpace(_homeGlobalView.DetailArticleData.Labels))
             {
-                _homeGlobalView.DetailArticleData.Ig_MenuName = (await _menuSet.FindOneByIdAsync(_homeGlobalView.DetailArticleData.MenuId)).Name;
-                _homeGlobalView.Location = "Detail";
-                _homeGlobalView.LocationTip = "文章(帖子)";
-                // 将标签组成字符串列表
-                if (!string.IsNullOrWhiteSpace(_homeGlobalView.DetailArticleData.Labels))
-                {
-                    var tmpLabelV = _homeGlobalView.DetailArticleData.Labels.Split(',', '，', ' ').ToList();
-                    tmpLabelV.RemoveAll(a => string.IsNullOrWhiteSpace(a));
-                    _homeGlobalView.DetailArticleData.LabelsList = tmpLabelV;
-                }
-                // 是隐私文章 隐藏内容主体
-                _homeGlobalView.DetailArticleData.Content = _homeGlobalView.DetailArticleData.IsLock ? 
-                    "" : _homeGlobalView.DetailArticleData.Content;
+                var tmpLabelV = _homeGlobalView.DetailArticleData.Labels.Split(',', '，', ' ').ToList();
+                tmpLabelV.RemoveAll(a => string.IsNullOrWhiteSpace(a));
+                _homeGlobalView.DetailArticleData.LabelsList = tmpLabelV;
             }
+            // 是隐私文章 隐藏内容主体
+            _homeGlobalView.DetailArticleData.Content = _homeGlobalView.DetailArticleData.IsLock ? 
+                "" : _homeGlobalView.DetailArticleData.Content;
+            // 处理文章点赞数
+            var theAllArticleThumb = await _thumbUpSet.GetListByExpAsync(x => x.ArticleId == articleId);
+            // 文章表态类型数量，文章点赞数ThumbUpStart；文章"有被笑到"数ThumbUpFun；文章"不敢苟同"数ThumbUpSilence
+            int thumbUpStart,thumbUpFun, thumbUpSilence = 0;
+            thumbUpStart = theAllArticleThumb.Where(x => x.Type == 1).Count();
+            thumbUpFun = theAllArticleThumb.Where(x => x.Type == 2).Count();
+            thumbUpSilence = theAllArticleThumb.Where(x => x.Type == 3).Count();
+            var thumbData = new Dictionary<string, int> { 
+                { "ThumbUpStart", thumbUpStart }, 
+                { "ThumbUpFun", thumbUpFun }, 
+                { "ThumbUpSilence", thumbUpSilence } 
+            };
+            _homeGlobalView.DetailArticleData.ThumbUpNumbers = thumbData;
         }
+
+
 
         /// <summary>
         /// 隐私文章解锁

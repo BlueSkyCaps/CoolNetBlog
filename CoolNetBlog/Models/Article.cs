@@ -99,10 +99,7 @@ namespace CoolNetBlog.Models
         /// Nullable:true
         /// </summary>
         public string? CustUri { get; set; }
-        /// <summary>
-        /// 文章点赞数
-        /// </summary>
-        public int ThumbUpStart { get;set;}
+
         /// <summary>
         /// 文章所属菜单名 非字段 只用于显示
         /// </summary>

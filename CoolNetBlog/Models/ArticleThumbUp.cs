@@ -25,5 +25,9 @@ namespace CoolNetBlog.Models
         public string? ClientDevice { get; set; }
         public string? ClientBrowser { get; set; }
         public DateTime? UpTime { get; set; }
+        /// <summary>
+        /// 类型：1觉得很赞2有被笑到3不敢苟同
+        /// </summary>
+        public int? Type { get; set; }
     }
 }

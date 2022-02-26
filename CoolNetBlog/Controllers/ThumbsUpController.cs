@@ -16,14 +16,11 @@ namespace CoolNetBlog.Controllers
 
         [Route("{Controller}/ThumbsUp")]
         [HttpPost]
-        public async Task<IActionResult> ThumbsUpAsync([FromForm] int articleId)
+        public async Task<IActionResult> ThumbsUpAsync([FromForm] int articleId, [FromForm] int type)
         {
-            var res =await _thumbsUpBll.DealThumbsUpArticleAsync(articleId, HttpContext);
+            var res =await _thumbsUpBll.DealThumbsUpArticleAsync(articleId, type, HttpContext);
             return new JsonResult(res);
         }
     }
-    public class V
-    {
-        public int ArticleId { get; set; } 
-    }
+
 }
