@@ -15,7 +15,7 @@
 -- Table structure for table `AdminUser`
 --
 
-CREATE DATABASE CoolNetBlog CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE DATABASE if not exists CoolNetBlog CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 USE CoolNetBlog;
 
