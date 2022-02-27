@@ -41,9 +41,9 @@ Powerd By asp.net core 6 mvc，default use mysql8
 ```
 然后可以使用git将configs.json设为忽略项
 
-4. 添加CoolNetBlog数据库((版本v1.99，其余类似)：
-使用navicat等数据库管理工具连接mysql服务器，运行sql语句，sql文件在本仓库下的"v199_dump_CoolNetBlog.sql"。
-或者在终端使用命令：
+3. 添加CoolNetBlog数据库((版本v1.99，其余类似)：
+使用navicat等数据库管理工具连接mysql服务器，运行sql语句，sql文件是本仓库下的"v199_dump_CoolNetBlog.sql"。
+或者在终端依次执行命令：
 ```
 mysql -u用户名 -p密码
 CREATE DATABASE if not exists CoolNetBlog CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -51,4 +51,4 @@ exit;
 mysql -u用户名 -p密码 CoolNetBlog < v199_dump_CoolNetBlog.sql
 ```
 这样便添加CoolNetBlog数据库完毕。
-5. visual studio启动项目。若数据库地址是远程服务器，确保地址和密码输入正确且服务器开启3306端口、mysql8版本远程连接方式配置正确。
+4. visual studio启动项目。若数据库地址是远程服务器，确保地址和密码输入正确且服务器开启3306端口、mysql8版本远程连接方式配置正确。
