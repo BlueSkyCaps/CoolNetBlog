@@ -50,4 +50,4 @@ CREATE DATABASE if not exists CoolNetBlog CHARACTER SET utf8 COLLATE utf8_genera
 exit;
 mysql -u用户名 -p密码 CoolNetBlog < v199_dump_CoolNetBlog.sql
 ```
-这样就成功添加CollNetBlog所需的数据库。
+这样便添加CoolNetBlog数据库完毕。
