@@ -51,4 +51,5 @@ exit;
 mysql -u用户名 -p密码 CoolNetBlog < v199_dump_CoolNetBlog.sql
 ```
 这样便添加CoolNetBlog数据库完毕。
+
 4. visual studio启动项目。若数据库地址是远程服务器，确保地址和密码输入正确且服务器开启3306端口、mysql8版本远程连接方式配置正确。
