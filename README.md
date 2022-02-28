@@ -1,6 +1,7 @@
 # CoolNetBlog
 
-## A lightweight, concise, and fast blogging framework using asp.net core 6.|使用 asp.net core 6 的轻量级、简洁、快速的博客框架。
+## A lightweight, concise, and fast blogging framework using asp.net core 6.
+使用 asp.net core 6 的轻量级、简洁、快速的博客框架。
 
 ### 使用介绍视频：
 [点击：观看基本使用介绍视频](https://www.bilibili.com/video/BV19S4y1F7zA?share_source=copy_web "好玩：独自开发的极简博客框架~全手写部署Linux|windows")
@@ -53,3 +54,4 @@ mysql -u用户名 -p密码 CoolNetBlog < v199_dump_CoolNetBlog.sql
 这样便添加CoolNetBlog数据库完毕。
 
 4. visual studio启动项目。若数据库地址是远程服务器，确保地址和密码输入正确且服务器开启3306端口、mysql8版本远程连接方式配置正确。
+5. 后台页：/admin/login，默认账户bluesky和密码12345678
