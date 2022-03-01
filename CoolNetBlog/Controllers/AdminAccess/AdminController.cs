@@ -53,7 +53,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 return View();
             }
             HttpContext.Response.Cookies.Delete("coolnetblogadminloginxiyuaneightfourone");
-            HttpContext.Response.Cookies.Append("coolnetblogadminloginxiyuaneightfourone", Guid.NewGuid().ToString());
+            HttpContext.Response.Cookies.Append("coolnetblogadminloginxiyuaneightfourone", am.Token);
             // 绑定token钥匙传递给视图，此token将一直用于当前后台后续的操作中，且赋值后台全局所需变量
             spassVm = new PassBaseViewModel
             {
