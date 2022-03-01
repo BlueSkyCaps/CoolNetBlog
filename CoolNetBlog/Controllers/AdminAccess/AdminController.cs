@@ -53,7 +53,8 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 return View();
             }
             HttpContext.Response.Cookies.Delete("coolnetblogadminloginxiyuaneightfourone");
-            HttpContext.Response.Cookies.Append("coolnetblogadminloginxiyuaneightfourone", am.Token);
+            _currentCookieValue = Guid.NewGuid().ToString();
+            HttpContext.Response.Cookies.Append("coolnetblogadminloginxiyuaneightfourone", _currentCookieValue);
             // 绑定token钥匙传递给视图，此token将一直用于当前后台后续的操作中，且赋值后台全局所需变量
             spassVm = new PassBaseViewModel
             {
@@ -113,6 +114,9 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 ModelState.AddModelError("", "重置账户：重置失败，请重试。");
                 return View("Login");
             }
+            // 重置密码成功 去除当前多余的会话cookie
+            HttpContext.Response.Cookies.Delete("coolnetblogadminloginxiyuaneightfourone");
+            _currentCookieValue = null;
             return View("Login");
         }
 
@@ -129,6 +133,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
         public IActionResult LoginOut(string? pt)
         {
             HttpContext.Response.Cookies.Delete("coolnetblogadminloginxiyuaneightfourone");
+            _currentCookieValue = null;
             spassVm = null;
             return RedirectToAction("Login", "Admin");
         }

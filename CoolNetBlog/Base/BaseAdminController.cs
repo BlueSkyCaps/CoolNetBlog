@@ -9,6 +9,10 @@ namespace CoolNetBlog.Base
         protected static BaseSugar _bdb;
 
         public static PassBaseViewModel spassVm = new();
+        /// <summary>
+        /// 当前cookie的值，登录后生成此随机值。后续后台的操作都会从客户端取cookie验证值是否是一开始登陆时设置的此值
+        /// </summary>
+        public static string? _currentCookieValue = null;
 
         public BaseAdminController()
         {

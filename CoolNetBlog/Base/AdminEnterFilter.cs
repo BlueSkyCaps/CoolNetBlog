@@ -46,7 +46,7 @@ namespace CoolNetBlog.Base
                         context.Result = new StatusCodeResult(StatusCodes.Status401Unauthorized);
                     }
                 }
-                if (string.IsNullOrWhiteSpace(cv) || cv != pt.FirstOrDefault())
+                if (string.IsNullOrWhiteSpace(cv) || cv != BaseAdminController._currentCookieValue)
                     context.Result = new StatusCodeResult(StatusCodes.Status401Unauthorized);
 
                 var adminUserSet = new SugarDataBaseStorage<AdminUser, int>();
