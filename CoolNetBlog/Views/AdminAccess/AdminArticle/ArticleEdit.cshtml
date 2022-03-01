@@ -42,7 +42,8 @@
         <button type="button" class="btn btn-secondary" onclick="RichElementsPut('blockquote')">引用文</button>
         <button type="button" class="btn btn-secondary" onclick="RichElementsPut('ul')">列表项</button>
         </div>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsPut('bimg')">图片链接</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsPut('bimg')">图片链接(放大尺寸,会损失质量)</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsPut('oimg')">图片链接(原始尺寸)</button>
         <button type="button" class="btn btn-secondary" onclick="RichElementsPut('cimg')">图片链接(迷你式)</button>
     </div>
     <br/>
@@ -175,10 +176,13 @@
                 $('#textarea').val($('#textarea').val()+'<ul><li>1.XX</li><li>2.XX</li><li>3.XX</li></ul>');
                 break;
             case 'bimg':
-                $('#textarea').val($('#textarea').val()+'<img src="/articleImgs/输入图片实际名" class="img-fluid" alt="">');
+                $('#textarea').val($('#textarea').val()+'<img src="/articleImgs/输入图片实际名" style="width:100%;height:auto;" class="img-fluid mx-auto d-block" alt="">');
+                break;
+            case 'oimg':
+                $('#textarea').val($('#textarea').val()+'<img src="/articleImgs/输入图片实际名" style="max-width:100%;max-height:100%;" class="img-fluid mx-auto d-block" alt="">');
                 break;
             case 'cimg':
-                $('#textarea').val($('#textarea').val()+'<img src="/articleImgs/输入图片实际名" class="rounded mx-auto d-block" alt="">');
+                $('#textarea').val($('#textarea').val()+'<img src="/articleImgs/输入图片实际名" style="width:40%;height:40%;" class="img-thumbnail rounded mx-auto d-block" alt="">');
                 break;
             default:
                 return;
