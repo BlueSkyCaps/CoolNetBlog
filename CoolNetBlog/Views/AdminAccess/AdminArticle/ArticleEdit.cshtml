@@ -290,9 +290,8 @@
         $('#richPutModalAName').val('')
         $('#richPutModalAHref').val('')
         $('#richPutModal').modal('hide');
-        $("#richPutModalUlDiv input").each(function(){
-            this.value="";
-        });
+        $("#richPutModalUlDiv input").remove();
+        richPutModalUlAdd();
         currentRichName = "";
     }
 
@@ -302,9 +301,8 @@
         $('#richPutModalAName').val('')
         $('#richPutModalAHref').val('')
         $('#richPutModal').modal('hide');
-        $("#richPutModalUlDiv input").each(function(){
-            this.value="";
-        });
+        $("#richPutModalUlDiv input").remove();
+        richPutModalUlAdd();
     }
 
     function richPutModalUlAdd(){
