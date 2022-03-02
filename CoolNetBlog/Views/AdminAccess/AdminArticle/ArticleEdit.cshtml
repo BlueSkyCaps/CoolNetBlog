@@ -27,24 +27,24 @@
     <!--富文本按钮组-->
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
         <div class="btn-group mr-2" role="group" aria-label="First group">
-        <button type="button" class="btn btn-secondary" onclick="RichElementsPut('h3')">大标题</button>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsPut('h5')">小型标题</button>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsPut('strong')">粗体</button>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsPut('em')">斜体</button>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsPut('u')">下划线</button>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsPut('del')">中间线文本</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('h3')">大标题</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('h5')">小型标题</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('strong')">粗体</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('em')">斜体</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('u')">下划线</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('del')">中间线文本</button>
         </div>
         <div class="btn-group mr-2" role="group" aria-label="Second group">
-        <button type="button" class="btn btn-secondary" onclick="RichElementsPut('br')">另起一行</button>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsPut('code')">代码块</button>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsPut('mark')">标记</button>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsPut('a')">外链接</button>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsPut('blockquote')">引用文</button>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsPut('ul')">列表项</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('br')">另起一行</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('code')">代码块</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('mark')">标记</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('a')">外链接</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('blockquote')">引用文</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('ul')">列表项</button>
         </div>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsPut('bimg')">图片链接(放大尺寸,会损失质量)</button>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsPut('oimg')">图片链接(原始尺寸)</button>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsPut('cimg')">图片链接(迷你式)</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('bimg')">图片链接(放大尺寸,会损失质量)</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('oimg')">图片链接(原始尺寸)</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('cimg')">图片链接(迷你式)</button>
     </div>
     <br/>
     <div class="form-row align-items-center">
@@ -125,8 +125,50 @@
         </div>
     </div>
 </form>
+<div class="modal fade" id="richPutModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="richPutModalTip"></h5>
+      </div>
+      <div class="modal-body">
+        <span>添加当前内容</span>
+        <div class="input-group richPutModalDiv" id="richPutModalTextAreaDiv">
+        <textarea class="form-control" aria-label="With textarea" id="richPutModalTextArea"></textarea>
+        </div>
+        <div class="input-group mb-3 richPutModalDiv" id="richPutModalADiv">
+          <span class="input-group-text" id="inputGroup-sizing-default">链接名称</span>
+          <input id="richPutModalAName" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+          <span class="input-group-text" id="inputGroup-sizing-default">链接地址</span>
+          <input id="richPutModalAHref" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+        </div>
+        <div class="input-group mb-3 richPutModalDiv" id="richPutModalImgDiv">
+            <label class="input-group-text" for="richPutModalImg">选择上传的图片</label>
+            <select class="form-select" id="richPutModalImg">
+            <option value="">空定义</option>
+            </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="CloseRichPutModal()">关闭</button>
+        <button type="button" class="btn btn-primary" id="richPutModalOk" onclick="LinkRichTextPut()">完成</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
+    // 定义富文本按钮对应的提示文本
+    var richPutModalTips = {
+        "h3":"大标题文字", "h5":"小标题文字", "strong":"粗体样式", "em":"斜体样式", "u":"下划线样式", 
+        "br":"换行", "mark":"标记样式", "del":"有中间线的文字", "code":"代码块",
+        "a":"链接", "blockquote":"引用文", "ul":"列表项", "bimg":"图片链接(放大尺寸,会损失质量)",
+        "oimg":"图片链接(原始尺寸)", "cimg":"图片链接(迷你式)"
+    };
+    var currentRichName = "";//当前富文本按钮点击的样式名
+    var posLeftText = "";//光标在编辑框的位置左部分内容
+    var posRightText = "";//光标在编辑框的位置右部分内容
+
     function LockChange(){
         var obj = document.getElementById("lockHidDiv");
         if(obj["hidden"]){
@@ -136,60 +178,102 @@
         }
     }
 
-    function RichElementsPut(eName){
-        var htmlTextToPut = "";
-        switch(eName)
-        {
-            case 'h3':
-                htmlTextToPut = '<h3>输入文字</h3>';
-                break;
-            case 'h5':
-                htmlTextToPut = '<h5>输入文字</h5>';
-                break;
-            case 'strong':
-                htmlTextToPut = '<strong>输入文字</strong>';
-                break;
-            case 'em':
-                htmlTextToPut = '<em>输入文字</em>';
-                break;
-            case 'u':
-                htmlTextToPut = '<u>输入文字</u>';
-                break;
-            case 'del':
-                htmlTextToPut = '<del>输入文字</del>';
-                break;
-            case 'br':
-                htmlTextToPut = '</br>';
-                break;
-            case 'code':
-                htmlTextToPut = '<code>输入代码块</code>';
-                break;
-            case 'mark':
-                htmlTextToPut = '<mark>输入标记</mark>';
-                break;
+    function RichElementsClick(eName){
+        var textAreaText = $("#textarea").val();//获取当前文章编辑框输入了的内容
+        var caretPos = $("#textarea").prop("selectionStart");//获取当前光标在编辑框的位置
+        posLeftText = textAreaText.substring(0, caretPos);
+        posRightText = textAreaText.substring(caretPos);
+        // 按点击了的富文本按钮，设置弹出框的提示文本
+        $('#richPutModalTip').text(richPutModalTips[eName]);
+        // 给弹出框多种可能的div(超链接、文本、图片)设置隐藏属性
+        $('.richPutModalDiv').attr("hidden", "hidden");
+        // 判断当前点击的是哪个富文本按钮，显示对应的弹出框div
+        switch(eName){
             case 'a':
-                htmlTextToPut = '<a class="text text-dark" href="链接地址">链接名称</a>';
-                break;
-            case 'blockquote':
-                htmlTextToPut = '<blockquote><em>输入引用文<em/></blockquote>';
-                break;
-            case 'ul':
-                htmlTextToPut = '<ul><li>1.XX</li><li>2.XX</li><li>3.XX</li></ul>';
+                $('#richPutModalADiv').removeAttr("hidden");
                 break;
             case 'bimg':
-                htmlTextToPut = '<img src="/articleImgs/输入图片实际名" style="width:100%;height:auto;" class="img-fluid mx-auto d-block" alt="">';
+            case 'oimg':
+            case 'cimg':
+                $('#richPutModalImgDiv').removeAttr("hidden");
+                break;
+            default:
+                $('#richPutModalTextAreaDiv').removeAttr("hidden");
+                break;
+        }
+        currentRichName = eName;
+        // 启动弹出框
+        $('#richPutModal').modal('show');
+
+        
+    }
+
+    function LinkRichTextPut(){
+        var htmlTextToPut = "";
+        // 无论如何，一并获取弹出框多种可能的div下 输入的值，后续会switch判断到正确的div是文本还是超链接还是选择图片
+        var richPutModalText = $('#richPutModalTextArea').val();//弹出编辑框的text
+        var richPutModalANameValue = $('#richPutModalAName').val();//弹出编辑框超链接名称
+        var richPutModalAHrefValue = $('#richPutModalAHref').val();//弹出编辑框超链接地址
+        var richPutModalImgValue = $('#richPutModalImg option:selected').val();//弹出编辑框选择的图片实际名
+        switch(currentRichName)
+        {
+            case 'h3':
+                htmlTextToPut = posLeftText+'<h3>'+richPutModalText+'</h3>'+posRightText;
+                break;
+            case 'h5':
+                htmlTextToPut = posLeftText+'<h5>'+richPutModalText+'</h5>'+posRightText;
+                break;
+            case 'strong':
+                htmlTextToPut = posLeftText+'<strong>'+richPutModalText+'</strong>'+posRightText;
+                break;
+            case 'em':
+                htmlTextToPut = posLeftText+'<em>'+richPutModalText+'</em>'+posRightText;
+                break;
+            case 'u':
+                htmlTextToPut = posLeftText+'<u>'+richPutModalText+'</u>'+posRightText;
+                break;
+            case 'del':
+                htmlTextToPut = posLeftText+'<del>'+richPutModalText+'</del>'+posRightText;
+                break;
+            case 'br':
+                htmlTextToPut = posLeftText+'</br>'+posRightText;
+                break;
+            case 'code':
+                htmlTextToPut = posLeftText+'<code>'+richPutModalText+'</code>'+posRightText;
+                break;
+            case 'mark':
+                htmlTextToPut = posLeftText+'<mark>'+richPutModalText+'</mark>'+posRightText;
+                break;
+            case 'a':
+                htmlTextToPut = posLeftText+'<a class="text text-dark" href="'+richPutModalAHrefValue+'">'+richPutModalANameValue+'</a>'+posRightText;
+                break;
+            case 'blockquote':
+                htmlTextToPut = posLeftText+'<blockquote><em>'+richPutModalText+'<em/></blockquote>'+posRightText;
+                break;
+            case 'ul':
+                htmlTextToPut = posLeftText+'<ul><li>1.XX</li><li>2.XX</li><li>3.XX</li></ul>'+posRightText;
+                break;
+            case 'bimg':
+                htmlTextToPut = posLeftText+'<img src="/articleImgs/'+richPutModalImgValue+'" style="width:100%;height:auto;" class="img-fluid mx-auto d-block" alt="">'+posRightText;
                 break;
             case 'oimg':
-                htmlTextToPut = '<img src="/articleImgs/输入图片实际名" style="max-width:100%;max-height:100%;" class="img-fluid mx-auto d-block" alt="">';
+                htmlTextToPut = posLeftText+'<img src="/articleImgs/'+richPutModalImgValue+'" style="max-width:100%;max-height:100%;" class="img-fluid mx-auto d-block" alt="">'+posRightText;
                 break;
             case 'cimg':
-                htmlTextToPut = '<img src="/articleImgs/输入图片实际名" style="width:40%;height:40%;" class="img-thumbnail rounded mx-auto d-block" alt="">';
+                htmlTextToPut = posLeftText+'<img src="/articleImgs/'+richPutModalImgValue+'" style="width:40%;height:40%;" class="img-thumbnail rounded mx-auto d-block" alt="">'+posRightText;
                 break;
             default:
                 return;
         }
-        var caretPos = $("#textarea").prop("selectionStart");
-        var textAreaTxt = $("#textarea").val();
-        $("#textarea").val(textAreaTxt.substring(0, caretPos) + htmlTextToPut + textAreaTxt.substring(caretPos));
+
+        $('#textarea').val(htmlTextToPut);
+        // 关闭清空弹出框
+        $('#richPutModalTextArea').val('')
+        $('#richPutModal').modal('hide');
+        currentRichName = "";
+    }
+    function CloseRichPutModal(){
+        // 关闭清空弹出框
+        $('#richPutModalTextArea').val('')
     }
 </script>
