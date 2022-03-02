@@ -161,7 +161,7 @@
     // 定义富文本按钮对应的提示文本
     var richPutModalTips = {
         "h3":"大标题文字", "h5":"小标题文字", "strong":"粗体样式", "em":"斜体样式", "u":"下划线样式", 
-        "br":"换行", "mark":"标记样式", "del":"有中间线的文字", "code":"代码块",
+        "br":"另起一行", "mark":"标记样式", "del":"有中间线的文字", "code":"代码块",
         "a":"链接", "blockquote":"引用文", "ul":"列表项", "bimg":"图片链接(放大尺寸,会损失质量)",
         "oimg":"图片链接(原始尺寸)", "cimg":"图片链接(迷你式)"
     };
@@ -202,10 +202,13 @@
                 break;
         }
         currentRichName = eName;
-        // 启动弹出框
-        $('#richPutModal').modal('show');
-
-        
+        if(eName=="br"){
+            // br元素就直接填充进去 不要多余弹出框
+            LinkRichTextPut();
+        }else{
+            // 启动弹出框
+            $('#richPutModal').modal('show');
+        }
     }
 
     function LinkRichTextPut(){
