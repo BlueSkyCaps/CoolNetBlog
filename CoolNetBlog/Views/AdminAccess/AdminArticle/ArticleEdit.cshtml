@@ -148,6 +148,10 @@
             <option value="">空定义</option>
             </select>
         </div>
+        <div class="input-group mb-3 richPutModalDiv" id="richPutModalUlDiv">
+          <input style="width:100%" placeholder="输入项文字" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+          <button type="button" class="btn btn-secondary btn-sm" id="richPutModalUlAddItemBtn" onclick="richPutModalUlAdd()">再添加一项</button>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="CloseRichPutModal()">关闭</button>
@@ -192,6 +196,9 @@
             case 'a':
                 $('#richPutModalADiv').removeAttr("hidden");
                 break;
+            case 'ul':
+                $('#richPutModalUlDiv').removeAttr("hidden");
+                break;
             case 'bimg':
             case 'oimg':
             case 'cimg':
@@ -213,11 +220,8 @@
 
     function LinkRichTextPut(){
         var htmlTextToPut = "";
-        // 无论如何，一并获取弹出框多种可能的div下 输入的值，后续会switch判断到正确的div是文本还是超链接还是选择图片
+        // 无论如何，获取弹出框div是richPutModalTextArea的值，因为此富文本按钮最多，后续会switch判断到正确的div是文本还是超链接还是选择图片
         var richPutModalText = $('#richPutModalTextArea').val();//弹出编辑框的text
-        var richPutModalANameValue = $('#richPutModalAName').val();//弹出编辑框超链接名称
-        var richPutModalAHrefValue = $('#richPutModalAHref').val();//弹出编辑框超链接地址
-        var richPutModalImgValue = $('#richPutModalImg option:selected').text();//弹出编辑框选择的图片实际名
         switch(currentRichName)
         {
             case 'h3':
@@ -248,21 +252,32 @@
                 htmlTextToPut = posLeftText+'<mark>'+richPutModalText+'</mark>'+posRightText;
                 break;
             case 'a':
+                var richPutModalANameValue = $('#richPutModalAName').val();//弹出编辑框超链接名称
+                var richPutModalAHrefValue = $('#richPutModalAHref').val();//弹出编辑框超链接地址
                 htmlTextToPut = posLeftText+'<a class="text text-dark" href="'+richPutModalAHrefValue+'">'+richPutModalANameValue+'</a>'+posRightText;
                 break;
             case 'blockquote':
                 htmlTextToPut = posLeftText+'<blockquote><em>'+richPutModalText+'<em/></blockquote>'+posRightText;
                 break;
             case 'ul':
-                htmlTextToPut = posLeftText+'<ul><li>1.XX</li><li>2.XX</li><li>3.XX</li></ul>'+posRightText;
+                var richPutUlValue = '<ul>';
+                // 获取列表项的值 richPutModalUlDiv下有多个输入框，按顺序迭代组成html字符串
+                $("#richPutModalUlDiv input").each(function(){
+                    richPutUlValue+='<li>'+this.value+'</li>';
+                });
+                richPutUlValue += '</ul>';
+                htmlTextToPut = posLeftText+richPutUlValue+posRightText;
                 break;
             case 'bimg':
+                var richPutModalImgValue = $('#richPutModalImg option:selected').text();//弹出编辑框选择的图片实际名
                 htmlTextToPut = posLeftText+'<img src="/articleImgs/'+richPutModalImgValue+'" style="width:100%;height:auto;" class="img-fluid mx-auto d-block" alt="">'+posRightText;
                 break;
             case 'oimg':
+                var richPutModalImgValue = $('#richPutModalImg option:selected').text();//弹出编辑框选择的图片实际名
                 htmlTextToPut = posLeftText+'<img src="/articleImgs/'+richPutModalImgValue+'" style="max-width:100%;max-height:100%;" class="img-fluid mx-auto d-block" alt="">'+posRightText;
                 break;
             case 'cimg':
+                var richPutModalImgValue = $('#richPutModalImg option:selected').text();//弹出编辑框选择的图片实际名
                 htmlTextToPut = posLeftText+'<img src="/articleImgs/'+richPutModalImgValue+'" style="width:40%;height:40%;" class="img-thumbnail rounded mx-auto d-block" alt="">'+posRightText;
                 break;
             default:
@@ -270,18 +285,29 @@
         }
 
         $('#textarea').val(htmlTextToPut);
-        // 关闭清空弹出框
+        // 清空弹出框
         $('#richPutModalTextArea').val('')
         $('#richPutModalAName').val('')
         $('#richPutModalAHref').val('')
         $('#richPutModal').modal('hide');
+        $("#richPutModalUlDiv input").each(function(){
+            this.value="";
+        });
         currentRichName = "";
     }
+
     function CloseRichPutModal(){
         // 关闭清空弹出框
         $('#richPutModalTextArea').val('')
         $('#richPutModalAName').val('')
         $('#richPutModalAHref').val('')
         $('#richPutModal').modal('hide');
+        $("#richPutModalUlDiv input").each(function(){
+            this.value="";
+        });
+    }
+
+    function richPutModalUlAdd(){
+        $('#richPutModalUlAddItemBtn').before('<input style="width:100%" placeholder="输入项文字" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">');
     }
 </script>
