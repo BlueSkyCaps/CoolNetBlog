@@ -41,7 +41,10 @@ namespace CoolNetBlog.ViewModels.Admin
         /// </summary>
         public Menu RelatedMenu { get; set; } = new Menu();
 
-
+        /// <summary>
+        /// 图片实际名 图片名称地址列表 供文章编辑时选择插入的图片
+        /// </summary>
+        public List<FilePath> ImgRelPaths { get; set; } = new List<FilePath>();   
        
 
     }

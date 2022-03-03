@@ -17,11 +17,13 @@ namespace CoolNetBlog.Controllers.Admin
         private static ArticleViewModel smvm = new();
         private SugarDataBaseStorage<Article, int> _articleSet;
         private SugarDataBaseStorage<Menu, int> _menuSet;
+        private SugarDataBaseStorage<FilePath, int> _filePathSet;
 
         public AdminArticleController():base()
         {
             _articleSet = new SugarDataBaseStorage<Article, int>();
             _menuSet = new SugarDataBaseStorage<Menu, int>();
+            _filePathSet = new SugarDataBaseStorage<FilePath, int>();
         }
 
         /// <summary>
@@ -192,10 +194,11 @@ namespace CoolNetBlog.Controllers.Admin
                 vm.RelatedMenu = _menuSet.FindOneById(orgArticle.MenuId);
             }
             // 封装菜单下拉框选择列表，用于在设置归属菜单时显示
-           
             vm.MenuSelectList = (await _menuSet.GetAllListAsync())
                 .Select(m=>new SelectList { Text=m.Name, Value=m.Id})
                 .ToList();
+            vm.ImgRelPaths = await _filePathSet.GetListBuilder().Where(f => f.Type == "img")
+                .OrderBy(f=>f.UploadTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
             vm = (ArticleViewModel)WrapMustNeedPassFields(vm);
             return View(vm);
         }

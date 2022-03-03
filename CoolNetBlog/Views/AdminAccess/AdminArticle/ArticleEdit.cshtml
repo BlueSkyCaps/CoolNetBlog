@@ -42,9 +42,11 @@
         <button type="button" class="btn btn-secondary" onclick="RichElementsClick('blockquote')">引用文</button>
         <button type="button" class="btn btn-secondary" onclick="RichElementsClick('ul')">列表项</button>
         </div>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('bimg')">图片链接(放大尺寸,会损失质量)</button>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('oimg')">图片链接(原始尺寸)</button>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('cimg')">图片链接(迷你式)</button>
+        <div class="btn-group mr-2" role="group" aria-label="third group">
+            <button type="button" class="btn btn-secondary" onclick="RichElementsClick('bimg')">图片链接(放大尺寸,会损失质量)</button>
+            <button type="button" class="btn btn-secondary" onclick="RichElementsClick('oimg')">图片链接(原始尺寸)</button>
+            <button type="button" class="btn btn-secondary" onclick="RichElementsClick('cimg')">图片链接(迷你式)</button>
+        </div>
     </div>
     <br/>
     <div class="form-row align-items-center">
@@ -145,7 +147,11 @@
         <div class="input-group mb-3 richPutModalDiv" id="richPutModalImgDiv">
             <label class="input-group-text" for="richPutModalImg">选择上传的图片</label>
             <select class="form-select" id="richPutModalImg">
-            <option value="">空定义</option>
+            <option value="">--空--</option>
+            @foreach (var fpItem in Model.ImgRelPaths)
+            {
+                <option value="@fpItem.FileRelPath">@fpItem.HelpName</option>
+            }
             </select>
         </div>
         <div class="input-group mb-3 richPutModalDiv" id="richPutModalUlDiv">
@@ -269,15 +275,15 @@
                 htmlTextToPut = posLeftText+richPutUlValue+posRightText;
                 break;
             case 'bimg':
-                var richPutModalImgValue = $('#richPutModalImg option:selected').text();//弹出编辑框选择的图片实际名
+                var richPutModalImgValue = $('#richPutModalImg option:selected').val();//弹出编辑框选择的图片实际名
                 htmlTextToPut = posLeftText+'<img src="/articleImgs/'+richPutModalImgValue+'" style="width:100%;height:auto;" class="img-fluid mx-auto d-block" alt="">'+posRightText;
                 break;
             case 'oimg':
-                var richPutModalImgValue = $('#richPutModalImg option:selected').text();//弹出编辑框选择的图片实际名
+                var richPutModalImgValue = $('#richPutModalImg option:selected').val();//弹出编辑框选择的图片实际名
                 htmlTextToPut = posLeftText+'<img src="/articleImgs/'+richPutModalImgValue+'" style="max-width:100%;max-height:100%;" class="img-fluid mx-auto d-block" alt="">'+posRightText;
                 break;
             case 'cimg':
-                var richPutModalImgValue = $('#richPutModalImg option:selected').text();//弹出编辑框选择的图片实际名
+                var richPutModalImgValue = $('#richPutModalImg option:selected').val();//弹出编辑框选择的图片实际名
                 htmlTextToPut = posLeftText+'<img src="/articleImgs/'+richPutModalImgValue+'" style="width:40%;height:40%;" class="img-thumbnail rounded mx-auto d-block" alt="">'+posRightText;
                 break;
             default:
