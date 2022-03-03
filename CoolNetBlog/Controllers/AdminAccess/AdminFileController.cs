@@ -81,7 +81,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
                     }
                     if ((file.Length / 1024.0) > 200)
                     {
-                        TempData["Tips"] = "上传失败 图片大小大于200kb！";
+                        TempData["Tips"] = "上传失败 图片大小大于200kb！通常，图片资源过大对于博客网站是很大的开销，建议压缩优化图片。";
                         return RedirectToAction("FileAmManagement", "AdminFile", new { pt = sfvm.PassToken });
                     }
                     if (!Directory.Exists(Path.Combine(_environment.WebRootPath, "articleImgs")))
