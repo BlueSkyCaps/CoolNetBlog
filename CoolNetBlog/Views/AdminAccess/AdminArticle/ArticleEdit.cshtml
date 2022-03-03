@@ -3,7 +3,7 @@
 </div>
 <form method="post">
     <div class="form-group">
-        <input asp-for="PassToken" type="hidden" value="@Model.PassToken" class="form-control">
+        <input asp-for="PassToken" id="ptValue" type="hidden" value="@Model.PassToken" class="form-control">
     </div>
     <div class="form-group">
         <input asp-for="Id" type="hidden" value="@Model.Id" class="form-control">
@@ -145,9 +145,11 @@
           <input id="richPutModalAHref" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
         </div>
         <div class="input-group mb-3 richPutModalDiv" id="richPutModalImgDiv">
+            <input style="width:70%" type="text" class="form-control input-group-sm" id="toSearchImgKey" placeholder="输入想插入的图片关键字词">
+            <button style="width:30%" class="btn btn-outline-primary" type="button" id="toSearchImgBtn" onclick="toSearchImgBtn()">搜索图片</button>
             <label class="input-group-text" for="richPutModalImg">选择上传的图片</label>
             <select class="form-select" id="richPutModalImg">
-            <option value="">--空--</option>
+            <option value="">--不选定--</option>
             @foreach (var fpItem in Model.ImgRelPaths)
             {
                 <option value="@fpItem.FileRelPath">@fpItem.HelpName</option>
@@ -313,5 +315,30 @@
 
     function richPutModalUlAdd(){
         $('#richPutModalUlAddItemBtn').before('<input style="width:100%" placeholder="输入项文字" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">');
+    }
+
+    // 插入的图片 搜索调用接口返回匹配的图片名列表项 更新选择框列表
+    function toSearchImgBtn(){
+        var pt = $('#ptValue').val();
+        var kw = $('#toSearchImgKey').val();
+        var getUrl = "/AdminFile/GetArticleEditImgPaths?pt=" +pt+ "&kw=" +kw;
+        $.ajax (
+        {
+            url: getUrl,
+            type: "GET",
+            dataType: "json",
+            success: function(data, status){
+                // 清空图片选择列表，添加新的搜索结果集
+                $('#richPutModalImg').empty();
+                $('#richPutModalImg').append(new Option("--不选定--", ""));
+                $.each(data, function(i,item){  
+                    $('#richPutModalImg').append(new Option(item.helpName, item.fileRelPath));
+                });  
+            },
+            error: function(err){
+                console.log("出错了！请重试一下吧。"+err);
+            }
+        }
+    );
     }
 </script>

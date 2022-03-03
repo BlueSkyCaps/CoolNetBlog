@@ -264,6 +264,34 @@ namespace CoolNetBlog.Controllers.AdminAccess
         }
 
         /// <summary>
+        /// 此接口用于文章编辑时插入文章 获取上传的图片实际名(xxx.后缀格式)
+        /// </summary>
+        /// <param name="pt"></param>
+        /// <param name="kw"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetArticleEditImgPaths(string? pt, string? kw)
+        {
+
+            IList<FilePath> fileImgPaths;
+            if (!string.IsNullOrWhiteSpace(kw))
+            {
+                fileImgPaths = await _fileSet.GetListBuilder().Where(a => a.Type.ToLower() == "img")
+                    .Where(a =>
+                    (a.HelpName != null && a.HelpName.Contains(kw)) ||
+                    (a.FileRelPath != null && a.FileRelPath.Contains(kw)))
+                    .OrderBy(a => a.UploadTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
+            }
+            else
+            {
+                fileImgPaths = await _fileSet.GetListBuilder().Where(a => a.Type.ToLower() == "img")
+                    .OrderBy(a => a.UploadTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
+            }
+           
+            return Json(fileImgPaths);
+        }
+
+        /// <summary>
         /// 移除有些场景下表单不需要验证的属性
         /// </summary>
         private void RemoveSomeValid()
