@@ -53,7 +53,9 @@ By default, this project uses mysql for development, and sqlserver requires you 
 You can then use git to make configs.json an ignored file.|然后可以使用git将configs.json设为忽略项
 
 3. Add coolNetBlog database (version v1.9.9, similar to the rest)|添加CoolNetBlog数据库(版本v1.9.9，其余类似)：
+
 Use navicat and other database management tools to connect to the mysql server, run sql statements, and the sql file is the "v199_dump_CoolNetBlog.sql" under this repository.|使用navicat等数据库管理工具连接mysql服务器，运行sql语句，sql文件是本仓库下的"v199_dump_CoolNetBlog.sql"。
+
 Another way is that the commands can be executed sequentially in the terminal|或者在终端依次执行命令：
 ```
 mysql -u用户名 -p密码
