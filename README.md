@@ -19,6 +19,7 @@ Powerd By asp.net core 6 mvc，default use mysql8
 3. 上传图片和文件：插入图片到文章；扩展自定义文件链接和html页面。
 4. 配置小组件：外部链接侧边栏、心愿图片、自定义链接列表。
 5. 开启或取消文章点赞功能。
+
 Support mobile and pc style, you can set menus, keyword search, customize site tail and title.
 Article management: Drafts, menu categorization, article locking, article text style, labeling and searching, article images (large, original, thumbnail).
 Upload images and files: Insert images into articles; extend custom file links and html pages.
@@ -29,15 +30,17 @@ Turn on or disable article likes.
 - 扩充帖子评论留言功能，随时启用。
 - 文章编辑优化，文本编辑可预览(不引用第三方富文本插件，暂无此想法)。
 - ........
+
 Post comment messages, which can be turned on and off according to the article.
 Article editing is optimized, and text edits can be previewed.
 ......
 
 ### Run|development project 运行|开发项目：
 #### 环境配置：.net core 6 sdk and asp.net core 6，visual studio 2022
-By default, this project uses mysql for development, and sqlserver requires you to verify the development by yourself.| 本项目默认使用mysql进行开发完成，sqlserver等需自行验证开发
-1. Select a Tag version of the repository (Lasted) and download the repository code, such as v1.9.9 or v9.9.9| 选择仓库的某个Tag版本(最终版Lasted)，下载仓库代码，如v1.9.9 or v9.9.9。
-2. Create the file 'configs.json' in the 'CoolNetBlog' directory and copy the json content:| 在CoolNetBlog\目录下创建文件configs.json，并复制一下json内容：
+By default, this project uses mysql for development, and sqlserver requires you to verify the development by yourself.
+本项目默认使用mysql进行开发完成，sqlserver等需自行验证开发
+1. Select a Tag version of the repository (Lasted) and download the repository code, such as v1.9.9 or v9.9.9|选择仓库的某个Tag版本(最终版Lasted)，下载仓库代码，如v1.9.9 or v9.9.9。
+2. Create the file 'configs.json' in the 'CoolNetBlog' directory and copy the json content|在CoolNetBlog\目录下创建文件configs.json，并复制一下json内容：
 ```
 {
   "DbConnStr": {
@@ -49,11 +52,11 @@ By default, this project uses mysql for development, and sqlserver requires you 
   "Redis": {}
 }
 ```
-You can then use git to make configs.json an ignored file.| 然后可以使用git将configs.json设为忽略项
+You can then use git to make configs.json an ignored file.|然后可以使用git将configs.json设为忽略项
 
-3. Add coolNetBlog database (version v1.9.9, similar to the rest)| 添加CoolNetBlog数据库(版本v1.9.9，其余类似)：
-Use navicat and other database management tools to connect to the mysql server, run sql statements, and the sql file is the "v199_dump_CoolNetBlog.sql" under this repository.| 使用navicat等数据库管理工具连接mysql服务器，运行sql语句，sql文件是本仓库下的"v199_dump_CoolNetBlog.sql"。
-Another way is that the commands can be executed sequentially in the terminal:| 或者在终端依次执行命令：
+3. Add coolNetBlog database (version v1.9.9, similar to the rest)|添加CoolNetBlog数据库(版本v1.9.9，其余类似)：
+Use navicat and other database management tools to connect to the mysql server, run sql statements, and the sql file is the "v199_dump_CoolNetBlog.sql" under this repository.|使用navicat等数据库管理工具连接mysql服务器，运行sql语句，sql文件是本仓库下的"v199_dump_CoolNetBlog.sql"。
+Another way is that the commands can be executed sequentially in the terminal|或者在终端依次执行命令：
 ```
 mysql -u用户名 -p密码
 CREATE DATABASE if not exists CoolNetBlog CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -62,7 +65,7 @@ mysql -u用户名 -p密码 CoolNetBlog < v199_dump_CoolNetBlog.sql
 ```
 This completes the addition of the CoolNetBlog database.| 这样便添加CoolNetBlog数据库完毕。
 
-4. Visual studio starts the project. If the database address is a remote server, make sure that the address and password are entered correctly, that the server has port 3306 open, and that the mysql version of the remote connection method is configured correctly.| visual studio启动项目。若数据库地址是远程服务器，确保地址和密码输入正确且服务器开启3306端口、mysql版本远程连接方式配置正确。
+4. Visual studio starts the project. If the database address is a remote server, make sure that the address and password are entered correctly, that the server has port 3306 open, and that the mysql version of the remote connection method is configured correctly.|visual studio启动项目。若数据库地址是远程服务器，确保地址和密码输入正确且服务器开启3306端口、mysql版本远程连接方式配置正确。
 5. Background admin page is /admin/login, default username is bluesky and password is 12345678
 后台页：/admin/login，默认账户bluesky和密码12345678
 
