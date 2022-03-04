@@ -14,26 +14,24 @@
 
 ### Basic features 基本功能(v1.9.9，当前版本)：
 Powerd By asp.net core 6 mvc，default use mysql8
+Support mobile and pc style, you can set menus, keyword search, customize site tail and title.
+Article management: Drafts, menu categorization, article locking, article text style, labeling and searching, article images (large, original, thumbnail).
+Upload images and files: Insert images into articles; extend custom file links and html pages.
+Configuration widgets: external links sidebar, wish-possible images, custom link lists.
+Turn on or disable article likes.
 1. 支持移动端和pc端样式，可以设置菜单，关键词搜索，自定义站点尾巴和标题。
 2. 文章管理：草稿、菜单归类、文章加锁、文章文字样式、设置标签且搜索、文章图片(大图、原始图、缩略图)。
 3. 上传图片和文件：插入图片到文章；扩展自定义文件链接和html页面。
 4. 配置小组件：外部链接侧边栏、心愿图片、自定义链接列表。
 5. 开启或取消文章点赞功能。
 
-Support mobile and pc style, you can set menus, keyword search, customize site tail and title.
-Article management: Drafts, menu categorization, article locking, article text style, labeling and searching, article images (large, original, thumbnail).
-Upload images and files: Insert images into articles; extend custom file links and html pages.
-Configuration widgets: external links sidebar, wish-possible images, custom link lists.
-Turn on or disable article likes.
-
 ### Subsequent features 后续功能(v2.0.1，下一版本)
-- 扩充帖子评论留言功能，随时启用。
-- 文章编辑优化，文本编辑可预览(不引用第三方富文本插件，暂无此想法)。
-- ........
-
 Post comment messages, which can be turned on and off according to the article.
 Article editing is optimized, and text edits can be previewed.
 ......
+- 扩充帖子评论留言功能，随时启用。
+- 文章编辑优化，文本编辑可预览(不引用第三方富文本插件，暂无此想法)。
+- ........
 
 ### Run|development project 运行|开发项目：
 #### 环境配置：.net core 6 sdk and asp.net core 6，visual studio 2022
