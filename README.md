@@ -15,9 +15,9 @@
 ### 基本功能(v1.9.9，当前版本)：
 Powerd By asp.net core 6 mvc，default use mysql8
 1. 支持移动端和pc端样式，可以设置菜单，关键词搜索，自定义站点尾巴和标题。
-2. 发表文章，文章草稿，文章归类，文章加锁，定义文章文字样式，设置标签。
-3. 上传图片和文件，文章插入图片和扩展自定义文件链接和html页面。
-4. 配置小组件，例如外部链接侧边栏、展示心愿图片等。
+2. 文章管理：草稿、菜单归类、文章加锁、文章文字样式、设置标签且搜索、文章图片(大图、原始图、缩略图)。
+3. 上传图片和文件：插入图片到文章；扩展自定义文件链接和html页面。
+4. 配置小组件：外部链接侧边栏、心愿图片、自定义链接列表。
 5. 开启或取消文章点赞功能。
 
 ### 后续功能(v2.0.1，下一版本)
@@ -55,3 +55,10 @@ mysql -u用户名 -p密码 CoolNetBlog < v199_dump_CoolNetBlog.sql
 
 4. visual studio启动项目。若数据库地址是远程服务器，确保地址和密码输入正确且服务器开启3306端口、mysql8版本远程连接方式配置正确。
 5. 后台页：/admin/login，默认账户bluesky和密码12345678
+
+### 部署至服务器：
+#### Ubuntu & NNginx
+#### CentOS & Apache
+#### Windows & IIS
+参见微软msdn文档，有详细介绍。
+[Host and deploy ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/?view=aspnetcore-6.0"部署Linux|windows")
