@@ -27,7 +27,7 @@ Powerd By asp.net core 6 mvc，default use mysql8
 ### 运行|开发项目：
 #### 环境配置：.net core 6 sdk and asp.net core 6，visual studio 2022
 本项目默认使用mysql进行开发完成，sqlserver等需自行验证开发
-1. 克隆本仓库
+1. 选择克隆本仓库的Tag分支，如v1.9.9 or 9.9.9
 2. 在CoolNetBlog\目录下创建文件configs.json，并复制一下json内容：
 ```
 {
