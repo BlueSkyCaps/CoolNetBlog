@@ -57,7 +57,7 @@ mysql -u用户名 -p密码 CoolNetBlog < v199_dump_CoolNetBlog.sql
 5. 后台页：/admin/login，默认账户bluesky和密码12345678
 
 ### 部署至服务器：
-#### Ubuntu & NNginx
+#### Ubuntu & Nginx
 #### CentOS & Apache
 #### Windows & IIS
 参见微软msdn文档，有详细介绍。
