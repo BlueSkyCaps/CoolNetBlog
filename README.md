@@ -37,7 +37,7 @@ Article editing is optimized, and text edits can be previewed.
 #### 环境配置：.net core 6 sdk and asp.net core 6，visual studio 2022
 By default, this project uses mysql for development, and sqlserver requires you to verify the development by yourself.
 本项目默认使用mysql进行开发完成，sqlserver等需自行验证开发
-1. Select a Tag version of the repository (Lasted) and download the repository code, such as v1.9.9 or v9.9.9|选择仓库的某个Tag版本(最终版Lasted)，下载仓库代码，如v1.9.9 or v9.9.9。
+1. Select a Release version(Lasted) of the repository and download the repository code, such as v1.9.9 or v9.9.9|选择仓库的某个Release版本(Lasted)，下载仓库代码，如v1.9.9 or v9.9.9。
 2. Create the file 'configs.json' in the 'CoolNetBlog' directory and copy the json content|在CoolNetBlog\目录下创建文件configs.json，并复制一下json内容：
 ```
 {
