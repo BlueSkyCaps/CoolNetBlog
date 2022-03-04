@@ -65,8 +65,11 @@ mysql -u用户名 -p密码 CoolNetBlog < v199_dump_CoolNetBlog.sql
 ```
 This completes the addition of the CoolNetBlog database.| 这样便添加CoolNetBlog数据库完毕。
 
-4. Visual studio starts the project. If the database address is a remote server, make sure that the address and password are entered correctly, that the server has port 3306 open, and that the mysql version of the remote connection method is configured correctly.|visual studio启动项目。若数据库地址是远程服务器，确保地址和密码输入正确且服务器开启3306端口、mysql版本远程连接方式配置正确。
+4. Visual studio starts the project. If the database address is a remote server, make sure that the address and password are entered correctly, that the server has port 3306 open, and that the mysql version of the remote connection method is configured correctly.
+
+visual studio启动项目。若数据库地址是远程服务器，确保地址和密码输入正确且服务器开启3306端口、mysql版本远程连接方式配置正确。
 5. Background admin page is /admin/login, default username is bluesky and password is 12345678
+
 后台页：/admin/login，默认账户bluesky和密码12345678
 
 ### Deploy to the server 部署至服务器：
