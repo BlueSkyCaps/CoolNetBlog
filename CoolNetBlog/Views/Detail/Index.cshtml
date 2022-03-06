@@ -1,7 +1,7 @@
 ﻿@model HomeViewModel
 @{
     // 此局部视图Detail/Index/，是文章详细局部视图，文章详细视图模型与主页分页一样，直接继承自视图模型HomeViewModel，
-    if (Model?.DetailArticleData == null)
+    if (Model?.DetailArticleData == null || Model.DetailArticleData.IsDraft)
     {
         <div class="alert alert-warning" role="alert">
          @Model?.NotTips
