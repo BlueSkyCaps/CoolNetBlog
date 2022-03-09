@@ -240,6 +240,12 @@
         <div class="container text-center">
             @Html.Raw(Model.HomeSiteSettingData.TailContent)
         </div>
+        @if (!String.IsNullOrWhiteSpace(Model.HomeSiteSettingData.Cban))
+        {
+            <div class="container text-center">
+                @Html.Raw(Model.HomeSiteSettingData.Cban)
+            </div>
+        }
     </footer>
 </body>
 </html>
