@@ -48,7 +48,8 @@ namespace CoolNetBlog.Bll
             try
             {
                 _articleSet.TransBegin();
-                await _thumbUpSet.InsertAsync(new ArticleThumbUp { ArticleId = articleId,ClientIp = cip,Type=type});
+                await _thumbUpSet.InsertAsync(new ArticleThumbUp { ArticleId = articleId,
+                    ClientIp = cip,Type=type, UpTime = DateTime.Now});
                 _articleSet.TransCommit();
             }
             catch (Exception e)
