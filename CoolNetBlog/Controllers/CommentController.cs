@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoolNetBlog.Controllers
 {
     /// <summary>
-    /// 
+    /// 评论处理控制接口
     /// </summary>
     public class CommentController : Controller
     {
