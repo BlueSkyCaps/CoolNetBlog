@@ -1,4 +1,4 @@
-﻿namespace CoolNetBlog.ViewModels.Api
+﻿namespace CoolNetBlog.ViewModels.Detail
 {
     /// <summary>
     /// 博客站点 隐私文章需要解锁 传递得到的验证数据模型

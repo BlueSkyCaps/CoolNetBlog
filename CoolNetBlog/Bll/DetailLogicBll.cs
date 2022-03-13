@@ -1,6 +1,5 @@
 ﻿using ComponentsServices.Base;
 using CoolNetBlog.Models;
-using CoolNetBlog.ViewModels.Api;
 using CoolNetBlog.ViewModels.Detail;
 
 namespace CoolNetBlog.Bll

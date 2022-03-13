@@ -39,7 +39,7 @@ namespace CoolNetBlog.Models
         /// <summary>
         /// Nullable:true
         /// </summary>
-        public int? IsPassed { get; set; }
+        public bool? IsPassed { get; set; }
         /// <summary>
         /// Nullable:False
         /// </summary>

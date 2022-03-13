@@ -20,6 +20,7 @@ namespace CoolNetBlog.ViewModels.Admin
         public bool IsDraft { get; set; }
         public string? Labels { get; set; }
         public string? CustUri { get; set; }
+        public int CommentType { get; set; }
 
         // -----⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆
 

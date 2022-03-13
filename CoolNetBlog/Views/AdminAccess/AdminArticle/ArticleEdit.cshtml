@@ -105,6 +105,21 @@
         </div>
     </div>
 
+    <div class="form-row align-items-center">
+        <div class="col-auto my-1">
+            <div class="custom-control custom-checkbox mr-sm-2">
+            <label class="custom-control-label">评论类型</label>
+            </div>
+        </div>
+        <div class="col-auto my-1">
+            <select class="custom-select mr-sm-2"  asp-for="CommentType" >
+                <option asp-for="CommentType" name="CommentType" value="3">不允许评论</option>
+                <option asp-for="CommentType" name="CommentType" value="1">公开</option>
+                <option asp-for="CommentType" name="CommentType" value="2">需要审核</option>
+            </select>
+        </div>
+    </div>
+
     <div class="form-group row">
     <label asp-for="Labels" class="col-sm-2 col-form-label">标签</label>
     <p>(标签相当于文章提炼关键字词，可以设置自定义词汇，多个标签请用空格或逗号隔开吧！)</p>

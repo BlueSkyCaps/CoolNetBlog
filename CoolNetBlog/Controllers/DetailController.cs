@@ -1,6 +1,6 @@
 ﻿using CoolNetBlog.Base;
 using CoolNetBlog.Bll;
-using CoolNetBlog.ViewModels.Api;
+using CoolNetBlog.ViewModels.Detail;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoolNetBlog.Controllers.Home

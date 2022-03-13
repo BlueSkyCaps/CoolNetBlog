@@ -72,9 +72,11 @@ namespace CoolNetBlog.Controllers.Admin
             editable.IsDraft = vm.IsDraft;
             editable.CustUri = string.IsNullOrWhiteSpace(vm.CustUri)?null: vm.CustUri?.Trim();
             editable.IsShowTitle = vm.IsShowTitle;
+            editable.CommentType = vm.CommentType;
             editable.Content = vm.Content;
             editable.MenuId = vm.MenuId;
             editable.Labels = vm.Labels;
+            editable.CommentType = vm.CommentType;
             var belongMenu = await _menuSet.FindOneByIdAsync(editable.MenuId);
             if (belongMenu.IsHome)
             {
@@ -182,6 +184,7 @@ namespace CoolNetBlog.Controllers.Admin
                 vm.LockPassword = orgArticle.LockPassword;
                 vm.IsLock = orgArticle.IsLock;
                 vm.CustUri = orgArticle.CustUri;
+                vm.CommentType = orgArticle.CommentType;
                 vm.IsDraft = orgArticle.IsDraft;
                 vm.Labels = orgArticle.Labels;
                 vm.IsShowTitle = orgArticle.IsShowTitle;

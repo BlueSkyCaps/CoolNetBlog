@@ -101,6 +101,12 @@ namespace CoolNetBlog.Models
         public string? CustUri { get; set; }
 
         /// <summary>
+        /// 评论类型，1直接公开，2经过审核，3不允许评论
+        /// Nullable:false
+        /// </summary>
+        public int CommentType { get; set; }
+
+        /// <summary>
         /// 文章所属菜单名 非字段 只用于显示
         /// </summary>
         [SugarColumn(IsIgnore=true)]

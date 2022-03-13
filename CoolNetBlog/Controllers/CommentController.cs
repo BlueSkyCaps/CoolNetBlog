@@ -1,4 +1,5 @@
 ﻿using CoolNetBlog.Bll;
+using CoolNetBlog.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoolNetBlog.Controllers
@@ -15,11 +16,16 @@ namespace CoolNetBlog.Controllers
             _commentBllBll = new CommentBll();
         }
 
+        /// <summary>
+        /// 发布评论 处理接口
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         [Route("{Controller}/Comment")]
         [HttpPost]
-        public async Task<IActionResult> CommentAsync([FromForm] int articleId)
+        public async Task<IActionResult> CommentAsync([FromBody] CommentViewModel data)
         {
-            var res =await _commentBllBll.DealThumbsUpArticleAsync(articleId, type, HttpContext);
+            var res =await _commentBllBll.DealCommentPostAsync(data);
             return new JsonResult(res);
         }
     }
