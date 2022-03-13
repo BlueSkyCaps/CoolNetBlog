@@ -23,6 +23,7 @@
         {
             // 登录页没有PassToken 成功登陆后才有 不显示"返回后台面板"
             <a class="text text-primary" asp-route-pt="@Model?.PassToken" asp-action="AdminHome" asp-controller="Admin">返回后台面板</a>
+            <a class="text text-primary" target="_blank" asp-action="Index" asp-controller="Home">前往站点</a>
             <a class="text text-primary" asp-route-pt="@Model?.PassToken" asp-action="LoginOut" asp-controller="Admin">登出</a>
         }
         @{

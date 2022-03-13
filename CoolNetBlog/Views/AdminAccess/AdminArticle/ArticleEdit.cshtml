@@ -292,7 +292,8 @@
                 return;
         }
 
-        $('#textarea').val(htmlTextToPut);
+        // 先获取焦点在设置值，确保光标位于输入框最后位置
+        $('#textarea').focus().val(htmlTextToPut); 
         // 清空弹出框
         $('#richPutModalTextArea').val('')
         $('#richPutModalAName').val('')
