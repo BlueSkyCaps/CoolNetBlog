@@ -93,12 +93,48 @@
             </div>
             <br/>
         }
+ 
         @if (Model.DetailArticleData.CommentType!=3)
         {
             // 此文章设置了允许评论 显示评论表单和查看评论按钮
-            <p>
-                <a onclick="commentShowBtnClick()" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#" role="button" aria-expanded="false" aria-controls="commentShowBtn">--显示评论--</a>
-            </p>
+         
+            <div>
+                <div class="row">
+                    <div class="col-1">
+                    </div>
+                    <div class="col-7">
+                        <input type="email" class="form-control" placeholder="邮箱(以便我与你联系,它不会被显示)">
+                    </div>
+                    <div class="col-1">
+                        <input type="text" class="form-control" placeholder="昵称">
+                    </div>
+                    <div class="col-1">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-1">
+                    </div>
+                    <div class="col-8">
+                        <textarea  type="text" class="form-control" placeholder="你想说的话.."></textarea>
+                    </div>
+                    <div class="col-1">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                    </div>
+                    <div class="col-5">
+                        <a onclick="commentShowBtnClick()" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#" role="button" aria-expanded="false" aria-controls="commentShowBtn">--显示网友的评论--</a>
+                        <a class="btn btn-outline-primary btn-sm">发表评论</a>
+                    </div>
+                    <div class="col-1">
+                    </div>
+                </div>
+ 
+            </div>
+                   
+               
+            
             <div class="collapse" id="commentShowCollapse">
                 <div class="card card-body">
                 Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
