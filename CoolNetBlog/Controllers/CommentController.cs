@@ -21,11 +21,23 @@ namespace CoolNetBlog.Controllers
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        [Route("{Controller}/Comment")]
         [HttpPost]
-        public async Task<IActionResult> CommentAsync([FromBody] CommentViewModel data)
+        public async Task<IActionResult> Comment([FromBody] CommentViewModel data)
         {
             var res =await _commentBllBll.DealCommentPostAsync(data);
+            return new JsonResult(res);
+        }
+
+        /// <summary>
+        /// 获取文章的评论数据
+        /// </summary>
+        /// <param name="sourceId">文章id</param>
+        /// <param name="index">当前加载评论的索引(次数)，默认为1，开头，每点击一次“加载评论”按钮，前端传递数据+1</param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetArticleComments(int sourceId, int index=1)
+        {
+            var res = await _commentBllBll.GetArticleCommentsAsync(sourceId, index);
             return new JsonResult(res);
         }
     }

@@ -63,7 +63,6 @@
         <span class="badge rounded-pill bg-success">来自：@Model?.DetailArticleData.Ig_MenuName</span>
         <br/>
         <span class="badge rounded-pill bg-info text-dark">更新于@(Model?.DetailArticleData.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss"))</span>
-        <br/>
         <span class="badge rounded-pill bg-info text-dark">发表于@(Model?.DetailArticleData.CreatedTime.ToString("yyyy-MM-dd HH:mm:ss"))</span>
         </small>
         </div>
@@ -92,9 +91,27 @@
             <button class="btn btn-outline-primary btn-sm thumbUpBtn" id="thumbUpBtnSilence" onclick="thumbUpBtnClick(this,@Model?.DetailArticleData.Id,3)" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">不敢苟同</button>
             </small>
             </div>
+            <br/>
         }
-
-        <br/>
+        @if (Model.DetailArticleData.CommentType!=3)
+        {
+            // 此文章设置了允许评论 显示评论表单和查看评论按钮
+            <p>
+                <a onclick="commentShowBtnClick()" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#" role="button" aria-expanded="false" aria-controls="commentShowBtn">--显示评论--</a>
+            </p>
+            <div class="collapse" id="commentShowCollapse">
+                <div class="card card-body">
+                Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+                </div>
+                <div class="card card-body">
+                Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+                </div>
+                <div class="text-end">
+                    <button type="button" class="btn btn-outline-primary btn-sm">加载评论..</button>
+                </div>
+                <br/>
+            </div>
+        }
         <div>
         <button onClick="javascript:history.back(-1);" type="button" class="btn btn-outline-primary btn-sm">回到之前</button>
         </div>
@@ -178,6 +195,11 @@ function thumbUpBtnClick(target, id, type){
         }
     );
     
+}
+
+// 显示评论按钮被点击
+function commentShowBtnClick(){
+    $('#commentShowCollapse').toggle();
 }
 </script>
 

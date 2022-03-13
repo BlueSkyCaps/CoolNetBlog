@@ -79,5 +79,37 @@ namespace CoolNetBlog.Bll
             result.TipMessage = "感谢你的畅所欲言~";
             return result;
         }
+
+
+        public async Task<ValueResult> GetArticleCommentsAsync(int sourceId, int index)
+        {
+            ValueResult result = new()
+            {
+                Code = ValueCodes.UnKnow
+            };
+            Article? commentAte = null;
+            commentAte = _articleSet.FindOneById(sourceId);
+            if (commentAte is null)
+            {
+                result.HideMessage = $"获取文章id为{sourceId}的评论时失败，不存在此文章Id";
+                result.TipMessage = "获取此文章的评论失败了，你刷新在试试吧?!";
+                return result;
+            }
+            try
+            {
+                // 最新评论在前 一次取10个
+                result.Data = _commentSet.GetListBuilder().Where(c=>c.SourceType==1&&c.SourceId==sourceId)
+                    .OrderBy(c=>c.CommentTime, SqlSugar.OrderByType.Desc)
+                    .Skip((index - 1)*20).Take(10).ToList();
+                result.Code = ValueCodes.Success;
+            }
+            catch (Exception e)
+            {
+                result.Code = ValueCodes.Error;
+                result.HideMessage = $"获取文章id为{sourceId}的评论时失败，引发异常:{e.Message} {e.StackTrace}";
+                result.TipMessage = "获取此文章的评论失败了，你刷新在试试吧?!";
+            }
+            return result;
+        }
     }
 }
