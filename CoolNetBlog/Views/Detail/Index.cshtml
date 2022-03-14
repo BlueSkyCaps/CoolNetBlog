@@ -101,19 +101,19 @@
             <div>
                 <div class="row">
                     <span style="width:10%"></span>
-                    <input style="width:60%" type="email" class="form-control" placeholder="邮箱(能与你联系,它不会被显示)">
-                    <input style="width:20%" type="text" class="form-control" placeholder="昵称">
+                    <input style="width:60%" id="cEmailInput" type="email" class="form-control" placeholder="邮箱(能与您联系,它不会被显示)">
+                    <input style="width:20%" id="cNameInput" type="text" class="form-control" placeholder="昵称">
                     <span style="width:10%"></span>
                 </div>
                 <div class="row">
                     <span style="width:10%"></span>
-                    <textarea  style="width:80%" type="text" class="form-control" placeholder="你想说的话.."></textarea>
+                    <textarea  style="width:80%" id="cContentInput" type="text" class="form-control" placeholder="您想说的话.."></textarea>
                     <span style="width:10%"></span>
                 </div>
                 <div class="row">
                     <div class="text-end col-11">
                         <a onclick="commentShowBtnClick()" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#" role="button" aria-expanded="false" aria-controls="commentShowBtn">▼显示网友的评论▼</a>
-                        <a class="btn btn-outline-primary btn-sm">发表评论</a>
+                        <a id="toCommentBtn" class="btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">发表评论</a>
                     </div>
                     <span class="col-1"></span>
                 </div>
@@ -142,6 +142,7 @@
 }
 
 <script>
+// 隐私文章 输入密码
 $("#toUnlockBtn").click(
     function()
     {
@@ -159,6 +160,53 @@ $("#toUnlockBtn").click(
                 data: JSON.stringify({
                     "ArticleId":$('#inputArticleId').val(),
                     "Password":$('#inputPassword').val()
+                }),
+                success: function(data, status){
+                    if(data['code']==1){
+                        // 密码正确隐藏表单div 显示返回后的主体内容
+                        $('#lockFormDiv').hide();
+                        $('#unLockContentP').html(data['content']);
+                    }else{
+                        // 错误显示提示文本
+                        $('#pwErrorTipDiv').removeAttr('hidden');
+                    }
+                },
+                error: function(err){
+                    alert(err)
+                    console.log(err)
+                    $('#pwErrorTipDiv').removeAttr('hidden');
+                }
+            }
+        );
+    }
+);
+
+// 发表评论
+$("#toCommentBtn").click(
+    function()
+    {
+        var email = $('#cEmailInput').val();
+        var name =$('#cNameInput').val();
+        var content = $('#cContentInput').val();
+
+        if(email==null||email==""||name==null||name==""||content==null||content==""){
+            $('#toCommentBtn').attr('data-bs-content', "请把内容填写完整哦!~");
+            var popover = new bootstrap.Popover($('#toCommentBtn'), {trigger: 'focus'});
+            popover.show();
+            setTimeout(function(){popover.hide();}, 2500);
+            return;
+        }
+
+        $.ajax (
+            {
+                url: "/Detail/UnLock/ArticleUnLock",
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    "ArticleId":$('#cEmailInput').val(),
+                    "Password":$('#cNameInput').val(),
+                    "Password":$('#cContentInput').val()
                 }),
                 success: function(data, status){
                     if(data['code']==1){
