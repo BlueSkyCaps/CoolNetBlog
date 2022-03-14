@@ -101,33 +101,27 @@
             <div>
                 <div class="row">
                     <span style="width:10%"></span>
-                    <input style="width:60%" id="cEmailInput" type="email" class="form-control" placeholder="邮箱(能与您联系,它不会被显示)">
-                    <input style="width:20%" id="cNameInput" type="text" class="form-control" placeholder="昵称">
+                    <input style="width:60%" id="cEmailInput" maxlength="25" type="email" class="form-control" placeholder="邮箱(能与您联系,它不会被显示)">
+                    <input style="width:20%" id="cNameInput" maxlength="12" type="text" class="form-control" placeholder="昵称">
                     <span style="width:10%"></span>
                 </div>
                 <div class="row">
                     <span style="width:10%"></span>
-                    <textarea  style="width:80%" id="cContentInput" type="text" class="form-control" placeholder="您想说的话.."></textarea>
+                    <textarea  style="width:80%" id="cContentInput" type="text" maxlength="150" class="form-control" placeholder="您想说的话.."></textarea>
                     <span style="width:10%"></span>
                 </div>
                 <div class="row">
                     <div class="text-end col-11">
-                        <a onclick="commentShowBtnClick()" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#" role="button" aria-expanded="false" aria-controls="commentShowBtn">▼显示网友的评论▼</a>
+                        <a onclick="commentShowBtnClick()" id="commentShowBtn" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#" role="button" aria-expanded="false" aria-controls="commentShowBtn" data-bs-placement="bottom" tabindex="0" data-bs-trigger="focus" data-bs-content="">▼显示网友的评论▼</a>
                         <a id="toCommentBtn" class="btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">发表评论</a>
                     </div>
                     <span class="col-1"></span>
                 </div>
                 <br/>
             </div>
-            <div class="collapse" id="commentShowCollapse">
-                <div class="card card-body">
-                Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
-                </div>
-                <div class="card card-body">
-                Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
-                </div>
-                <div class="text-end">
-                    <button type="button" class="btn btn-outline-primary btn-sm">加载评论..</button>
+            <div class="collapse" id="commentShowDiv">
+                <div class="text-end" id="moreCommentBtnDiv">
+                    <a id="moreCommentBtn" class="btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">加载评论..</a>
                 </div>
                 <br/>
             </div>
@@ -181,47 +175,111 @@ $("#toUnlockBtn").click(
     }
 );
 
+// 统一按钮弹出提示文本
+function PopoverShow(idStr, tipMsg){
+    $('#'+idStr).attr('data-bs-content', tipMsg);
+    var popover = new bootstrap.Popover($('#'+idStr));
+    popover.show();
+    setTimeout(function(){popover.dispose();}, 2500);
+}
+
+var commentShowIndex = 0;
+
 // 发表评论
 $("#toCommentBtn").click(
     function()
     {
-        var email = $('#cEmailInput').val();
-        var name =$('#cNameInput').val();
-        var content = $('#cContentInput').val();
+        var email = $('#cEmailInput').val().trim();
+        var name =$('#cNameInput').val().trim();
+        var content = $('#cContentInput').val().trim();
 
         if(email==null||email==""||name==null||name==""||content==null||content==""){
-            $('#toCommentBtn').attr('data-bs-content', "请把内容填写完整哦!~");
-            var popover = new bootstrap.Popover($('#toCommentBtn'), {trigger: 'focus'});
-            popover.show();
-            setTimeout(function(){popover.hide();}, 2500);
+            PopoverShow("toCommentBtn", "请把内容填写完整哦!~");
+            return;
+        }
+        if(content.length<5){
+            PopoverShow("toCommentBtn", "评论内容太少啦!~");
+            return;
+        }
+        if (!!!(/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,10})+$/.test(email)))
+        {
+            PopoverShow("toCommentBtn", "不是有效的邮箱!~");
             return;
         }
 
         $.ajax (
             {
-                url: "/Detail/UnLock/ArticleUnLock",
+                url: "/Comment/Comment/",
                 type: "POST",
                 dataType: "json",
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
-                    "ArticleId":$('#cEmailInput').val(),
-                    "Password":$('#cNameInput').val(),
-                    "Password":$('#cContentInput').val()
+                    "Email":email,
+                    "Name":name,
+                    "Content":content,
+                    "SourceId":@Model?.DetailArticleData?.Id??0,
+                    "SourceType":1
                 }),
                 success: function(data, status){
                     if(data['code']==1){
-                        // 密码正确隐藏表单div 显示返回后的主体内容
-                        $('#lockFormDiv').hide();
-                        $('#unLockContentP').html(data['content']);
+                        PopoverShow("toCommentBtn", data['tipMessage']);
+                        $('#cEmailInput').val("");
+                        $('#cNameInput').val("");
+                        $('#cContentInput').val("");
                     }else{
-                        // 错误显示提示文本
-                        $('#pwErrorTipDiv').removeAttr('hidden');
+                        PopoverShow("toCommentBtn", data['tipMessage']);
                     }
                 },
                 error: function(err){
-                    alert(err)
+                    PopoverShow("toCommentBtn", "评论失败,刷新再试试吧err");
                     console.log(err)
-                    $('#pwErrorTipDiv').removeAttr('hidden');
+                }
+            }
+        );
+    }
+);
+
+
+$("#moreCommentBtn").click(
+    function()
+    {
+        commentShowIndex++;
+        var url = "/Comment/GetArticleComments?sourceId="+@(Model?.DetailArticleData?.Id??0)+"&index="+commentShowIndex;
+        $.ajax (
+            {
+                url: url,
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                success: function(data, status){
+                    if(data['code']==1){
+                        // 重显当前获取的评论数据到评论区域
+                        $('.commentItem').remove();
+                        $.each(data['data'], function(i,item){
+                            console.log(item);
+                            var cmNodeStr = '<div class="card card-body commentItem">'+item.content+'</div>';
+                            $('#moreCommentBtnDiv').prepend(cmNodeStr);
+
+                        });  
+                        $('#commentShowCollapse').show();
+                    }else{
+                        commentShowIndex--;
+                        if(commentShowIndex <= 0){
+                            // 有问题 来自第一次显示评论 在"显示评论按钮"显示提示文本
+                            PopoverShow("commentShowBtn", data['tipMessage']);
+                        }else{
+                            // 有问题 不是第一次显示评论 而是后续点击加载评论 在"加载评论按钮"显示提示文本
+                            PopoverShow("moreCommentBtn", data['tipMessage']);
+                        }
+                    }
+                },
+                error: function(err){
+                    commentShowIndex--;
+                    if(commentShowIndex <= 0){
+                        PopoverShow("commentShowBtn", data['tipMessage']);
+                    }else{
+                         PopoverShow("moreCommentBtn", data['tipMessage']);
+                    }
+                    console.log(err)
                 }
             }
         );
@@ -250,17 +308,12 @@ function thumbUpBtnClick(target, id, type){
                 }
                 // bootstrap显示按钮弹出层 作为提示
                 var thumbUpBtnId = target.getAttribute('id');
-                $('#'+thumbUpBtnId).attr('data-bs-content', data['tipMessage']);
-                var popover = new bootstrap.Popover($('#'+thumbUpBtnId), {trigger: 'focus'});
-                popover.show();
-                setTimeout(function(){popover.hide();}, 2500);
+                PopoverShow(thumbUpBtnId, data['tipMessage']);
+
             },
             error: function(err){
                 var thumbUpBtnId = target.getAttribute('id');
-                $('#'+thumbUpBtnId).attr('data-bs-content', "表态失败，好意心领啦err。");
-                var popover = new bootstrap.Popover($('#'+thumbUpBtnId), {trigger: 'focus'});
-                popover.show();
-                setTimeout(function(){popover.hide();}, 2500);
+                PopoverShow(thumbUpBtnId, "表态失败，好意心领啦err");
             }
         }
     );
@@ -269,6 +322,11 @@ function thumbUpBtnClick(target, id, type){
 
 // 显示评论按钮被点击
 function commentShowBtnClick(){
+    // commentShowIndex <1，说明还没有显示过评论，触发加载评论事件去加载 否则不必触发，而是开关显示评论区域
+    if(commentShowIndex < 1){
+        // 触发moreCommentBtn的点击事件
+        $("#moreCommentBtn").click();
+    }
     $('#commentShowCollapse').toggle();
 }
 
@@ -281,8 +339,8 @@ function copyCommand(){
     if (document.execCommand('copy')) {
         document.execCommand('copy');
         $('#urlHidInput').attr('hidden','hidden');
-        $('#urlShareBtn').text("链接已复制");
-
+        $('#urlShareBtn').text("√链接已复制");
+        $('#urlShareBtn').attr('disabled', 'disabled');
     }
 }
 </script>

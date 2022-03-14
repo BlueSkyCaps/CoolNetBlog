@@ -29,6 +29,18 @@ namespace CoolNetBlog.Controllers
         }
 
         /// <summary>
+        /// 评论回复 处理接口
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> Reply([FromBody] ReplyViewModel data)
+        {
+            var res = await _commentBllBll.DealReplyPostAsync(data);
+            return new JsonResult(res);
+        }
+
+        /// <summary>
         /// 获取文章的评论数据
         /// </summary>
         /// <param name="sourceId">文章id</param>
