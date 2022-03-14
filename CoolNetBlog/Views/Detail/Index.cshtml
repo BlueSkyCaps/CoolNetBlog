@@ -101,7 +101,7 @@
             <div>
                 <div class="row">
                     <span style="width:10%"></span>
-                    <input style="width:60%" type="email" class="form-control" placeholder="邮箱(以便我与你联系,它不会被显示)">
+                    <input style="width:60%" type="email" class="form-control" placeholder="邮箱(能与你联系,它不会被显示)">
                     <input style="width:20%" type="text" class="form-control" placeholder="昵称">
                     <span style="width:10%"></span>
                 </div>
@@ -112,16 +112,13 @@
                 </div>
                 <div class="row">
                     <div class="text-end col-11">
-                        <a onclick="commentShowBtnClick()" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#" role="button" aria-expanded="false" aria-controls="commentShowBtn">--显示网友的评论--</a>
+                        <a onclick="commentShowBtnClick()" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#" role="button" aria-expanded="false" aria-controls="commentShowBtn">▼显示网友的评论▼</a>
                         <a class="btn btn-outline-primary btn-sm">发表评论</a>
                     </div>
                     <span class="col-1"></span>
                 </div>
- 
+                <br/>
             </div>
-                   
-               
-            
             <div class="collapse" id="commentShowCollapse">
                 <div class="card card-body">
                 Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
@@ -136,6 +133,8 @@
             </div>
         }
         <div>
+        <input hidden type="text" id="urlHidInput">
+        <button id="urlShareBtn" onClick="copyCommand()" type="button" class="btn btn-outline-primary btn-sm">分享链接</button>
         <button onClick="javascript:history.back(-1);" type="button" class="btn btn-outline-primary btn-sm">回到之前</button>
         </div>
         <br/>
@@ -223,6 +222,20 @@ function thumbUpBtnClick(target, id, type){
 // 显示评论按钮被点击
 function commentShowBtnClick(){
     $('#commentShowCollapse').toggle();
+}
+
+// 分享链接按钮 复制url到剪贴板
+function copyCommand(){
+    $('#urlHidInput').val(window.location.href);
+    $('#urlHidInput').removeAttr('hidden');
+    $('#urlHidInput').focus();
+    $('#urlHidInput').select();
+    if (document.execCommand('copy')) {
+        document.execCommand('copy');
+        $('#urlHidInput').attr('hidden','hidden');
+        $('#urlShareBtn').text("链接已复制");
+
+    }
 }
 </script>
 
