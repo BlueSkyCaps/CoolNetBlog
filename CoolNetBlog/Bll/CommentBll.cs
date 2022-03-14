@@ -189,7 +189,7 @@ namespace CoolNetBlog.Bll
                 // 最新评论在前 一次取10个
                 var commentsVm = await _commentVmReader.GetListBuilder().Where(c=>c.SourceType==1&&c.SourceId==sourceId&&c.IsPassed==true)
                     .OrderBy(c=>c.CommentTime, SqlSugar.OrderByType.Desc)
-                    .Skip((index - 1)*20).Take(10).ToListAsync();
+                    .Skip((index - 1)*10).Take(10).ToListAsync();
                 // 获取每个评论的回复
                 foreach (var c in commentsVm)
                 {
