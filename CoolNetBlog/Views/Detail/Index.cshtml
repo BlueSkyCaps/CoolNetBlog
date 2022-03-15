@@ -113,7 +113,7 @@
                 <div class="row">
                     <div class="text-end col-11">
                         <a onclick="commentShowBtnClick()" id="commentShowBtn" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#commentShowDiv" role="button" aria-expanded="false" aria-controls="commentShowDiv"
-                        data-bs-placement="bottom" tabindex="0" data-bs-trigger="focus" data-bs-content="">▼显示网友的评论▼</a>
+                            data-bs-placement="bottom" tabindex="0" data-bs-trigger="focus" data-bs-content="">显示网友的评论▼</a>
                         <a id="toCommentBtn" class="btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">发表评论</a>
                     </div>
                     <span class="col-1"></span>
@@ -122,6 +122,8 @@
             </div>
             <div class="collapse" id="commentShowDiv">
                 <div class="text-end" id="moreCommentBtnDiv">
+                <a onclick="commentShowBtnClick()" id="commentShowBtn" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#commentShowDiv" role="button" aria-expanded="false" aria-controls="commentShowDiv"
+                        data-bs-placement="bottom" tabindex="0" data-bs-trigger="focus" data-bs-content="">收起评论▲</a>
                     <a id="moreCommentBtn" class="btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">加载评论..</a>
                 </div>
                 <br/>
@@ -253,8 +255,8 @@ $("#moreCommentBtn").click(
                 contentType: "application/json; charset=utf-8",
                 success: function(data, status){
                     if(data['code']==1){
-                        // 重显当前获取的评论数据到评论区域
-                        $('.commentItem').remove();
+                        // 追加当前获取的评论数据到评论区域
+                        //$('.commentItem').remove();
                         $.each(data['data'], function(i,item){
                             console.log(item);
                             var cmNodeStr = '<div class="text-start card card-body commentItem">'+item.content+'</div>';
