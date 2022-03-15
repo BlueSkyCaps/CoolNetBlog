@@ -34,6 +34,10 @@ namespace CoolNetBlog.ViewModels.Home
         /// 找不到文章的提示
         /// </summary>
         public string NotTips { get; set; } = "";
+        /// <summary>
+        /// 当前网页需要显示的title 首页是站点名 文章是文章标题 文章不显示标题仍是站点名
+        /// </summary>
+        public string CurrentTitle { get; set; } = "";
 
         /// <summary>
         /// 是否没有设置显示任何一个侧边栏组件

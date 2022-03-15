@@ -29,6 +29,7 @@ namespace CoolNetBlog.Controllers.Home
         /// <returns></returns>
         public async Task<IActionResult> Index(string? from, int? menuId,string? kw, int pageIndex=1, int onePageCount=5)
         {
+            _homeGlobalView.CurrentTitle = _homeGlobalView.HomeSiteSettingData.SiteName;
             // 从配置里取设置的每页条数
             onePageCount = _homeGlobalView.HomeSiteSettingData.OnePageCount<=0?
                 onePageCount: _homeGlobalView.HomeSiteSettingData.OnePageCount;

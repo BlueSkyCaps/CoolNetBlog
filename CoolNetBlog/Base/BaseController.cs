@@ -49,6 +49,7 @@ namespace CoolNetBlog.Base
             // 判断是否没有显示任何一个侧边栏组件
             _homeGlobalView.IsNotShowAnyOneCom = !_homeGlobalView.HomeSiteSettingData.IsShowEdgeSearch
                 && !_homeGlobalView.HomeSiteSettingData.IsShowLoveLook && !_homeGlobalView.HomeSiteSettingData.IsShowWishPicture;
+
         }
 
         /// <summary>

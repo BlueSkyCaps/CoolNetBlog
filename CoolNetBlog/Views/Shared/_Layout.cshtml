@@ -1,12 +1,12 @@
 ﻿@{
 
-// 主页全局视图 列表分页、文章详细都寄生使用此视图
+    // 主页全局视图 列表分页、文章详细都寄生使用此视图
 }
 @model HomeViewModel
 @functions {
     public async Task RecDeal(List<HomeMenuViewModel> subs)
     {
-                
+
         <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
             @foreach (var m in subs)
             {
@@ -14,7 +14,7 @@
                 {
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-success" asp-route-from='menu' asp-route-menuId='@m.Id' asp-controller='Home' asp-action='Index' id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        @m.Name
+                            @m.Name
                         </a>
                         @{
                             await RecDeal(m.Subs);
@@ -26,7 +26,7 @@
                 }
             }
         </ul>
-       
+
     }
 }
 <!DOCTYPE html>
@@ -34,7 +34,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@Model?.HomeSiteSettingData.SiteName</title>
+    @{
+        <title>@Model?.CurrentTitle</title>
+    }
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @*<link rel="stylesheet" href="~/CoolNetBlog.styles.css" asp-append-version="true" />*@

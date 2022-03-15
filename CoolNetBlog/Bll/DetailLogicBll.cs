@@ -75,6 +75,9 @@ namespace CoolNetBlog.Bll
                 { "ThumbUpSilence", thumbUpSilence } 
             };
             _homeGlobalView.DetailArticleData.ThumbUpNumbers = thumbData;
+            _homeGlobalView.CurrentTitle = _homeGlobalView.DetailArticleData.IsShowTitle&& 
+                !string.IsNullOrWhiteSpace(_homeGlobalView.DetailArticleData.Title) ? 
+                _homeGlobalView.DetailArticleData.Title: _homeGlobalView.HomeSiteSettingData.SiteName;
         }
 
 
