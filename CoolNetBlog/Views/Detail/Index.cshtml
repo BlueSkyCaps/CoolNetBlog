@@ -101,6 +101,13 @@
             <div>
                 <div class="row">
                     <span style="width:10%"></span>
+                    <p id="commentFormTip" style="width:80%" class="text text-secondary">
+                    发表您的评论
+                    </p>
+                    <span style="width:10%"></span>
+                </div>
+                <div class="row">
+                    <span style="width:10%"></span>
                     <input style="width:60%" id="cEmailInput" maxlength="25" type="email" class="form-control" placeholder="邮箱(能与您联系,它不会被显示)">
                     <input style="width:20%" id="cNameInput" maxlength="12" type="text" class="form-control" placeholder="昵称">
                     <span style="width:10%"></span>
@@ -265,20 +272,18 @@ $("#moreCommentBtn").click(
                             var hours=date.getHours();
                             var minutes=date.getMinutes();
                             var seconds=date.getSeconds();
-                            
+                            console.log(item.name);
                             var commnetTimeStr = year+"-"+(month>9?month:"0"+month)+"-"
                                     +(day>9?day:"0"+day)+" "
                                     +(hours>9?hours:"0"+hours)+":"
                                     +(minutes>9?minutes:"0"+minutes)+":"
                                     +(seconds>9?seconds:"0"+seconds)
                             //var cmNodeStr = '<div class="text-start card card-body commentItem">'+item.content+'</div>';
-                            var cmNodeStr = '<div class="text-start card card-body commentItem"><h5 class="card-title">'+
-                                item.name+
-                                '</h5><p class="card-text">'+
+                            var cmNodeStr = '<div class="card card-body commentItem"><p class="text-start card-title"><small class="text text-info">'+
+                                item.name+'</small> <small>'+commnetTimeStr+
+                                ' <a href="javascript:;">回复TA</a></small></p><p class="text-start card-text">'+
                                 item.content+
-                                '</p></div><div class="card-footer"><small class="text-muted">'+
-                                commnetTimeStr+
-                                '</small></div>';
+                                '</p></div><div class="card-footer text-end"><a class="btn btn-outline-primary btn-sm">查看回复</a></div></br>';
                             $('#moreCommentBtnDiv').before(cmNodeStr);
                         });  
                     }else{
