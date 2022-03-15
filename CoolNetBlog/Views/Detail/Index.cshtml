@@ -258,8 +258,27 @@ $("#moreCommentBtn").click(
                         // 追加当前获取的评论数据到评论区域
                         //$('.commentItem').remove();
                         $.each(data['data'], function(i,item){
-                            console.log(item);
-                            var cmNodeStr = '<div class="text-start card card-body commentItem">'+item.content+'</div>';
+                            var date = new Date(item.commentTime);
+                            var year = date.getFullYear();
+                            var month=date.getMonth()+1;
+                            var day=date.getDate();
+                            var hours=date.getHours();
+                            var minutes=date.getMinutes();
+                            var seconds=date.getSeconds();
+                            
+                            var commnetTimeStr = year+"-"+(month>9?month:"0"+month)+"-"
+                                    +(day>9?day:"0"+day)+" "
+                                    +(hours>9?hours:"0"+hours)+":"
+                                    +(minutes>9?minutes:"0"+minutes)+":"
+                                    +(seconds>9?seconds:"0"+seconds)
+                            //var cmNodeStr = '<div class="text-start card card-body commentItem">'+item.content+'</div>';
+                            var cmNodeStr = '<div class="text-start card card-body commentItem"><h5 class="card-title">'+
+                                item.name+
+                                '</h5><p class="card-text">'+
+                                item.content+
+                                '</p></div><div class="card-footer"><small class="text-muted">'+
+                                commnetTimeStr+
+                                '</small></div>';
                             $('#moreCommentBtnDiv').before(cmNodeStr);
                         });  
                     }else{
