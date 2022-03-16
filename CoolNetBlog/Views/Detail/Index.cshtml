@@ -119,9 +119,9 @@
                 </div>
                 <div class="row">
                     <div class="text-end col-11">
-                        <a onclick="commentToggleBtnClick(1)" id="commentShowBtn" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#commentShowDiv" role="button" aria-expanded="false" aria-controls="commentShowDiv"
-                            data-bs-placement="bottom" data-bs-trigger="focus" data-bs-content="">显示网友的评论▼</a>
-                        <a id="toCommentBtn" class="btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">发表评论</a>
+                        <button onclick="commentToggleBtnClick(1)" id="commentShowBtn" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#commentShowDiv" role="button" aria-expanded="false" aria-controls="commentShowDiv"
+                            data-bs-placement="bottom" data-bs-trigger="focus" data-bs-content="">显示网友的评论▼</button>
+                        <button id="toCommentBtn" class="btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">发表评论</button>
                     </div>
                     <span class="col-1"></span>
                 </div>
@@ -129,9 +129,9 @@
             </div>
             <div class="collapse" id="commentShowDiv">
                 <div class="text-end" id="moreCommentBtnDiv">
-                    <a onclick="commentToggleBtnClick(0)" id="commentShowBtn" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#commentShowDiv" role="button" aria-expanded="false" aria-controls="commentShowDiv"
-                            data-bs-placement="bottom" tabindex="0" data-bs-trigger="focus" data-bs-content="">收起评论▲</a>
-                    <a id="moreCommentBtn" class="btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">加载评论..</a>
+                    <button onclick="commentToggleBtnClick(0)" id="commentShowBtn" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#commentShowDiv" role="button" aria-expanded="false" aria-controls="commentShowDiv"
+                            data-bs-placement="bottom" tabindex="0" data-bs-trigger="focus" data-bs-content="">收起评论▲</button>
+                    <button id="moreCommentBtn" class="btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">加载评论..</button>
                 </div>
                 <br/>
             </div>
@@ -186,11 +186,14 @@ $("#toUnlockBtn").click(
 );
 
 // 统一按钮弹出提示文本
-function PopoverShow(idStr, tipMsg){
+function PopoverShow(idStr, tipMsg, dis=false){
     $('#'+idStr).attr('data-bs-content', tipMsg);
     var popover = new bootstrap.Popover($('#'+idStr));
     popover.show();
-    setTimeout(function(){popover.dispose();}, 2500);
+    setTimeout(function(){
+        popover.dispose();
+        $('#'+idStr).attr("disabled","disabled");
+    }, 2500);
 }
 
 var commentShowIndex = 0;
@@ -262,6 +265,18 @@ $("#moreCommentBtn").click(
                 contentType: "application/json; charset=utf-8",
                 success: function(data, status){
                     if(data['code']==1){
+                        if(data['data'].length<=0)
+                        {
+                            commentShowIndex--;
+                            // 没有更多评论数据 禁用按钮
+                            if(commentShowIndex <= 0){
+                                $('#commentShowDiv').hide();//收起评论区域
+                                PopoverShow("commentShowBtn", "暂无更多评论啦",true);
+                            }else{
+                                PopoverShow("moreCommentBtn", "暂无更多评论啦",true);
+                            }
+                            return;
+                        }
                         // 追加当前获取的评论数据到评论区域
                         $.each(data['data'], function(i,item){
                             var commnetTimeStr = Gb_GetFmtDateStr(item.commentTime);
