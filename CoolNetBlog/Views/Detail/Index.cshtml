@@ -278,14 +278,20 @@ $("#moreCommentBtn").click(
                             return;
                         }
                         // 追加当前获取的评论数据到评论区域
-                        $.each(data['data'], function(i,item){
-                            var commnetTimeStr = Gb_GetFmtDateStr(item.commentTime);
-                            //var cmNodeStr = '<div class="text-start card card-body commentItem">'+item.content+'</div>';
+                        $.each(data['data'], function(i,cItem){
+                            // 迭代 拼接每个评论的所有回复
+                            var rpNodeStr = "";
+                            $.each(cItem['relatedReplies'], function(i,rItem){
+                                var replyTimeStr = Gb_GetFmtDateStr(rItem.replyTime);
+                                rpNodeStr += "";
+                            });
+                            // 格式化评论时间
+                            var commentTimeStr = Gb_GetFmtDateStr(cItem.commentTime);
                             var cmNodeStr = '<div class="card card-body commentItem"><p class="text-start card-title"><small class="text text-info">'+
-                                item.name+'</small> <small>'+commnetTimeStr+
+                                cItem.name+'</small> <small>'+commentTimeStr+
                                 ' <a href="javascript:;">回复TA</a></small></p><p class="text-start card-text">'+
-                                item.content+
-                                '</p></div><div class="card-footer text-end"><a class="btn btn-outline-primary btn-sm">查看回复</a></div></br>';
+                                cItem.content+
+                                '</p></div><div class="card-footer text-end">     </div></br>';
                             $('#moreCommentBtnDiv').before(cmNodeStr);
                         });  
                     }else{
@@ -378,4 +384,17 @@ function copyCommand(){
 }
 </script>
 
-
+<div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#comment1reply1" aria-expanded="true" aria-controls="comment1reply1">
+            rItem.
+          </button>
+        </h2>
+        <div id="comment1reply1" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+          <div class="accordion-body">
+            It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+          </div>
+        </div>
+    </div>
+</div>
