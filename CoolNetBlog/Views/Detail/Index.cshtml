@@ -119,8 +119,8 @@
                 </div>
                 <div class="row">
                     <div class="text-end col-11">
-                        <a onclick="commentShowBtnClick()" id="commentShowBtn" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#commentShowDiv" role="button" aria-expanded="false" aria-controls="commentShowDiv"
-                            data-bs-placement="bottom" tabindex="0" data-bs-trigger="focus" data-bs-content="">显示网友的评论▼</a>
+                        <a onclick="commentToggleBtnClick(1)" id="commentShowBtn" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#commentShowDiv" role="button" aria-expanded="false" aria-controls="commentShowDiv"
+                            data-bs-placement="bottom" data-bs-trigger="focus" data-bs-content="">显示网友的评论▼</a>
                         <a id="toCommentBtn" class="btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">发表评论</a>
                     </div>
                     <span class="col-1"></span>
@@ -129,8 +129,8 @@
             </div>
             <div class="collapse" id="commentShowDiv">
                 <div class="text-end" id="moreCommentBtnDiv">
-                <a onclick="commentShowBtnClick()" id="commentShowBtn" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#commentShowDiv" role="button" aria-expanded="false" aria-controls="commentShowDiv"
-                        data-bs-placement="bottom" tabindex="0" data-bs-trigger="focus" data-bs-content="">收起评论▲</a>
+                    <a onclick="commentToggleBtnClick(0)" id="commentShowBtn" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#commentShowDiv" role="button" aria-expanded="false" aria-controls="commentShowDiv"
+                            data-bs-placement="bottom" tabindex="0" data-bs-trigger="focus" data-bs-content="">收起评论▲</a>
                     <a id="moreCommentBtn" class="btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">加载评论..</a>
                 </div>
                 <br/>
@@ -263,21 +263,8 @@ $("#moreCommentBtn").click(
                 success: function(data, status){
                     if(data['code']==1){
                         // 追加当前获取的评论数据到评论区域
-                        //$('.commentItem').remove();
                         $.each(data['data'], function(i,item){
-                            var date = new Date(item.commentTime);
-                            var year = date.getFullYear();
-                            var month=date.getMonth()+1;
-                            var day=date.getDate();
-                            var hours=date.getHours();
-                            var minutes=date.getMinutes();
-                            var seconds=date.getSeconds();
-                            console.log(item.name);
-                            var commnetTimeStr = year+"-"+(month>9?month:"0"+month)+"-"
-                                    +(day>9?day:"0"+day)+" "
-                                    +(hours>9?hours:"0"+hours)+":"
-                                    +(minutes>9?minutes:"0"+minutes)+":"
-                                    +(seconds>9?seconds:"0"+seconds)
+                            var commnetTimeStr = Gb_GetFmtDateStr(item.commentTime);
                             //var cmNodeStr = '<div class="text-start card card-body commentItem">'+item.content+'</div>';
                             var cmNodeStr = '<div class="card card-body commentItem"><p class="text-start card-title"><small class="text text-info">'+
                                 item.name+'</small> <small>'+commnetTimeStr+
@@ -288,21 +275,23 @@ $("#moreCommentBtn").click(
                         });  
                     }else{
                         commentShowIndex--;
-                        if(commentShowIndex <= 0){
-                            // 有问题 来自第一次显示评论 在"显示评论按钮"显示提示文本
+                        if(commentShowIndex < 1){
+                            $('#commentShowDiv').hide();//收起评论区域
+                            // 有问题 来自第一次显示评论 在"显示评论"按钮显示提示文本
                             PopoverShow("commentShowBtn", data['tipMessage']);
                         }else{
-                            // 有问题 不是第一次显示评论 而是后续点击加载评论 在"加载评论按钮"显示提示文本
+                            // 有问题 不是第一次显示评论 而是后续点击加载评论 在"加载评论"按钮显示提示文本
                             PopoverShow("moreCommentBtn", data['tipMessage']);
                         }
                     }
                 },
                 error: function(err){
                     commentShowIndex--;
-                    if(commentShowIndex <= 0){
-                        PopoverShow("commentShowBtn", data['tipMessage']);
+                    if(commentShowIndex < 1){
+                        $('#commentShowDiv').hide();//收起评论区域
+                        PopoverShow("commentShowBtn", "加载评论失败err,重试一下?!");
                     }else{
-                         PopoverShow("moreCommentBtn", data['tipMessage']);
+                         PopoverShow("moreCommentBtn", "加载评论失败err,重试一下?!");
                     }
                     console.log(err)
                 }
@@ -346,13 +335,17 @@ function thumbUpBtnClick(target, id, type){
 }
 
 // 显示评论按钮被点击
-function commentShowBtnClick(){
-    // commentShowIndex <1，说明还没有显示过评论，触发加载评论事件去加载 否则不必触发，而是开关显示评论区域
-    if(commentShowIndex < 1){
-        // 触发moreCommentBtn的点击事件
-        $("#moreCommentBtn").click();
+function commentToggleBtnClick(status){
+    if(status==1){
+        $('#commentShowDiv').show();
+        // commentShowIndex <1，说明还没有显示过评论，触发加载评论事件去加载 否则不必触发，而是开关显示评论区域
+        if(commentShowIndex < 1){
+            // 触发moreCommentBtn的点击事件
+            $("#moreCommentBtn").click();
+        }
+    }else{
+        $('#commentShowDiv').hide();
     }
-    $('#commentShowCollapse').toggle();
 }
 
 // 分享链接按钮 复制url到剪贴板

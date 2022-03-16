@@ -181,7 +181,7 @@ namespace CoolNetBlog.Bll
             if (commentAte is null)
             {
                 result.HideMessage = $"获取文章id为{sourceId}的评论时失败，不存在此文章Id";
-                result.TipMessage = "获取更多评论失败了，刷新在试试吧?!";
+                result.TipMessage = "加载评论失败了，刷新在试试吧?!";
                 return result;
             }
             try
@@ -204,7 +204,7 @@ namespace CoolNetBlog.Bll
             {
                 result.Code = ValueCodes.Error;
                 result.HideMessage = $"获取文章id为{sourceId}的评论时失败，引发异常:{e.Message} {e.StackTrace}";
-                result.TipMessage = "获取此文章的评论失败了，你刷新在试试吧?!";
+                result.TipMessage = "加载评论失败了，你刷新在试试吧?!";
             }
             return result;
         }
