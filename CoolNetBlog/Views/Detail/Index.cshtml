@@ -281,17 +281,31 @@ $("#moreCommentBtn").click(
                         $.each(data['data'], function(i,cItem){
                             // 迭代 拼接每个评论的所有回复
                             var rpNodeStr = "";
-                            $.each(cItem['relatedReplies'], function(i,rItem){
-                                var replyTimeStr = Gb_GetFmtDateStr(rItem.replyTime);
-                                rpNodeStr += "";
-                            });
+                            if(cItem['relatedReplies'].length>0)
+                            {
+                                $.each(cItem['relatedReplies'], function(i,rItem){
+                                    var idStr = "comment"+cItem.id+"reply"+rItem.id;
+                                    var replyTimeStr = Gb_GetFmtDateStr(rItem.replyTime);
+                                    var replyContent = rItem.content;
+                                    var replyInfoStr = '<small class="text text-info">'+rItem.name+'</small> <small>'+replyTimeStr+' <a href="javascript:;">回复TA</a></small>';
+                                    var tmpRpNodeStr = '<div class="accordion" id="accordion{0}"><div class="accordion-item"><h2 class="accordion-header" id="heading{0}">'+
+                                    '<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{0}" aria-expanded="false" aria-controls="collapse{0}">'+
+                                    '<p>{1}</p>'+
+                                    '</button></h2><div id="collapse{0}" class="accordion-collapse collapse" aria-labelledby="heading{0}" data-bs-parent="#accordion{0}"><div class="accordion-body">'+
+                                    '{2}'+'</div></div></div></div>';
+                                    // 格式化占位符 第一个是元素的id 第二个是回复内容 第三个是回复时间|名字组成的元素
+                                    rpNodeStr += tmpRpNodeStr.format(idStr, replyContent, replyInfoStr);
+                                });
+                            }
                             // 格式化评论时间
                             var commentTimeStr = Gb_GetFmtDateStr(cItem.commentTime);
                             var cmNodeStr = '<div class="card card-body commentItem"><p class="text-start card-title"><small class="text text-info">'+
                                 cItem.name+'</small> <small>'+commentTimeStr+
                                 ' <a href="javascript:;">回复TA</a></small></p><p class="text-start card-text">'+
                                 cItem.content+
-                                '</p></div><div class="card-footer text-end">     </div></br>';
+                                '</p></div><div class="card-footer text-end">'+
+                                rpNodeStr+
+                                '</div></br>';
                             $('#moreCommentBtnDiv').before(cmNodeStr);
                         });  
                     }else{
@@ -382,19 +396,10 @@ function copyCommand(){
         $('#urlShareBtn').attr('disabled', 'disabled');
     }
 }
+
+// 点击了某个回复
+function replyBtnCick(){
+   
+}
 </script>
 
-<div class="accordion" id="accordionExample">
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingOne">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#comment1reply1" aria-expanded="true" aria-controls="comment1reply1">
-            rItem.
-          </button>
-        </h2>
-        <div id="comment1reply1" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-          <div class="accordion-body">
-            It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-          </div>
-        </div>
-    </div>
-</div>
