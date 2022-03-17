@@ -129,7 +129,7 @@ namespace CoolNetBlog.Bll
             if (cmt is null)
             {
                 result.HideMessage = "不存在此评论Id";
-                result.TipMessage = "该评论已经消失了，可以刷新看看哦..";
+                result.TipMessage = "评论已经消失了，可以刷新看看哦..";
                 return result;
             }
             // 通过评论实体获取对应的文章实体
@@ -160,10 +160,10 @@ namespace CoolNetBlog.Bll
                 _replySet.TransRoll();
                 result.Code = ValueCodes.Error;
                 result.HideMessage = "插入回复数据时引发异常:" + e.Message + " " + e.StackTrace;
-                result.TipMessage = "回复失败了，你可以再试一下?!";
+                result.TipMessage = "回复失败了，可以再试一下?!";
             }
             result.Code = ValueCodes.Success;
-            result.TipMessage = commentAte?.CommentType == 2 ? "经过审核后将会显示回复,感谢您的畅所欲言~" : "感谢您的畅所欲言~";
+            result.TipMessage = commentAte?.CommentType == 2 ? "审核后将会显示回复,感谢畅所欲言~" : "感谢您的畅所欲言~";
             return result;
         }
 
@@ -204,7 +204,7 @@ namespace CoolNetBlog.Bll
             {
                 result.Code = ValueCodes.Error;
                 result.HideMessage = $"获取文章id为{sourceId}的评论时失败，引发异常:{e.Message} {e.StackTrace}";
-                result.TipMessage = "加载评论失败了，你刷新在试试吧?!";
+                result.TipMessage = "加载评论失败了，刷新在试试吧?!";
             }
             return result;
         }
