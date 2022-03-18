@@ -108,7 +108,7 @@
                 </div>
                 <div class="row">
                     <span style="width:10%"></span>
-                    <input style="width:60%" id="cEmailInput" maxlength="25" type="email" class="form-control" placeholder="邮箱(能与您联系,它不会被显示)">
+                    <input style="width:60%" id="cEmailInput" maxlength="25" type="email" class="form-control" placeholder="邮箱(能与您联系,不会被显示)">
                     <input style="width:20%" id="cNameInput" maxlength="12" type="text" class="form-control" placeholder="昵称">
                     <span style="width:10%"></span>
                 </div>
@@ -144,6 +144,35 @@
         <br/>
     }
 }
+<!--回复模态弹出层-->
+<div class="modal fade" id="ReplyModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ReplyModalTip"></h5>
+      </div>
+      <div class="modal-body">
+            <input hidden id="rCommentIdInput">
+            <input hidden id="rtoNameInput">
+            <div class="row">
+                <span style="width:10%"></span>
+                <input style="width:60%" id="rEmailInput" maxlength="25" type="email" class="form-control" placeholder="邮箱(能与您联系,它不会被显示)">
+                <input style="width:20%" id="rNameInput" maxlength="12" type="text" class="form-control" placeholder="昵称">
+                <span style="width:10%"></span>
+            </div>
+            <div class="row">
+                <span style="width:10%"></span>
+                <textarea  style="width:80%" id="rContentInput" type="text" maxlength="137" class="form-control" placeholder="您想回复的话.."></textarea>
+                <span style="width:10%"></span>
+            </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="CloseReplyModal()">关闭</button>
+        <button type="button" class="btn btn-primary" id="ReplyModalOk" onclick="toReply()" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">回复</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 // 隐私文章 输入密码
@@ -192,7 +221,9 @@ function PopoverShow(idStr, tipMsg, dis=false){
     popover.show();
     setTimeout(function(){
         popover.dispose();
-        $('#'+idStr).attr("disabled","disabled");
+        if(dis){
+            $('#'+idStr).attr("disabled","disabled");
+        }
     }, 2500);
 }
 
@@ -287,21 +318,25 @@ $("#moreCommentBtn").click(
                                     var idStr = "comment"+cItem.id+"reply"+rItem.id;
                                     var replyTimeStr = Gb_GetFmtDateStr(rItem.replyTime);
                                     var replyContent = rItem.content;
-                                    var replyInfoStr = '<small class="text text-info">'+rItem.name+'</small> <small>'+replyTimeStr+' <a href="javascript:;">回复TA</a></small>';
+                                    var replyInfoStr = '<small class="text text-info">'+rItem.name+'</small> <small>'+replyTimeStr+' <a href="javascript:;" onClick="toReplyDialog(this)" comment-id="{3}" to-name="{4}">回复TA</a></small>';
                                     var tmpRpNodeStr = '<div class="accordion" id="accordion{0}"><div class="accordion-item"><h2 class="accordion-header" id="heading{0}">'+
                                     '<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{0}" aria-expanded="false" aria-controls="collapse{0}">'+
                                     '<p>{1}</p>'+
                                     '</button></h2><div id="collapse{0}" class="accordion-collapse collapse" aria-labelledby="heading{0}" data-bs-parent="#accordion{0}"><div class="accordion-body">'+
                                     '{2}'+'</div></div></div></div>';
-                                    // 格式化占位符 第一个是元素的id 第二个是回复内容 第三个是回复时间|名字组成的元素
-                                    rpNodeStr += tmpRpNodeStr.format(idStr, replyContent, replyInfoStr);
+                                    // 格式化占位符 第一个是元素的id 第二个是回复内容 第三个是回复时间|名字组成的元素 第四个是关联的评论id 第五个是回复对象的昵称 
+                                    rpNodeStr += tmpRpNodeStr.format(idStr, replyContent, replyInfoStr, cItem.id, rItem.name);
                                 });
                             }
                             // 格式化评论时间
                             var commentTimeStr = Gb_GetFmtDateStr(cItem.commentTime);
                             var cmNodeStr = '<div class="card card-body commentItem"><p class="text-start card-title"><small class="text text-info">'+
-                                cItem.name+'</small> <small>'+commentTimeStr+
-                                ' <a href="javascript:;">回复TA</a></small></p><p class="text-start card-text">'+
+                                cItem.name+'</small> <small>'+
+                                commentTimeStr+
+                                ' <a href="javascript:;" onClick="toReplyDialog(this)" comment-id="' +
+                                cItem.id+'" to-name="'+
+                                cItem.name+
+                                '">回复TA</a></small></p><p class="text-start card-text">'+
                                 cItem.content+
                                 '</p></div><div class="card-footer text-end">'+
                                 rpNodeStr+
@@ -397,9 +432,49 @@ function copyCommand(){
     }
 }
 
-// 点击了某个回复
-function replyBtnCick(){
-   
+// 确认回复
+function toReply(){
+    var email = $('#rEmailInput').val().trim();
+    var name =$('#rNameInput').val().trim();
+    var content = $('#rContentInput').val().trim();
+
+    if(email==null||email==""||name==null||name==""||content==null||content==""){
+        PopoverShow("ReplyModalOk", "请把内容填写完整哦!~");
+        return;
+    }
+    if(content.length<5){
+        PopoverShow("ReplyModalOk", "回复内容太少啦!~");
+        return;
+    }
+    if (!!!(/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,10})+$/.test(email)))
+    {
+        PopoverShow("ReplyModalOk", "不是有效的邮箱!~");
+        return;
+    }
+}
+
+// 点击了某个回复按钮 显示回复弹出层
+function toReplyDialog(target){
+    CloseReplyModal();
+    var cid = target.getAttribute('comment-id');
+    var toName = target.getAttribute('to-name');
+    // 设置回复弹出层隐藏的属性值
+    if(toName!=""){
+        $('#ReplyModalTip').text("@@"+toName);
+    }else{
+        $('#ReplyModalTip').text("回复TA");
+    }
+    $('#rCommentIdInput').val(cid);
+    $('#rtoNameInput').val(toName);
+    $('#ReplyModal').modal("show");
+}
+
+function CloseReplyModal(){
+    // 关闭清空回复弹出层
+    $('#ReplyModal input').val("");
+    $('#ReplyModal textarea').val("");
+    $('#ReplyModal').modal('hide');
+
 }
 </script>
 

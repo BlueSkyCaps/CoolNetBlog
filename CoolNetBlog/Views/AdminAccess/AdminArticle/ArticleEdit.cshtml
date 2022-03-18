@@ -164,7 +164,7 @@
             <button style="width:30%" class="btn btn-outline-primary" type="button" id="toSearchImgBtn" onclick="toSearchImgBtn()">搜索图片</button>
             <label class="input-group-text" for="richPutModalImg">选择上传的图片</label>
             <select class="form-select" id="richPutModalImg">
-            <option value="">--不选定--</option>
+            <option value="">--不选定 主动指定第三方图片url--</option>
             @foreach (var fpItem in Model.ImgRelPaths)
             {
                 <option value="@fpItem.FileRelPath">@fpItem.HelpName</option>
