@@ -140,6 +140,15 @@
         <div class="col-sm-10">
             <button asp-action="ArticleEdit" asp-controller="AdminArticle" type="submit" class="btn btn-primary">发表(￣︶￣)↗</button>
         </div>
+        @if (Model.MenuId > 0)
+        {
+            <div class="col-sm-2">
+                <div class="form-check">
+                <input asp-for="UpTimeLine"  class="form-check-input" type="checkbox" checked>
+                <label asp-for="UpTimeLine" class="form-check-label">更新时间线</label>
+                </div>
+            </div>
+        }
     </div>
 </form>
 <div class="modal fade" id="richPutModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">

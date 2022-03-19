@@ -176,9 +176,17 @@ namespace CoolNetBlog.Controllers.Admin
                 if (id != null && id > 0)
                 {
                     editable.Id = vm.Id;
-                    editable.UpdateTime = DateTime.Now;
-                    // 更新，忽略创建时间
-                    await _articleSet.UpdateByIgColsAsync(editable, "CreatedTime");
+                    if (vm.UpTimeLine)
+                    {
+                        editable.UpdateTime = DateTime.Now;
+                        // 更新，忽略创建时间
+                        await _articleSet.UpdateByIgColsAsync(editable, "CreatedTime");
+                    }
+                    else
+                    {
+                        // 更新，忽略创建时间 且若勾选不更新更新时间 也忽略更新时间
+                        await _articleSet.UpdateByIgColsAsync(editable, "CreatedTime", "UpdateTime");
+                    }
                 }
                 else
                 {

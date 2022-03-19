@@ -21,6 +21,10 @@ namespace CoolNetBlog.ViewModels.Admin
         public string? Labels { get; set; }
         public string? CustUri { get; set; }
         public int CommentType { get; set; }
+        /// <summary>
+        /// 更新文章 是否更新更新时间 不勾选不会更新更新时间
+        /// </summary>
+        public bool UpTimeLine { get; set; }
 
         // -----⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆
 
