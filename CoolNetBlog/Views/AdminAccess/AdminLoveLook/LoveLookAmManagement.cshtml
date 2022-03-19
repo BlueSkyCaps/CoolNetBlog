@@ -15,29 +15,43 @@
  </mark></p></div>
  <br/>
 <form method="post">
-    <div class="input-group">
-        <input hidden name="pt" value="@Model.PassToken">
-        <input class="form-control form-control-lg" asp-for="RelHref" placeholder="输入链接，切勿输入不存在的链接">
-        <div class="form-check">
-        <input class="form-check-input" type="radio"  id="exampleRadios1" asp-for="Type" value="1" checked>
-        <label class="form-check-label" for="exampleRadios1">
-        内部文章链接
-        </label>
+    <div class="row">
+        <div class="form-check col-4">
+            <input class="form-check-input" type="radio"  id="exampleRadios1" asp-for="Type" value="1" checked>
+            <label class="form-check-label" for="exampleRadios1">
+            内部文章链接
+            </label>
         </div>
-        <div class="form-check">
-        <input class="form-check-input" type="radio"  id="exampleRadios2" asp-for="Type" value="2">
-        <label class="form-check-label" for="exampleRadios2">
-        上传的文件链接
-        </label>
+        <div class="form-check col-4">
+            <input class="form-check-input" type="radio"  id="exampleRadios2" asp-for="Type" value="2">
+            <label class="form-check-label" for="exampleRadios2">
+            上传的文件链接
+            </label>
         </div>
-        <div class="form-check">
-        <input class="form-check-input" type="radio"  id="exampleRadios2" asp-for="Type" value="3">
-        <label class="form-check-label" for="exampleRadios2">
-        外部链接
-        </label>
+        <div class="form-check col-4">
+            <input class="form-check-input" type="radio"  id="exampleRadios2" asp-for="Type" value="3">
+            <label class="form-check-label" for="exampleRadios2">
+            外部链接
+            </label>
         </div>
-        <input class="form-control form-control-lg" asp-for="LinkName" placeholder="自定义显示链接名，在侧边栏"看看这些"项中个性显示">
-        <button class="btn btn-dark" type="submit" asp-action="Add" asp-controller="AdminLoveLook">添加链接</button>
+
+    </div>
+    <div class="row">
+        <label class="form-input-label" for="RelHref">输入链接，切勿输入不存在的链接</label>
+        <input class="form-control form-control-lg" asp-for="RelHref">
+    </div>
+    <div class="row">
+        <label class="form-input-label" for="LinkName">自定义显示链接名，在侧边栏"看看这些"项中个性显示</label>
+        <input class="form-control form-control-lg" asp-for="LinkName">
+    </div>
+    <input hidden name="pt" value="@Model.PassToken">
+    <div class="row">
+        <div class="col-8">
+            <span></span>
+        </div>
+        <div class="col-4">
+            <button style="width:100%" class="btn btn-dark" type="submit" asp-action="Add" asp-controller="AdminLoveLook">添加链接</button>
+        </div>
     </div>
 </form>
 </div>
