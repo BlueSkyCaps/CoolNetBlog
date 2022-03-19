@@ -57,6 +57,13 @@ namespace CoolNetBlog.Bll
                     result.TipMessage = "该文章已经消失了，可以刷新看看哦..";
                     return result;
                 }
+                if (commentAte.CommentType == 3)
+                {
+                    result.Code = ValueCodes.UnKnow;
+                    result.HideMessage = "不允许评论的内容尝试进行评论";
+                    result.TipMessage = "内容已被设置为不允许评论~";
+                    return result;
+                }
             }
             Comment insertComment = new Comment
             {
@@ -134,7 +141,13 @@ namespace CoolNetBlog.Bll
             }
             // 通过评论实体获取对应的文章实体
             commentAte = await _articleSet.FindOneByIdAsync(cmt.SourceId);
-
+            if (commentAte.CommentType == 3)
+            {
+                result.Code = ValueCodes.UnKnow;
+                result.HideMessage = "不允许评论的内容尝试进行评论";
+                result.TipMessage = "内容已被设置为不允许评论~";
+                return result;
+            }
             Reply insertReply = new Reply
             {
                 ReplyTime = DateTime.Now,
@@ -146,7 +159,7 @@ namespace CoolNetBlog.Bll
             };
             if (cmt.SourceType == 1)
             {
-                // 要回复的评论的文章若是设置需要审核(CommentType为2) IsPassed就是false，否则公开评论、不设置评论直接true
+                // 要回复的评论的文章若是设置需要审核(CommentType为2) IsPassed就是false，否则公开评论直接true
                 insertReply.IsPassed = commentAte?.CommentType == 2 ? false : true;
             }
             _replySet.TransBegin();
