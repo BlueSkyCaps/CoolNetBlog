@@ -19,7 +19,7 @@ namespace ComponentsServices.Base
         public readonly SqlSugar.SqlSugarScope _dbHandler;
         /// <summary>
         /// 一个实体类实例化一个数据库句柄 后续每个实体Set都要连接一次数据库 开销大</br>
-        /// 目前使用此构造函数初始化
+        /// 不建议使用此构造函数初始化
         /// </summary>
         /// <param name="dataBaseType"></param>
         public SugarDataBaseStorage(DataBaseTypes dataBaseType = DataBaseTypes.MySql)
@@ -29,7 +29,7 @@ namespace ComponentsServices.Base
 
         /// <summary>
         /// 只用事先实例化的单独数据库句柄 后续每个泛型实体Set会共享这一个句柄 不会重复连接数据库 </br>
-        /// todo后续建议使用此构造函数
+        /// 建议搭配BaseSugar类使用此构造函数初始化
         /// </summary>
         /// <param name="dbHandler"></param>
         public SugarDataBaseStorage(SqlSugarScope dbHandler)

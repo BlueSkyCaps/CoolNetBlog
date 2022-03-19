@@ -21,9 +21,10 @@ namespace CoolNetBlog.Controllers.Admin
 
         public AdminArticleController():base()
         {
-            _articleSet = new SugarDataBaseStorage<Article, int>();
-            _menuSet = new SugarDataBaseStorage<Menu, int>();
-            _filePathSet = new SugarDataBaseStorage<FilePath, int>();
+            BaseSugar baseSugar = new BaseSugar();
+            _articleSet = new SugarDataBaseStorage<Article, int>(baseSugar._dbHandler);
+            _menuSet = new SugarDataBaseStorage<Menu, int>(baseSugar._dbHandler);
+            _filePathSet = new SugarDataBaseStorage<FilePath, int>(baseSugar._dbHandler);
         }
 
         /// <summary>
@@ -49,8 +50,39 @@ namespace CoolNetBlog.Controllers.Admin
                 return View("ArticleAmManagement", smvm);
             }
            
-            var ef = await _articleSet.DeleteAsync(delable);
             // 一并删除此文章的点赞表态、评论、回复数据
+            SugarDataBaseStorage<Reply, int> replyDelHelper = new SugarDataBaseStorage<Reply, int>(_articleSet._dbHandler);
+            SugarDataBaseStorage<Comment, int> commentDelHelper = new SugarDataBaseStorage<Comment, int>(_articleSet._dbHandler);
+            SugarDataBaseStorage<ArticleThumbUp, int> thumbUpDelHelper = new SugarDataBaseStorage<ArticleThumbUp, int>(_articleSet._dbHandler);
+            _articleSet.TransBegin();
+            try
+            {
+                // 删除此文章的点赞表态
+                await thumbUpDelHelper.DeleteEntitiesAsync(u => u.ArticleId == id);
+
+                // 删除此文章所有评论下的所有回复
+                var tmpCIdList = new List<int>();
+                tmpCIdList = commentDelHelper.GetListBuilder()
+                    .Where(c => c.SourceId == id && c.SourceType == 1)
+                    .Select(c => c.Id).ToList();
+                var tmpCIdString = string.Join(",", tmpCIdList);
+                await replyDelHelper._dbHandler.Ado.ExecuteCommandAsync(
+                    $"delete from Reply where CommentId in ({tmpCIdString})");
+                
+                // 删除此文章所有评论
+                await commentDelHelper.DeleteEntitiesAsync(c => c.SourceId == id && c.SourceType == 1);
+                _articleSet.TransCommit();
+
+                // 删除文章实体
+                await _articleSet.DeleteAsync(delable);
+            }
+            catch (Exception)
+            {
+                _articleSet.TransRoll();
+                ModelState.AddModelError("", "删除失败:刷新再试吧？。");
+                return View("ArticleAmManagement", smvm);
+            }
+
             return RedirectToAction("ArticleAmManagement", "AdminArticle", new { pt = smvm.PassToken });
 
         }
