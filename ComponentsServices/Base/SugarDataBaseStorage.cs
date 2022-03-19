@@ -8,7 +8,7 @@ namespace ComponentsServices.Base
 {
     public class BaseSugar
     {
-        public readonly SqlSugar.SqlSugarScope _dbHandler;
+        public readonly SqlSugarScope _dbHandler;
         public BaseSugar(DataBaseTypes dataBaseType = DataBaseTypes.MySql)
         {
             _dbHandler = new SugarDbConfiged(dataBaseType).DbHandler;
@@ -32,7 +32,7 @@ namespace ComponentsServices.Base
         /// todo后续建议使用此构造函数
         /// </summary>
         /// <param name="dbHandler"></param>
-        public SugarDataBaseStorage(SqlSugar.SqlSugarScope dbHandler)
+        public SugarDataBaseStorage(SqlSugarScope dbHandler)
         {
             _dbHandler = dbHandler;
         }
