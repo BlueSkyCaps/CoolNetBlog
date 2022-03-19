@@ -18,8 +18,8 @@ namespace ComponentsServices.Base
     {
         public readonly SqlSugar.SqlSugarScope _dbHandler;
         /// <summary>
-        /// 一个实体类实例化一个数据库句柄 后续每个实体Set都要连接一次数据库 开销大</br>
-        /// 不建议使用此构造函数初始化
+        /// 一个实体类实例化一个数据库句柄 </br>
+        /// 后续每个实体Set都要连接一次数据库 开销大
         /// </summary>
         /// <param name="dataBaseType"></param>
         public SugarDataBaseStorage(DataBaseTypes dataBaseType = DataBaseTypes.MySql)
