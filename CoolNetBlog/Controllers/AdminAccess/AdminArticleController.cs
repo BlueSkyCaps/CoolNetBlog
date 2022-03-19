@@ -50,6 +50,7 @@ namespace CoolNetBlog.Controllers.Admin
             }
            
             var ef = await _articleSet.DeleteAsync(delable);
+            // 一并删除此文章的点赞表态、评论、回复数据
             return RedirectToAction("ArticleAmManagement", "AdminArticle", new { pt = smvm.PassToken });
 
         }
