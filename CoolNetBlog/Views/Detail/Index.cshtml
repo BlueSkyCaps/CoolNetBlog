@@ -153,7 +153,7 @@
       </div>
       <div class="modal-body">
             <input hidden id="rCommentIdInput">
-            <input hidden id="rtoNameInput">
+            <input hidden id="rToNameInput">
             <div class="row">
                 <span style="width:10%"></span>
                 <input style="width:60%" id="rEmailInput" maxlength="25" type="email" class="form-control" placeholder="邮箱(能与您联系,它不会被显示)">
@@ -437,6 +437,8 @@ function toReply(){
     var email = $('#rEmailInput').val().trim();
     var name =$('#rNameInput').val().trim();
     var content = $('#rContentInput').val().trim();
+    var cid = $('#rCommentIdInput').val().trim();
+    var toNmae = $('#rToNameInput').val().trim();
 
     if(email==null||email==""||name==null||name==""||content==null||content==""){
         PopoverShow("ReplyModalOk", "请把内容填写完整哦!~");
@@ -446,11 +448,19 @@ function toReply(){
         PopoverShow("ReplyModalOk", "回复内容太少啦!~");
         return;
     }
+    // 两个@@其实是一个 razor语法转义
     if (!!!(/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,10})+$/.test(email)))
     {
         PopoverShow("ReplyModalOk", "不是有效的邮箱!~");
         return;
     }
+    if(cid.isWhiteSpaceOrNull()||toNmae.isWhiteSpaceOrNull())
+    {
+        PopoverShow("ReplyModalOk", "不允许的操作，请重试!~");
+        return;
+    }   
+    alert($('#rCommentIdInput').val())
+    alert($('#rToNameInput').val())
 }
 
 // 点击了某个回复按钮 显示回复弹出层
@@ -465,7 +475,7 @@ function toReplyDialog(target){
         $('#ReplyModalTip').text("回复TA");
     }
     $('#rCommentIdInput').val(cid);
-    $('#rtoNameInput').val(toName);
+    $('#rToNameInput').val(toName);
     $('#ReplyModal').modal("show");
 }
 

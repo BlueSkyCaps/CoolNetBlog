@@ -20,3 +20,19 @@ String.prototype.format = function () {
         s = s.replace(new RegExp("\\{" + i + "\\}", "g"), arguments[i]);
     return s;
 };
+
+String.prototype.isWhiteSpaceOrNull = function () {
+    if (this === null || this === undefined || this === "undefined")
+        return true;
+    if (this.replace(/(^\s*)|(\s*$)/g, "")==="")
+        return true;
+    return false;
+};
+
+String.prototype.trimF = function (p) {
+    if (p==="l"||p==="L")
+        return this.replace(/(^\s*)/g, "");
+    if (p === "r" || p === "R")
+        return this.replace(/(\s*$)/g, "");
+    return this.replace(/(^\s*)|(\s*$)/g, "");
+};
