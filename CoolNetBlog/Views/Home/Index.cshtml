@@ -21,7 +21,7 @@
     <a class="btn btn-outline-dark" asp-route-articleId="@item.Id" asp-controller="Detail" asp-action="Index" >阅读更多</a>
 }
 </div>
-<div class="card-footer text-muted"><span class="badge bg-success">@(item.Ig_MenuName)</span> <small class="text-primary"><span class="badge rounded-pill bg-info text-dark">@(item.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss"))</span></small>
+<div class="card-footer text-muted"><span class="badge bg-success">@(item.Ig_MenuName)</span> <small class="text-primary"><span class="badge rounded-pill bg-info text-dark">更新于@(item.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss"))</span></small>
 @if (item.IsLock)
 {
     <svg t="1645106164793" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1873" width="16" height="16"><path d="M512 170.666667c70.314667 0 128 57.685333 128 128v128H384V298.666667c0-70.314667 57.685333-128 128-128z m213.333333 256V298.666667c0-117.418667-95.914667-213.333333-213.333333-213.333334S298.666667 181.248 298.666667 298.666667v128H256a85.333333 85.333333 0 0 0-85.333333 85.333333v341.333333a85.333333 85.333333 0 0 0 85.333333 85.333334h512a85.333333 85.333333 0 0 0 85.333333-85.333334v-341.333333a85.333333 85.333333 0 0 0-85.333333-85.333333h-42.666667zM256 512h512v341.333333H256v-341.333333z" fill="#d4237a" p-id="1874"></path></svg>

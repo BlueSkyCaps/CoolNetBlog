@@ -8,14 +8,14 @@ namespace CoolNetBlog.Bll
 {
     public class CommentBll
     {
+        private readonly BaseSugar _baseSugar;
         private readonly SugarDataBaseStorage<Article, int> _articleSet;
         private readonly SugarDataBaseStorage<Comment, int> _commentSet;
-        private SugarDataBaseStorage<Reply, int> _replySet;
-        private SugarDataBaseStorage<CommentViewModel, int> _commentVmReader;
         public CommentBll()
         {
-            _articleSet = new SugarDataBaseStorage<Article, int>();
-            _commentSet = new SugarDataBaseStorage<Comment, int>();
+            _baseSugar = new BaseSugar();
+            _articleSet = new SugarDataBaseStorage<Article, int>(_baseSugar._dbHandler);
+            _commentSet = new SugarDataBaseStorage<Comment, int>(_baseSugar._dbHandler);
         }
 
         public async Task<ValueResult> DealCommentPostAsync(CommentViewModel data) { 
@@ -64,16 +64,26 @@ namespace CoolNetBlog.Bll
                     result.TipMessage = "内容已被设置为不允许评论~";
                     return result;
                 }
+               
             }
             Comment insertComment = new Comment
             {
                 CommentTime = DateTime.Now,
-                Email = data.Email,
-                Name = data.Name,
-                Content = data.Content,
+                Email = data.Email.Trim(),
+                Name = data.Name.Trim(),
+                Content = data.Content.Trim(),
                 SourceId = data.SourceId,
                 SourceType = data.SourceType,
             };
+
+            if (await _baseSugar._dbHandler.Queryable<AdminUser>().AnyAsync(a => a.AccountName.ToLower() == data.Name.ToLower()))
+            {
+                result.Code = ValueCodes.UnKnow;
+                result.HideMessage = "昵称是管理员使用昵称";
+                result.TipMessage = "哈,该昵称被创造者'霸占'了哦~";
+                return result;
+            }
+
             // SourceType == 1 文章评论
             if (data.SourceType==1)
             {
@@ -100,7 +110,7 @@ namespace CoolNetBlog.Bll
 
         public async Task<ValueResult> DealReplyPostAsync(ReplyViewModel data)
         {
-            _replySet = new SugarDataBaseStorage<Reply, int>();
+            SugarDataBaseStorage<Reply, int> replySet = new SugarDataBaseStorage<Reply, int>(_baseSugar._dbHandler);
 
             ValueResult result = new()
             {
@@ -162,15 +172,15 @@ namespace CoolNetBlog.Bll
                 // 要回复的评论的文章若是设置需要审核(CommentType为2) IsPassed就是false，否则公开评论直接true
                 insertReply.IsPassed = commentAte?.CommentType == 2 ? false : true;
             }
-            _replySet.TransBegin();
+            replySet.TransBegin();
             try
             {
-                var e = await _replySet.InsertAsync(insertReply);
-                _replySet.TransCommit();
+                var e = await replySet.InsertAsync(insertReply);
+                replySet.TransCommit();
             }
             catch (Exception e)
             {
-                _replySet.TransRoll();
+                replySet.TransRoll();
                 result.Code = ValueCodes.Error;
                 result.HideMessage = "插入回复数据时引发异常:" + e.Message + " " + e.StackTrace;
                 result.TipMessage = "回复失败了，可以再试一下?!";
@@ -182,8 +192,8 @@ namespace CoolNetBlog.Bll
 
         public async Task<ValueResult> GetArticleCommentsAsync(int sourceId, int index)
         {
-            _replySet = new SugarDataBaseStorage<Reply, int>();
-            _commentVmReader = new SugarDataBaseStorage<CommentViewModel, int>();
+            SugarDataBaseStorage<CommentViewModel, int> commentVmReader= new SugarDataBaseStorage<CommentViewModel, int>(_baseSugar._dbHandler);
+            SugarDataBaseStorage<Reply, int> replySet = new SugarDataBaseStorage<Reply, int>(_baseSugar._dbHandler);
 
             ValueResult result = new()
             {
@@ -200,14 +210,14 @@ namespace CoolNetBlog.Bll
             try
             {
                 // 最新评论在前 一次取10个
-                var commentsVm = await _commentVmReader.GetListBuilder().Where(c=>c.SourceType==1&&c.SourceId==sourceId&&c.IsPassed==true)
+                var commentsVm = await commentVmReader.GetListBuilder().Where(c=>c.SourceType==1&&c.SourceId==sourceId&&c.IsPassed==true)
                     .OrderBy(c=>c.CommentTime, SqlSugar.OrderByType.Desc)
                     .Skip((index - 1)*10).Take(10).ToListAsync();
                 // 获取每个评论的回复
                 foreach (var c in commentsVm)
                 {
                     // 按回复时间从早到新排序
-                    c.RelatedReplies = await _replySet.GetListBuilder().Where(r => r.CommentId == c.Id && r.IsPassed == true)
+                    c.RelatedReplies = await replySet.GetListBuilder().Where(r => r.CommentId == c.Id && r.IsPassed == true)
                     .OrderBy(c => c.ReplyTime, SqlSugar.OrderByType.Asc).ToListAsync();
                 }
                 result.Data = commentsVm;
