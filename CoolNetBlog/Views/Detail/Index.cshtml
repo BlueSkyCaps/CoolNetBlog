@@ -135,6 +135,14 @@
                 </div>
                 <br/>
             </div>
+        }else{
+            <div class="row">
+                <span style="width:10%"></span>
+                <p id="commentFormTip" style="width:80%" class="text text-secondary">
+                此内容暂不允许评论
+                </p>
+                <span style="width:10%"></span>
+            </div>
         }
         <div>
         <input hidden type="text" id="urlHidInput">
@@ -303,9 +311,10 @@ $("#moreCommentBtn").click(
                             // 没有更多评论数据 禁用按钮
                             if(commentShowIndex <= 0){
                                 $('#commentShowDiv').hide();//收起评论区域
-                                PopoverShow("commentShowBtn", "暂无更多评论啦",true);
+                                $('#commentShowBtn').text("此内容暂无评论~");//收起评论区域
+                                PopoverShow("commentShowBtn", "暂无评论",true);
                             }else{
-                                PopoverShow("moreCommentBtn", "暂无更多评论啦",true);
+                                PopoverShow("moreCommentBtn", "暂无更多评论啦~",true);
                             }
                             return;
                         }
@@ -483,6 +492,8 @@ function toReply(){
                         $('#ReplyModalOk').attr("disabled","disabled");
                         setTimeout(function(){
                             $('#ReplyModal').modal('hide');
+                            $('#ReplyModalOk').removeAttr("disabled");
+                            $('#ReplyModalOk').text("回复");
                         }, 2000);
 
                     }else{
@@ -520,5 +531,10 @@ function CloseReplyModal(){
     $('#ReplyModal textarea').val("");
     $('#ReplyModal').modal('hide');
 }
+
+// 当页面加载完毕时，自动触发"显示网友评论"按钮
+window.onload = function(){
+    commentToggleBtnClick(1);
+};
 </script>
 

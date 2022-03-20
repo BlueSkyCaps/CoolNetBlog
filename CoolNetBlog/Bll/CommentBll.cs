@@ -76,7 +76,7 @@ namespace CoolNetBlog.Bll
                 SourceType = data.SourceType,
             };
 
-            if (await _baseSugar._dbHandler.Queryable<AdminUser>().AnyAsync(a => a.AccountName.ToLower() == data.Name.ToLower()))
+            if (await _baseSugar._dbHandler.Queryable<AdminUser>().AnyAsync(a => a.AccountName.ToLower() == insertComment.Name.ToLower()))
             {
                 result.Code = ValueCodes.UnKnow;
                 result.HideMessage = "昵称是管理员使用昵称";
@@ -167,6 +167,14 @@ namespace CoolNetBlog.Bll
                 CommentId = data.CommentId,
                 
             };
+            if (await _baseSugar._dbHandler.Queryable<AdminUser>().AnyAsync(a => a.AccountName.ToLower() == insertReply.Name.ToLower()))
+            {
+                result.Code = ValueCodes.UnKnow;
+                result.HideMessage = "昵称是管理员使用昵称";
+                result.TipMessage = "哈,该昵称被创造者'霸占'了哦~";
+                return result;
+            }
+
             if (cmt.SourceType == 1)
             {
                 // 要回复的评论的文章若是设置需要审核(CommentType为2) IsPassed就是false，否则公开评论直接true
