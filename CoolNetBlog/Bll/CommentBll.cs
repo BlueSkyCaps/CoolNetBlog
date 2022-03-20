@@ -227,9 +227,9 @@ namespace CoolNetBlog.Bll
                     // 按回复时间从早到新排序 只取当前评论最前的5个回复 因为评论默认都显示第一页的回复
                     var queryable = replyVmReader.GetListBuilder().Where(r => r.CommentId == c.Id && r.IsPassed == true)
                     .OrderBy(c => c.ReplyTime, SqlSugar.OrderByType.Asc);
-                    c.RelatedReplies = await queryable.Take(2).ToListAsync();
+                    c.RelatedReplies = await queryable.Take(5).ToListAsync();
                     // 计算是否不止5个
-                    c.HasReplyInNext = (await queryable.CountAsync())>2;
+                    c.HasReplyInNext = (await queryable.CountAsync())>5;
                 }
                 result.Data = commentsVm;
                 result.Code = ValueCodes.Success;
@@ -264,9 +264,9 @@ namespace CoolNetBlog.Bll
                 // 最早回复在前 每次取5个
                 var queryable = replyVmReader.GetListBuilder().Where(c => c.CommentId == commentId && c.IsPassed == true)
                     .OrderBy(c => c.ReplyTime, SqlSugar.OrderByType.Asc);
-                var replies = await queryable.Skip((index - 1) * 2).Take(2).ToListAsync();
+                var replies = await queryable.Skip((index - 1) * 5).Take(5).ToListAsync();
                 // 计算是否总数大于当前页*条数
-                var HasReplyInNext = (await queryable.CountAsync()) > index * 2;
+                var HasReplyInNext = (await queryable.CountAsync()) > index * 5;
                 result.Data = new { Replies = replies, HasReplyInNext };
                 result.Code = ValueCodes.Success;
             }
