@@ -7,5 +7,6 @@ namespace CoolNetBlog.ViewModels
     /// </summary>
     public class ReplyViewModel:Reply
     {
+ 
     }
 }

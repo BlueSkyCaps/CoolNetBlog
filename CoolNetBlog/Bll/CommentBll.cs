@@ -194,14 +194,14 @@ namespace CoolNetBlog.Bll
                 result.TipMessage = "回复失败了，可以再试一下?!";
             }
             result.Code = ValueCodes.Success;
-            result.TipMessage = commentAte?.CommentType == 2 ? "审核后将会显示回复,感谢畅所欲言~" : "感谢您的畅所欲言~";
+            result.TipMessage = commentAte?.CommentType == 2 ? "审核后将显示,感谢发言~" : "感谢畅所欲言~";
             return result;
         }
 
         public async Task<ValueResult> GetArticleCommentsAsync(int sourceId, int index)
         {
             SugarDataBaseStorage<CommentViewModel, int> commentVmReader= new SugarDataBaseStorage<CommentViewModel, int>(_baseSugar._dbHandler);
-            SugarDataBaseStorage<Reply, int> replySet = new SugarDataBaseStorage<Reply, int>(_baseSugar._dbHandler);
+            SugarDataBaseStorage<ReplyViewModel, int> replyVmReader = new SugarDataBaseStorage<ReplyViewModel, int>(_baseSugar._dbHandler);
 
             ValueResult result = new()
             {
@@ -217,16 +217,19 @@ namespace CoolNetBlog.Bll
             }
             try
             {
-                // 最新评论在前 一次取10个
+                // 最新评论在前 当前页取10个
                 var commentsVm = await commentVmReader.GetListBuilder().Where(c=>c.SourceType==1&&c.SourceId==sourceId&&c.IsPassed==true)
                     .OrderBy(c=>c.CommentTime, SqlSugar.OrderByType.Desc)
                     .Skip((index - 1)*10).Take(10).ToListAsync();
-                // 获取每个评论的回复
+                // 获取当前页每个评论的回复
                 foreach (var c in commentsVm)
                 {
-                    // 按回复时间从早到新排序
-                    c.RelatedReplies = await replySet.GetListBuilder().Where(r => r.CommentId == c.Id && r.IsPassed == true)
-                    .OrderBy(c => c.ReplyTime, SqlSugar.OrderByType.Asc).ToListAsync();
+                    // 按回复时间从早到新排序 只取当前评论最前的5个回复 因为评论默认都显示第一页的回复
+                    var queryable = replyVmReader.GetListBuilder().Where(r => r.CommentId == c.Id && r.IsPassed == true)
+                    .OrderBy(c => c.ReplyTime, SqlSugar.OrderByType.Asc);
+                    c.RelatedReplies = await queryable.Take(2).ToListAsync();
+                    // 计算是否不止5个
+                    c.HasReplyInNext = (await queryable.CountAsync())>2;
                 }
                 result.Data = commentsVm;
                 result.Code = ValueCodes.Success;
@@ -236,6 +239,42 @@ namespace CoolNetBlog.Bll
                 result.Code = ValueCodes.Error;
                 result.HideMessage = $"获取文章id为{sourceId}的评论时失败，引发异常:{e.Message} {e.StackTrace}";
                 result.TipMessage = "加载评论失败了，刷新在试试吧?!";
+            }
+            return result;
+        }
+
+        public async Task<ValueResult> GetCommentReplysAsync(int commentId, int index)
+        {
+            SugarDataBaseStorage<ReplyViewModel, int> replyVmReader = new SugarDataBaseStorage<ReplyViewModel, int>(_baseSugar._dbHandler);
+
+            ValueResult result = new()
+            {
+                Code = ValueCodes.UnKnow
+            };
+            Comment? comment = null;
+            comment = await _commentSet.FindOneByIdAsync(commentId);
+            if (comment is null)
+            {
+                result.HideMessage = $"获取评论id为{commentId}的评论失败，不存在此评论Id";
+                result.TipMessage = "评论已经消失了，可以刷新看看哦..";
+                return result;
+            }
+            try
+            {
+                // 最早回复在前 每次取5个
+                var queryable = replyVmReader.GetListBuilder().Where(c => c.CommentId == commentId && c.IsPassed == true)
+                    .OrderBy(c => c.ReplyTime, SqlSugar.OrderByType.Asc);
+                var replies = await queryable.Skip((index - 1) * 2).Take(2).ToListAsync();
+                // 计算是否总数大于当前页*条数
+                var HasReplyInNext = (await queryable.CountAsync()) > index * 2;
+                result.Data = new { Replies = replies, HasReplyInNext };
+                result.Code = ValueCodes.Success;
+            }
+            catch (Exception e)
+            {
+                result.Code = ValueCodes.Error;
+                result.HideMessage = $"获取评论id为{commentId}的评论时失败，引发异常:{e.Message} {e.StackTrace}";
+                result.TipMessage = "获取回复失败了，刷新在试试吧?!";
             }
             return result;
         }

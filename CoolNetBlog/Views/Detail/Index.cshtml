@@ -128,10 +128,10 @@
                 <br/>
             </div>
             <div class="collapse" id="commentShowDiv">
-                <div class="text-end" id="moreCommentBtnDiv">
+                <div class="text-end" id="loadCommentBtnDiv">
                     <button onclick="commentToggleBtnClick(0)" id="commentShowBtn" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#commentShowDiv" role="button" aria-expanded="false" aria-controls="commentShowDiv"
                             data-bs-placement="bottom" tabindex="0" data-bs-trigger="focus" data-bs-content="">收起评论▲</button>
-                    <button id="moreCommentBtn" class="btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">加载评论..</button>
+                    <button id="loadCommentBtn" class="btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">加载评论..</button>
                 </div>
                 <br/>
             </div>
@@ -293,7 +293,7 @@ $("#toCommentBtn").click(
 );
 
 
-$("#moreCommentBtn").click(
+$("#loadCommentBtn").on("click",
     function()
     {
         commentShowIndex++;
@@ -314,7 +314,7 @@ $("#moreCommentBtn").click(
                                 $('#commentShowBtn').text("此内容暂无评论~");//收起评论区域
                                 PopoverShow("commentShowBtn", "暂无评论",true);
                             }else{
-                                PopoverShow("moreCommentBtn", "暂无更多评论啦~",true);
+                                PopoverShow("loadCommentBtn", "暂无更多评论啦~",true);
                             }
                             return;
                         }
@@ -340,6 +340,15 @@ $("#moreCommentBtn").click(
                             }
                             // 格式化评论时间
                             var commentTimeStr = Gb_GetFmtDateStr(cItem.commentTime);
+                            // 判断下一页回复按钮，当前评论有更多回复数据在下一页,HasReplyInNext会是true,显示'加载回复'按钮.
+                            // 属性theNextIndex指向此评论的下一页回复的页索引 且根据后续ajax调用动态更新它的值
+                            var rpInNextStr = cItem.hasReplyInNext ?
+                                '<div class="text-end"><button commentId="'+
+                                cItem.id+
+                                '" id="comment'+
+                                cItem.id+
+                                'replyLoadBtn" theNextIndex="2" class="loadReplyBtn btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" '+
+                                'data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">加载回复..</button></div>' : '';
                             var cmNodeStr = '<div class="card card-body commentItem"><p class="text-start card-title"><small class="text text-info">'+
                                 cItem.name+'</small> <small>'+
                                 commentTimeStr+
@@ -349,9 +358,9 @@ $("#moreCommentBtn").click(
                                 '">回复TA</a></small></p><p class="text-start card-text">'+
                                 cItem.content+
                                 '</p></div><div class="card-footer">'+
-                                rpNodeStr+
+                                rpNodeStr + rpInNextStr
                                 '</div></br>';
-                            $('#moreCommentBtnDiv').before(cmNodeStr);
+                            $('#loadCommentBtnDiv').before(cmNodeStr);
                         });  
                     }else{
                         commentShowIndex--;
@@ -361,7 +370,7 @@ $("#moreCommentBtn").click(
                             PopoverShow("commentShowBtn", data['tipMessage']);
                         }else{
                             // 有问题 不是第一次显示评论 而是后续点击加载评论 在"加载评论"按钮显示提示文本
-                            PopoverShow("moreCommentBtn", data['tipMessage']);
+                            PopoverShow("loadCommentBtn", data['tipMessage']);
                         }
                     }
                 },
@@ -371,8 +380,69 @@ $("#moreCommentBtn").click(
                         $('#commentShowDiv').hide();//收起评论区域
                         PopoverShow("commentShowBtn", "加载评论失败err,重试一下?!");
                     }else{
-                         PopoverShow("moreCommentBtn", "加载评论失败err,重试一下?!");
+                         PopoverShow("loadCommentBtn", "加载评论失败err,重试一下?!");
                     }
+                    console.log(err)
+                }
+            }
+        );
+    }
+);
+
+// 监听loadReplyBtn被点击 loadReplyBtn是个class属性 因为有多个评论可以点击"加载回复"
+$(document).on("click",".loadReplyBtn",
+    function()
+    {
+        var targerRpLoadBtn = $(this);
+        var cid = targerRpLoadBtn.attr("commentId");
+        var theCommentReplyIndex =targerRpLoadBtn.attr("theNextIndex");
+        var url = "/Comment/GetCommentReplys?commentId="+cid+"&index="+theCommentReplyIndex;
+        $.ajax (
+            {
+                url: url,
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                success: function(data, status){
+                    if(data['code']==1){
+                        if(data['data']['replies'].length<=0)
+                        {
+                            PopoverShow(targerRpLoadBtn.attr("id"), "暂无更多回复啦~",true);
+                            return;
+                        }
+                        // 追加当前获取的回复数据到当前聚焦的评论底部
+                        $.each(data['data']['replies'], function(i,rItem){
+                            // 迭代 拼接每个回复
+                            var rpNodeStr = "";
+                            var idStr = "comment"+cid+"reply"+rItem.id;
+                            var replyTimeStr = Gb_GetFmtDateStr(rItem.replyTime);
+                            var replyContent = rItem.content;
+                            var replyInfoStr = '<small>'+replyTimeStr+' <a href="javascript:;" onClick="toReplyDialog(this,1)" comment-id="{3}" to-name="{4}">回复TA</a></small>';
+                            var tmpRpNodeStr = '<div class="accordion" id="accordion{0}"><div class="accordion-item"><h2 class="accordion-header" id="heading{0}">'+
+                            '<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{0}" aria-expanded="false" aria-controls="collapse{0}">'+
+                            '<p><small class="text text-info">{4}</small><br/>{1}</p>'+
+                            '</button></h2><div id="collapse{0}" class="accordion-collapse collapse" aria-labelledby="heading{0}" data-bs-parent="#accordion{0}"><div class="accordion-body text-end">'+
+                            '{2}'+'</div></div></div></div>';
+                            
+                            // 格式化占位符 第0个是元素的id 第1个是回复内容 第2个是回复时间|按钮组成的元素 第3个是关联的评论id 第4个是昵称 
+                            rpNodeStr += tmpRpNodeStr.format(idStr, replyContent, replyInfoStr, cid, rItem.name);
+                            
+                            // 追加到当前"加载回复"按钮的前面，此按钮被一层div包裹
+                            targerRpLoadBtn.parent().before(rpNodeStr);
+                        });  
+                        if(data['data']['hasReplyInNext'] !== true){
+                            // 当前评论没有下一页的回复数据
+                            targerRpLoadBtn.parent().remove();
+                        }else{
+                            // 属性theNextIndex指向此评论的下一页回复的页索引 更新当前按钮属性值为下一页
+                            var theNextIndex = parseInt(targerRpLoadBtn.attr("theNextIndex"))+1;
+                            targerRpLoadBtn.attr("theNextIndex", theNextIndex)
+                        }
+                    }else{
+                        PopoverShow(targerRpLoadBtn.attr("id"), data['tipMessage']);
+                    }
+                },
+                error: function(err){
+                    PopoverShow(targerRpLoadBtn.attr("id"), "加载评论失败err,重试一下?!");
                     console.log(err)
                 }
             }
@@ -420,8 +490,8 @@ function commentToggleBtnClick(status){
         $('#commentShowDiv').show();
         // commentShowIndex <1，说明还没有显示过评论，触发加载评论事件去加载 否则不必触发，而是开关显示评论区域
         if(commentShowIndex < 1){
-            // 触发moreCommentBtn的点击事件
-            $("#moreCommentBtn").click();
+            // 触发loadCommentBtn的点击事件
+            $("#loadCommentBtn").click();
         }
     }else{
         $('#commentShowDiv').hide();

@@ -12,6 +12,12 @@ namespace CoolNetBlog.ViewModels
         /// 当前评论关联的回复
         /// </summary>
         [SugarColumn(IsIgnore =true)]
-        public IList<Reply> RelatedReplies { get; set; } = new List<Reply>();
+        public IList<ReplyViewModel> RelatedReplies { get; set; } = new List<ReplyViewModel>();
+
+        /// <summary>
+        /// 当前评论关联的回复是否还有回复数据在下一页
+        /// </summary>
+        [SugarColumn(IsIgnore = true)]
+        public bool HasReplyInNext { get; set; } = false;
     }
 }

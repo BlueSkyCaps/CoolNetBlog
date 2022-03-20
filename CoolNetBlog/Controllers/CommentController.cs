@@ -9,11 +9,11 @@ namespace CoolNetBlog.Controllers
     /// </summary>
     public class CommentController : Controller
     {
-        private readonly CommentBll _commentBllBll;
+        private readonly CommentBll _commentBll;
 
         public CommentController()
         {
-            _commentBllBll = new CommentBll();
+            _commentBll = new CommentBll();
         }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace CoolNetBlog.Controllers
         [HttpPost]
         public async Task<IActionResult> Comment([FromBody] CommentViewModel data)
         {
-            var res =await _commentBllBll.DealCommentPostAsync(data);
+            var res =await _commentBll.DealCommentPostAsync(data);
             return new JsonResult(res);
         }
 
@@ -36,7 +36,7 @@ namespace CoolNetBlog.Controllers
         [HttpPost]
         public async Task<IActionResult> Reply([FromBody] ReplyViewModel data)
         {
-            var res = await _commentBllBll.DealReplyPostAsync(data);
+            var res = await _commentBll.DealReplyPostAsync(data);
             return new JsonResult(res);
         }
 
@@ -49,7 +49,20 @@ namespace CoolNetBlog.Controllers
         [HttpGet]
         public async Task<IActionResult> GetArticleComments(int sourceId, int index=1)
         {
-            var res = await _commentBllBll.GetArticleCommentsAsync(sourceId, index);
+            var res = await _commentBll.GetArticleCommentsAsync(sourceId, index);
+            return new JsonResult(res);
+        }
+
+        /// <summary>
+        /// 获取评论的回复数据
+        /// </summary>
+        /// <param name="commentId">评论id</param>
+        /// <param name="index">当前加载回复的索引(次数)，默认为1，开头，每点击一次“加载回复”按钮，前端传递数据+1</param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetCommentReplys(int commentId, int index = 1)
+        {
+            var res = await _commentBll.GetCommentReplysAsync(commentId, index);
             return new JsonResult(res);
         }
     }
