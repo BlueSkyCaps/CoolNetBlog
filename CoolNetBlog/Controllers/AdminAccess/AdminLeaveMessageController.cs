@@ -117,7 +117,7 @@ namespace CoolNetBlog.Controllers.Admin
         }
 
         /// <summary>
-        /// 获取未审核的某页评论列表
+        /// 获取未审核的某页回复列表
         /// </summary>
         /// <returns></returns>
         public async Task<JsonResult> GetNotPassReplies(string? pt, int index)
