@@ -108,8 +108,13 @@
                 </div>
                 <div class="row">
                     <span style="width:10%"></span>
-                    <input style="width:60%" id="cEmailInput" maxlength="25" type="email" class="form-control" placeholder="邮箱(我的回复会有邮件通知)">
                     <input style="width:20%" id="cNameInput" maxlength="12" type="text" class="form-control" placeholder="昵称">
+                    <input style="width:60%" id="cSiteInput" maxlength="63" type="text" class="form-control" placeholder="网址http|https(选填)">
+                    <span style="width:10%"></span>
+                </div>
+                <div class="row">
+                    <span style="width:10%"></span>
+                    <input style="width:80%" id="cEmailInput" maxlength="25" type="email" class="form-control" placeholder="邮箱(我回复你会有邮件通知,它不会被显示)">
                     <span style="width:10%"></span>
                 </div>
                 <div class="row">
@@ -165,8 +170,13 @@
             <input hidden id="rLayerInput">
             <div class="row">
                 <span style="width:10%"></span>
-                <input style="width:60%" id="rEmailInput" maxlength="25" type="email" class="form-control" placeholder="邮箱(能与您联系,它不会被显示)">
                 <input style="width:20%" id="rNameInput" maxlength="12" type="text" class="form-control" placeholder="昵称">
+                <input style="width:60%" id="rSiteInput" maxlength="63" type="text" class="form-control" placeholder="网址http|https(选填)">
+                <span style="width:10%"></span>
+            </div>
+            <div class="row">
+                <span style="width:10%"></span>
+                <input style="width:80%" id="rEmailInput" maxlength="25" type="email" class="form-control" placeholder="邮箱(我回复你会有邮件通知,它不会被显示)">
                 <span style="width:10%"></span>
             </div>
             <div class="row">
@@ -244,6 +254,7 @@ $("#toCommentBtn").click(
     {
         var email = $('#cEmailInput').val().trim();
         var name =$('#cNameInput').val().trim();
+        var siteUrl =$('#cSiteInput').val().trim();
         var content = $('#cContentInput').val().trim();
 
         if(email==null||email==""||name==null||name==""||content==null||content==""){
@@ -269,6 +280,7 @@ $("#toCommentBtn").click(
                 data: JSON.stringify({
                     "Email":email,
                     "Name":name,
+                    "SiteUrl":siteUrl,
                     "Content":content,
                     "SourceId":@Model?.DetailArticleData?.Id??0,
                     "SourceType":1
@@ -327,15 +339,18 @@ $("#loadCommentBtn").on("click",
                                 $.each(cItem['relatedReplies'], function(i,rItem){
                                     var idStr = "comment"+cItem.id+"reply"+rItem.id;
                                     var replyTimeStr = Gb_GetFmtDateStr(rItem.replyTime);
+                                    var adminBadgeStr = rItem.isAdmin?'<small><span class="badge bg-danger">站主</span></small>':'';
+                                    var siteUrlStr = !(rItem.siteUrl.isWhiteSpaceOrNull())?'<small><a target="_blank" href="'+rItem.siteUrl+'" class="text-dark">GO</a></small>':'';
                                     var replyContent = rItem.content;
                                     var replyInfoStr = '<small>'+replyTimeStr+' <a href="javascript:;" onClick="toReplyDialog(this,1)" comment-id="{3}" to-name="{4}">回复TA</a></small>';
                                     var tmpRpNodeStr = '<div class="accordion" id="accordion{0}"><div class="accordion-item"><h2 class="accordion-header" id="heading{0}">'+
                                     '<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{0}" aria-expanded="false" aria-controls="collapse{0}">'+
-                                    '<p><small class="text text-info">{4}</small><br/>{1}</p>'+
+                                    '<p>{5}{6}<small class="text text-info">{4}</small><br/>{1}</p>'+
                                     '</button></h2><div id="collapse{0}" class="accordion-collapse collapse" aria-labelledby="heading{0}" data-bs-parent="#accordion{0}"><div class="accordion-body text-end">'+
                                     '{2}'+'</div></div></div></div>';
-                                    // 格式化占位符 第0个是元素的id 第1个是回复内容 第2个是回复时间|按钮组成的元素 第3个是关联的评论id 第4个是昵称 
-                                    rpNodeStr += tmpRpNodeStr.format(idStr, replyContent, replyInfoStr, cItem.id, rItem.name);
+                                    // 格式化占位符 第0个是元素的id 第1个是回复内容 第2个是回复时间|按钮组成的元素 
+                                    // 第3个是关联的评论id 第4个是昵称 第5个是站主徽标元素 第6个是网址链接元素
+                                    rpNodeStr += tmpRpNodeStr.format(idStr, replyContent, replyInfoStr, cItem.id, rItem.name, adminBadgeStr, siteUrlStr);
                                 });
                             }
                             // 格式化评论时间
@@ -349,7 +364,13 @@ $("#loadCommentBtn").on("click",
                                 cItem.id+
                                 'replyLoadBtn" theNextIndex="2" class="loadReplyBtn btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" '+
                                 'data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">加载回复..</button></div>' : '';
-                            var cmNodeStr = '<div class="card card-body commentItem"><p class="text-start card-title"><small class="text text-info">'+
+
+                            var adminBadgeStr = cItem.isAdmin?'<small><span class="badge bg-danger">站主</span></small>':'';
+                            var siteUrlStr = !(cItem.siteUrl.isWhiteSpaceOrNull())?'<small><a target="_blank" href="'+cItem.siteUrl+'" class="text-dark">GO</a></small>':'';
+                            var cmNodeStr = '<div class="card card-body commentItem"><p class="text-start card-title">'+
+                                adminBadgeStr+
+                                siteUrlStr+
+                                '<small class="text text-info">'+
                                 cItem.name+'</small> <small>'+
                                 commentTimeStr+
                                 ' <a href="javascript:;" onClick="toReplyDialog(this,0)" comment-id="' +
@@ -529,6 +550,7 @@ function copyCommand(){
 function toReply(){
     var email = $('#rEmailInput').val().trim();
     var name =$('#rNameInput').val().trim();
+    var siteUrl =$('#rSiteInput').val().trim();
     var content = $('#rContentInput').val().trim();
 
     if(email==null||email==""||name==null||name==""||content==null||content==""){
@@ -566,6 +588,7 @@ function toReply(){
                 data: JSON.stringify({
                     "Email":email,
                     "Name":name,
+                    "SiteUrl":siteUrl,
                     "Content":content,
                     "CommentId":cid,
                 }),

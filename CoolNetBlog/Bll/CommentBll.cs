@@ -1,5 +1,6 @@
 ﻿using CommonObject.Classes;
 using CommonObject.Enums;
+using CommonObject.Methods;
 using ComponentsServices.Base;
 using CoolNetBlog.Models;
 using CoolNetBlog.ViewModels;
@@ -49,6 +50,16 @@ namespace CoolNetBlog.Bll
                     result.TipMessage = "字数超出了规定长度..";
                     return result;
                 }
+                if (!string.IsNullOrWhiteSpace(data.SiteUrl))
+                {
+                    bool passUri = PathProvider.TryCreateUrl(data.SiteUrl);
+                    if (!passUri)
+                    {
+                        result.HideMessage = "输入了网址uri但无效";
+                        result.TipMessage = "不是合格的网址哦..";
+                        return result;
+                    }
+                }
 
                 commentAte = await _articleSet.FindOneByIdAsync(data.SourceId);
                 if (commentAte is null)
@@ -71,6 +82,7 @@ namespace CoolNetBlog.Bll
                 CommentTime = DateTime.Now,
                 Email = data.Email.Trim(),
                 Name = data.Name.Trim(),
+                SiteUrl = data.SiteUrl?.Trim(),
                 Content = data.Content.Trim(),
                 SourceId = data.SourceId,
                 SourceType = data.SourceType,
@@ -140,7 +152,16 @@ namespace CoolNetBlog.Bll
                 result.TipMessage = "字数超出了规定长度..";
                 return result;
             }
-
+            if (!string.IsNullOrWhiteSpace(data.SiteUrl))
+            {
+                bool passUri = PathProvider.TryCreateUrl(data.SiteUrl);
+                if (!passUri)
+                {
+                    result.HideMessage = "输入了网址uri但无效";
+                    result.TipMessage = "不是合格的网址哦..";
+                    return result;
+                }
+            }
             // 获取此回复对应评论实体
             cmt = await _commentSet.FindOneByIdAsync(data.CommentId);
             if (cmt is null)
@@ -163,6 +184,7 @@ namespace CoolNetBlog.Bll
                 ReplyTime = DateTime.Now,
                 Email = data.Email,
                 Name = data.Name,
+                SiteUrl = data.SiteUrl?.Trim(),
                 Content = data.Content,
                 CommentId = data.CommentId,
                 

@@ -29,6 +29,10 @@ namespace CoolNetBlog.Models
         /// </summary>
         public string Email { get; set; }
         /// <summary>
+        /// Nullable:true
+        /// </summary>
+        public string? SiteUrl { get; set; }
+        /// <summary>
         /// Nullable:False
         /// </summary>
         public string Content { get; set; }
@@ -40,5 +44,9 @@ namespace CoolNetBlog.Models
         /// Nullable:False
         /// </summary>
         public DateTime ReplyTime { get; set; }
+        /// <summary>
+        /// 是管理员的
+        /// </summary>
+        public bool IsAdmin { get; set; } = false;
     }
 }
