@@ -52,5 +52,15 @@ namespace CoolNetBlog.Models
         /// 是管理员的
         /// </summary>
         public bool IsAdmin { get; set; } = false;
+
+
+        /// <summary>
+        /// Desc:评论者的Ip
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public string ClientIp { get; set; }
+        public string? ClientDevice { get; set; }
+        public string? ClientBrowser { get; set; }
     }
 }

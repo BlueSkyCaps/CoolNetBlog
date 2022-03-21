@@ -24,7 +24,7 @@ namespace CoolNetBlog.Controllers
         [HttpPost]
         public async Task<IActionResult> Comment([FromBody] CommentViewModel data)
         {
-            var res =await _commentBll.DealCommentPostAsync(data);
+            var res =await _commentBll.DealCommentPostAsync(data, HttpContext);
             return new JsonResult(res);
         }
 
@@ -36,7 +36,7 @@ namespace CoolNetBlog.Controllers
         [HttpPost]
         public async Task<IActionResult> Reply([FromBody] ReplyViewModel data)
         {
-            var res = await _commentBll.DealReplyPostAsync(data);
+            var res = await _commentBll.DealReplyPostAsync(data, HttpContext);
             return new JsonResult(res);
         }
 

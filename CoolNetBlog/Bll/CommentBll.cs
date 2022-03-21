@@ -19,7 +19,7 @@ namespace CoolNetBlog.Bll
             _commentSet = new SugarDataBaseStorage<Comment, int>(_baseSugar._dbHandler);
         }
 
-        public async Task<ValueResult> DealCommentPostAsync(CommentViewModel data) { 
+        public async Task<ValueResult> DealCommentPostAsync(CommentViewModel data, HttpContext httpContext) { 
             ValueResult result = new()
             { 
                  Code = ValueCodes.UnKnow
@@ -75,7 +75,13 @@ namespace CoolNetBlog.Bll
                     result.TipMessage = "内容已被设置为不允许评论~";
                     return result;
                 }
-               
+            }
+            var cip = httpContext.Connection.RemoteIpAddress?.ToString()??"";
+            if (string.IsNullOrWhiteSpace(cip))
+            {
+                result.HideMessage = "新增评论,获取不到客户端ip";
+                result.TipMessage = "评论失败了呢，可以重新试试。";
+                return result;
             }
             Comment insertComment = new Comment
             {
@@ -86,6 +92,7 @@ namespace CoolNetBlog.Bll
                 Content = data.Content.Trim(),
                 SourceId = data.SourceId,
                 SourceType = data.SourceType,
+                ClientIp = cip,
             };
 
             if (await _baseSugar._dbHandler.Queryable<AdminUser>().AnyAsync(a => a.AccountName.ToLower() == insertComment.Name.ToLower()))
@@ -120,7 +127,7 @@ namespace CoolNetBlog.Bll
             return result;
         }
 
-        public async Task<ValueResult> DealReplyPostAsync(ReplyViewModel data)
+        public async Task<ValueResult> DealReplyPostAsync(ReplyViewModel data, HttpContext httpContext)
         {
             SugarDataBaseStorage<Reply, int> replySet = new SugarDataBaseStorage<Reply, int>(_baseSugar._dbHandler);
 
@@ -179,6 +186,13 @@ namespace CoolNetBlog.Bll
                 result.TipMessage = "内容已被设置为不允许评论~";
                 return result;
             }
+            var cip = httpContext.Connection.RemoteIpAddress?.ToString() ?? "";
+            if (string.IsNullOrWhiteSpace(cip))
+            {
+                result.HideMessage = "新增回复,获取不到客户端ip";
+                result.TipMessage = "回复失败了呢，可以重新试试。";
+                return result;
+            }
             Reply insertReply = new Reply
             {
                 ReplyTime = DateTime.Now,
@@ -187,6 +201,7 @@ namespace CoolNetBlog.Bll
                 SiteUrl = data.SiteUrl?.Trim(),
                 Content = data.Content,
                 CommentId = data.CommentId,
+                ClientIp = cip,
                 
             };
             if (await _baseSugar._dbHandler.Queryable<AdminUser>().AnyAsync(a => a.AccountName.ToLower() == insertReply.Name.ToLower()))

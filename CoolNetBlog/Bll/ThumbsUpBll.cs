@@ -35,7 +35,7 @@ namespace CoolNetBlog.Bll
             var cip = httpContext.Connection.RemoteIpAddress?.ToString();
             if (string.IsNullOrWhiteSpace(cip))
             {
-                result.HideMessage = "获取不到客户端ip";
+                result.HideMessage = "文章点赞，获取不到客户端ip";
                 result.TipMessage = "表态失败了呢，你的好意我心领啦。";
                 return result;
             }
