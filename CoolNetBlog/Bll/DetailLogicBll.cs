@@ -87,7 +87,7 @@ namespace CoolNetBlog.Bll
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public ArticleUnLockViewModel DealArticleUnLock(ArticleUnLockViewModel data)
+        public DetailArticleUnLockViewModel DealArticleUnLock(DetailArticleUnLockViewModel data)
         {
             try
             {

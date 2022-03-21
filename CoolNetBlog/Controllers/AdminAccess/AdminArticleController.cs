@@ -260,6 +260,7 @@ namespace CoolNetBlog.Controllers.Admin
             if (!string.IsNullOrWhiteSpace(kw))
             {
                 articles = await _articleSet.GetListBuilder().Where(a => 
+                    (a.Id.ToString()==kw) ||
                     (a.Title != null && a.Title.Contains(kw)) ||
                     (a.Labels != null && a.Labels.Contains(kw)) ||
                     (a.Abstract != null && a.Abstract.Contains(kw)))

@@ -35,7 +35,7 @@ namespace CoolNetBlog.Controllers.Home
         /// 指定路由为{Controller}/UnLock/ArticleUnLock，否则{Controller}/ArticleUnLock直接走Index方法自定义文章uri了
         [HttpPost]
         [Route("{Controller}/UnLock/ArticleUnLock")]
-        public JsonResult ArticleUnLock([FromBody]ArticleUnLockViewModel data)
+        public JsonResult ArticleUnLock([FromBody]DetailArticleUnLockViewModel data)
         {
             var res = _detailBll.DealArticleUnLock(data);
             return new JsonResult(res);
