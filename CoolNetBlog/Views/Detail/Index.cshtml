@@ -233,13 +233,17 @@ $("#toUnlockBtn").click(
     }
 );
 
-// 统一按钮弹出提示文本
-function PopoverShow(idStr, tipMsg, dis=false){
+// 统一按钮定时弹出提示文本 
+// idStr:对应按钮元素id；tipMsg:要弹出显示的提示文本；dis:是否时间到禁用指定按钮；lazyText:定时到时是否改变按钮的文本
+function PopoverShow(idStr, tipMsg, dis=false, lazyText=""){
     $('#'+idStr).attr('data-bs-content', tipMsg);
     var popover = new bootstrap.Popover($('#'+idStr));
     popover.show();
     setTimeout(function(){
         popover.dispose();
+        if(lazyText!==""){
+            $('#'+idStr).text(lazyText);
+        }
         if(dis){
             $('#'+idStr).attr("disabled","disabled");
         }
@@ -323,8 +327,7 @@ $("#loadCommentBtn").on("click",
                             // 没有更多评论数据 禁用按钮
                             if(commentShowIndex <= 0){
                                 $('#commentShowDiv').hide();//收起评论区域
-                                $('#commentShowBtn').text("此内容暂无评论~");
-                                PopoverShow("commentShowBtn", "暂无评论",true);
+                                PopoverShow("commentShowBtn", "暂无评论",true,"此内容暂无评论~");
                             }else{
                                 PopoverShow("loadCommentBtn", "暂无更多评论啦~",true);
                             }
@@ -413,6 +416,7 @@ $("#loadCommentBtn").on("click",
                     // 无论如何 还原"网友的评论"按钮最初的文本
                     $("#commentShowBtn").removeAttr("disabled");
                     $("#commentShowBtn").text("网友的评论▼");
+                    //↑↑↑若是第一次加载评论且没有任何评论 PopoverShow()会在之后定时执行：改变按钮的文本为"此内容暂无评论"
                 }
             }
         );

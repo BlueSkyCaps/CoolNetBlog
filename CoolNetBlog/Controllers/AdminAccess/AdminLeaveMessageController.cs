@@ -79,7 +79,7 @@ namespace CoolNetBlog.Controllers.Admin
         }
 
         /// <summary>
-        /// 留言管理页面入口 索引第一页
+        /// 留言管理页面入口 索引第一页 默认返回未审核的评论和回复列表
         /// </summary>
         /// <returns></returns>
         public async Task<IActionResult> LeaveMessageAmManagement(string? pt)
@@ -87,12 +87,12 @@ namespace CoolNetBlog.Controllers.Admin
             // 默认返回未审核的评论和回复列表 30条
             slvm.NotPassComments = await _commentReader.GetListBuilder().Where(c=>c.IsPassed==false||c.IsPassed==null)
                 .OrderBy(c=>c.CommentTime, SqlSugar.OrderByType.Desc).Take(30).ToListAsync();
-            var notPassrepliesTmp = await _replyVmReader.GetListBuilder().Where(c => c.IsPassed == false || c.IsPassed == null)
+            var notPassRepliesTmp = await _replyVmReader.GetListBuilder().Where(c => c.IsPassed == false || c.IsPassed == null)
                 .OrderBy(c => c.ReplyTime, SqlSugar.OrderByType.Desc).Take(30).ToListAsync();
             
-            foreach (var reply in notPassrepliesTmp)
+            foreach (var reply in notPassRepliesTmp)
             {
-                // 获取当前此条回复所属的评论
+                // 获取当前此条回复对应的评论
                 reply.RelatedComment = await _commentReader.FindOneByIdAsync(reply.CommentId);
                 slvm.NotPassReplies?.Add(reply);
             }
