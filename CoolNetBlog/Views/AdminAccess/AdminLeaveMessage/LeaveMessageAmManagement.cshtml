@@ -1,0 +1,220 @@
+﻿@model MenuViewModel
+
+<div class="row">
+    <div class="col-4">
+        <div class="list-group" id="list-tab" role="tablist">
+            @foreach (var item in @Model.MenusOrg)
+            {
+                <a onclick="MenuOpExpDivShow(@item.Id)" class="list-group-item list-group-item-action" id="@item.Id" data-bs-toggle="list" role="tab" aria-controls="list-@(item.Id)">@item.Name</a>
+            }
+        </div>
+    </div>
+    <div class="col-8">
+        <div class="tab-content" id="nav-tabContent">
+            @foreach (var item in @Model.MenusOrg)
+            {
+                <div class="tab-pane fade" id="@(item.Id)-exp" role="tabpanel" aria-labelledby="list-@(item.Id)">
+                    <button onclick="WantDelMenuShow(@item.Id)" id="@(item.Id)-del-btn" type="button" class="btn btn-danger">删除</button>
+                    <form method="post" id="@(item.Id)-del-form" hidden="hidden">
+                        <div class="form-group">
+                            <input asp-for="Id" type="hidden" value="@item.Id" class="form-control">
+                            <input asp-for="PassToken" type="hidden" value="@Model.PassToken" class="form-control">
+                        </div>
+                        <div  class="btn-group" role="group" aria-label="Basic example">
+                            <button asp-action="Delete" asp-controller="AdminMenu" type="submit" class="btn btn-warning">确认删除</button>
+                        </div>
+                    </form>
+                    <form method="post">
+                        <div class="form-group">
+                            <input asp-for="Id" type="hidden" value="@item.Id" class="form-control">
+                            <input asp-for="PassToken" type="hidden" value="@Model.PassToken" class="form-control">
+                        </div>
+                        <div class="form-group row">
+                        <label asp-for="Name" class="col-sm-2 col-form-label">菜单名</label>
+                        <div class="col-sm-10">
+                            @{
+                                //指定name属性的属性名,否则迭代列表asp无法获取值(asp-for其实就自动有name属性，
+                                //但列表中asp-for是item.xx，而模型没有'item.xx'，显式使用name指定模型的属性名)
+                            }
+                                
+                            <input asp-for="Name" name="Name" value="@item.Name" type="text" class="form-control">
+                        </div>
+                        </div>
+                        <div class="form-group row">
+                        <label asp-for="Tips" class="col-sm-2 col-form-label">菜单提示文本</label>
+                        <div class="col-sm-10">
+                            <input asp-for="Tips" name="Tips" value="@item.Tips" type="text" class="form-control">
+                        </div>
+                        </div>
+                        <div class="form-row align-items-center">
+                            <div class="col-auto my-1">
+                                <div class="custom-control custom-checkbox mr-sm-2">
+                                <label class="custom-control-label">父菜单</label>
+                                </div>
+                            </div>
+                            <div class="col-auto my-1">
+                                <label class="mr-sm-2 sr-only" asp-for="MenuSelectedValue">此菜单的归属菜单</label>
+                                <select class="custom-select mr-sm-2"  asp-for="MenuSelectedValue" name="MenuSelectedValue">
+                                <option asp-for="MenuSelectedValue" name="MenuSelectedValue" value="0">这是顶级菜单</option>
+                                @foreach (var menuSel in @Model.MenuSelectList)
+                                {
+                                    var arr = item.PId==menuSel.Value  ? "selected" : "";
+                                    if (item.Id==menuSel.Value)
+                                    {
+                                        continue;
+                                    }
+                                    <!option asp-for="MenuSelectedValue" name="MenuSelectedValue" value="@menuSel.Value" @arr>@menuSel.Text</!option>
+                                }
+                                </select>
+                            </div>
+                        </div>
+                        <div+ class="form-group row">
+                            <div class="col-sm-2">主页菜单</div>
+                            <div class="col-sm-10">
+                                <div class="form-check">
+                                <input asp-for="@item.IsHome" name="IsHome" class="form-check-input" type="checkbox">
+                                <label asp-for="IsHome" class="form-check-label">是否是主页菜单，主页菜单必为顶级菜单且不能有下级菜单；只能有一个菜单是主页菜单</label>
+                                </div>
+                            </div>
+                        </div+>
+ 
+                        <div class="form-group row">
+                            <div class="col-sm-2">显示与否</div>
+                            <div class="col-sm-10">
+                                <div class="form-check">
+                                <input asp-for="@item.IsShow" name="IsShow" class="form-check-input" type="checkbox">
+                                <label asp-for="IsShow" class="form-check-label" for="gridCheck1">是否显示此菜单，不勾选则会在菜单栏隐藏菜单</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                        <label asp-for="OrderNumber" class="col-sm-2 col-form-label">顺序</label>
+                        <div class="col-sm-10">
+                            <input asp-for="@item.OrderNumber" name="OrderNumber" value="@item.OrderNumber" type="number" class="form-control" placeholder="菜单排序顺序位，输入数字，越大数字的菜单将列后">
+                        </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-10">
+                                <button asp-action="Update" asp-controller="AdminMenu" type="submit" class="btn btn-primary">更新</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="addMenuModalCenter" tabindex="-1" role="dialog" aria-labelledby="addMenuModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addMenuModalCenterTitle">添加菜单</h5>
+      </div>
+      <div class="modal-body">
+        <form method="post">
+            <div class="form-group">
+                <input asp-for="PassToken" type="hidden" value="@Model.PassToken" class="form-control">
+            </div>
+            <div class="form-group row">
+            <label asp-for="Name" class="col-sm-2 col-form-label">菜单名</label>
+            <div class="col-sm-10">
+                <input asp-for="Name"  type="text" class="form-control">
+            </div>
+            </div>
+            <div class="form-group row">
+            <label asp-for="Tips" class="col-sm-2 col-form-label">菜单提示文本</label>
+            <div class="col-sm-10">
+                <input asp-for="Tips" type="text" class="form-control">
+            </div>
+            </div>
+            <div class="form-row align-items-center">
+                <div class="col-auto my-1">
+                    <div class="custom-control custom-checkbox mr-sm-2">
+                    <label class="custom-control-label">父菜单</label>
+                    </div>
+                </div>
+                <div class="col-auto my-1">
+                    <label class="mr-sm-2 sr-only" asp-for="MenuSelectedValue">此菜单的归属菜单</label>
+                    <select class="custom-select mr-sm-2"  asp-for="MenuSelectedValue" name="MenuSelectedValue">
+                    <option asp-for="MenuSelectedValue" name="MenuSelectedValue" value="0" selected>这是顶级菜单</option>
+                    @foreach (var menuSel in @Model.MenuSelectList)
+                    {
+                        <option asp-for="MenuSelectedValue" name="MenuSelectedValue" value="@menuSel.Value">@menuSel.Text</option>
+                    }
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-2">主页菜单</div>
+                <div class="col-sm-10">
+                    <div class="form-check">
+                    <input asp-for="IsHome"  class="form-check-input" type="checkbox">
+                    <label asp-for="IsHome" class="form-check-label">是否是主页菜单，主页菜单必为顶级菜单且不能有下级菜单；只能有一个菜单是主页菜单</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-sm-2">显示与否</div>
+                <div class="col-sm-10">
+                    <div class="form-check">
+                    <input asp-for="IsShow" class="form-check-input" type="checkbox" checked>
+                    <label asp-for="IsShow" class="form-check-label" for="gridCheck1">是否显示此菜单，不勾选则会在菜单栏隐藏菜单</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+            <label asp-for="OrderNumber" class="col-sm-2 col-form-label">顺序</label>
+            <div class="col-sm-10">
+                <input asp-for="OrderNumber"  type="number" class="form-control" placeholder="菜单排序顺序位，输入数字，越大数字的菜单将列后">
+            </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-10">
+                    <button asp-action="Add" asp-controller="AdminMenu" type="submit" class="btn btn-primary">添加</button>
+                </div>
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" onclick="AddMenu()" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+
+    function AddMenu(){
+        $('#addMenuModalCenter').modal('toggle')
+    }
+
+    function WantDelMenuShow(Id){
+        var delformObj = document.getElementById(Id+"-del-form");
+        if(delformObj['hidden']){
+            document.getElementById(Id+"-del-btn").innerHTML = "不想显示删除了！";
+            delformObj.removeAttribute("hidden");
+
+        }else{
+            document.getElementById(Id+"-del-btn").innerHTML = "删除";
+            delformObj.setAttribute("hidden", "hidden");
+        }
+    }
+
+
+    // 点击某个菜单，传递菜单Id，执行此函数，显示菜单对应的面板以操作数据
+    function MenuOpExpDivShow(Id){
+        // 先移除所有隐藏的操作面板的"激活"类名
+        var expDivPanes = document.getElementsByClassName("tab-pane")
+        for(i=0; i<expDivPanes.length;i++){
+            expDivPanes[i].classList.remove("show");
+            expDivPanes[i].classList.remove("active");
+        }
+        // 对当前点击的菜单对应的操作面板添加"激活"类名，已显示此面板
+        var triggerEl = document.getElementById(Id+"-exp")
+        triggerEl.classList.add("show");
+        triggerEl.classList.add("active");
+    }
+</script>
