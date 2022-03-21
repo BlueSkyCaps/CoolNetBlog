@@ -1,4 +1,5 @@
-﻿function Gb_GetFmtDateStr(dateTime) {
+﻿// 把日期对象转为通用字符串形式
+function Gb_GetFmtDateStr(dateTime) {
     var date = new Date(dateTime);
     var year = date.getFullYear();
     var month = date.getMonth() + 1;
@@ -6,12 +7,58 @@
     var hours = date.getHours();
     var minutes = date.getMinutes();
     var seconds = date.getSeconds();
-    var commnetTimeStr = year + "-" + (month > 9 ? month : "0" + month) + "-"
+    var fmtTimeStr = year + "-" + (month > 9 ? month : "0" + month) + "-"
         + (day > 9 ? day : "0" + day) + " "
         + (hours > 9 ? hours : "0" + hours) + ":"
-        + (minutes > 9 ? minutes : "0" + minutes);
-        //+ ":"+ (seconds > 9 ? seconds : "0" + seconds);
-    return commnetTimeStr;
+        + (minutes > 9 ? minutes : "0" + minutes) + ":"
+        + (seconds > 9 ? seconds : "0" + seconds);
+    return fmtTimeStr;
+}
+
+// 把日期对象转为"xx年|月|周|天|时|分|秒前"的字符串形式
+function Gb_GetFlowTimeStr(dateTime) {
+    // 格式化时间字符串
+    var fmtTimeStr = Gb_GetFmtDateStr(dateTime);
+    var second = 1000;
+    var minute = second * 60;
+    var hour = minute * 60;
+    var day = hour * 24;
+    var week = day * 7;
+    var month = day * 30;
+    var year = month * 12;
+    // 当前时间的时间戳 精确为毫秒 因此second以1000为基数
+    var nowStamp = new Date().getTime();
+    // 指定时间的时间戳
+    var thefmtTimeStamp = Date.parse(fmtTimeStr);
+    var deStamp = nowStamp - thefmtTimeStamp;
+
+    var flowTimeStr = "";
+    if (deStamp < 0) {
+        flowTimeStr = "时间来自未来";
+    } else if (deStamp / year >= 1) {
+        flowTimeStr = parseInt(deStamp / year) + "年前";
+    } else if (deStamp / month >= 1) {
+        flowTimeStr = parseInt(deStamp / month) + "月前";
+    } else if (deStamp / week >= 1) {
+        flowTimeStr = parseInt(deStamp / week) + "周前";
+    } else if (deStamp / day >= 1) {
+        flowTimeStr = parseInt(deStamp / day) + "天前";
+    } else if (deStamp / hour >= 1) {
+        flowTimeStr = parseInt(deStamp / hour) + "小时前";
+    } else if (deStamp / minute >= 1) {
+        flowTimeStr = parseInt(deStamp / minute) + "分钟前";
+    } else if (deStamp / second >= 1) {
+        flowTimeStr = parseInt(deStamp / second) + "秒前";
+    }
+    return flowTimeStr;
+}
+
+function Gb_IsWhiteSpaceOrNull(v) {
+    if (v === null || v === undefined || v === "undefined")
+        return true;
+    if (v.replace(/(^\s*)|(\s*$)/g, "") === "")
+        return true;
+    return false;
 }
 
 String.prototype.format = function () {
@@ -21,9 +68,7 @@ String.prototype.format = function () {
     return s;
 };
 
-String.prototype.isWhiteSpaceOrNull = function () {
-    if (this === null || this === undefined || this === "undefined")
-        return true;
+String.prototype.isWhiteSpace = function () {
     if (this.replace(/(^\s*)|(\s*$)/g, "")==="")
         return true;
     return false;
