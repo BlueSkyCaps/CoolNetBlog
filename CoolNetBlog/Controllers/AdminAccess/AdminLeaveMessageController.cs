@@ -34,14 +34,16 @@ namespace CoolNetBlog.Controllers.Admin
         /// 根据Id删除评论或回复
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="id">1评论，2回复</param>
+        /// <param name="dType">1评论，2回复</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Delete([FromForm]int id, [FromForm] int type) {
+        public async Task<IActionResult> Delete([FromForm]int id, [FromForm] int dType) {
+            ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
             if (id<1)
             {
-                ModelState.AddModelError("", "删除失败:菜单Id无效，重启浏览器再试吧？。");
-                return View("MenuAmManagement", slvm);
+                result.HideMessage = "删除评论或回复失败：id无效";
+                result.TipMessage = "删除评论或回复失败，请刷新重试";
+                return Json(result);
             }
             CommentCarryViewModel delable;
             try
