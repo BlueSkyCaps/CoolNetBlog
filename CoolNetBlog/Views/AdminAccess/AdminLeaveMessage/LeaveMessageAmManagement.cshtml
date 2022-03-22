@@ -2,7 +2,7 @@
 <div >
 <form method="get">
 <input name="kw" class="form-control me-2" type="search" placeholder="" aria-label="Search">
-<input hidden name="pt" value="@Model.PassToken">
+<input hidden id="pt" name="pt" value="@Model.PassToken">
 <button class="btn btn-dark" type="submit" asp-action="ArticleAmManagement" asp-controller="AdminArticle">搜索</button>
 </form>
 </div>
@@ -44,7 +44,10 @@
                   <nav aria-label="...">
                   <ul class="pagination">
                   <li class="page-item">
-                  <a class="page-link" href="#">更多</a>
+                  <a id="commentPrePageBtn" bluesky-data-type="comment" bluesky-page-type="pre" class="page-link" data-bs-placement="bottom" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="" href="javascript:;" onclick="commentOrReplyPageClick(this)" bluesky-index="0">往上</a>
+                  </li>
+                  <li class="page-item">
+                  <a id="commentNextPageBtn" bluesky-data-type="comment" bluesky-page-type="Next" class="page-link" data-bs-placement="bottom" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="" href="javascript:;" onclick="commentOrReplyPageClick(this)" bluesky-index="2">往下</a>
                   </li>
                   </ul>
                   </nav>
@@ -76,7 +79,7 @@
                             <span>昵称:</span><span class="text-info bg-dark">@item.Name</span>
                             <span>邮箱:</span><span class="text-info bg-dark">@item.Email</span>
                             <span>站点:</span><span class="text-info bg-dark">@(string.IsNullOrWhiteSpace(item.SiteUrl)?"无":item.SiteUrl)</span><br>
-                            <span>评论时间:</span><span class="text-info bg-dark">@item.ReplyTime</span>
+                            <span>回复时间:</span><span class="text-info bg-dark">@item.ReplyTime</span>
                             <span>IP:</span><span class="text-info bg-dark">@item.ClientIp</span>
                         </p>
                         <p class="card-text text-info bg-dark">@item.Content</p>
@@ -121,7 +124,10 @@
                   <nav aria-label="...">
                   <ul class="pagination">
                   <li class="page-item">
-                  <a class="page-link" href="#">更多</a>
+                  <a id="replyPrePageBtn" bluesky-data-type="reply" bluesky-page-type="pre" class="page-link" data-bs-placement="bottom" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="" href="javascript:;" onclick="commentOrReplyPageClick(this)" bluesky-index="0">往上</a>
+                  </li>
+                  <li class="page-item">
+                  <a id="replyNextPageBtn" bluesky-data-type="reply" bluesky-page-type="Next"class="page-link" data-bs-placement="bottom" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="" href="javascript:;" onclick="commentOrReplyPageClick(this)" bluesky-index="2">往下</a>
                   </li>
                   </ul>
                   </nav>
@@ -135,4 +141,73 @@
   </div>
 </div>
 <script>
+    // 未审核的评论 数据加载按钮
+    function commentOrReplyPageClick(target){
+        var targetId = target.getAttribute('id');
+        var needIndex = $('#'+targetId).attr('bluesky-index');
+        if(needIndex<=0){
+            Gb_PopoverShow(targetId, "已是第一页");
+            return;
+        }
+        var pt = $("#pt").val();
+        // 获取按钮所处的操作类型，回复还是评论
+        var dtypeValue = $('#'+targetId).attr('bluesky-data-type');
+        var url = "";
+        var dtype = 0;
+        if(dtypeValue=="commemt"){
+            url = '/AdminLeaveMessage/GetNotPassComments?pt='+pt+'&index='+needIndex;
+            dtype = 1;
+        }else{
+            url = '/AdminLeaveMessage/GetNotPassReplies?pt='+pt+'&index='+needIndex;
+            dtype = 2;
+        }
+        repaintMessageCom(targetId, dtype, url);
+    }
+
+    // ajax调用加载数据 targetId：点击的按钮id；type：1评论2回复；
+    function repaintMessageCom(targetId, dtype, url){
+        $.ajax (
+            {
+                url: url,
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                success: function(data, status){
+                    if(data['code']==1){
+                        if(data['data'].length<=0)
+                        {
+                            // 没有更多数据
+                            Gb_PopoverShow(targetId, "无更多数据",true);
+                            return;
+                        }
+                        // 重绘当前获取数据
+                        $.each(data['data'], function(i,item){
+                            if(dtype==1){
+
+                            }else{
+
+                            }
+                        });  
+                        // 更改页索引的值
+                        var dtypeAttrValue = dtype==1?"comment":"reply";//bluesky-data-type的具体值 comment还是reply
+                        var pgType = ('#'+targetId).attr('bluesky-page-type');
+                        // 点击的是"往上"还是"往下"
+                        if(pgType=="pre"){
+                            $('a[bluesky-data-type]$="'+dtypeAttrValue+'"').attr('bluesky-index', parseInt($('#'+targetId).attr('bluesky-index'))-1);
+                        }else{
+                            $('a[bluesky-data-type]$="'+dtypeAttrValue+'"').attr('bluesky-index', parseInt($('#'+targetId).attr('bluesky-index'))+1);
+                        }
+                    }else{
+                        
+                    }
+                },
+                error: function(err){
+                    console.log(err)
+                },
+                complete: function(){
+                    // 无论如何执行此回调
+                }
+            }
+        );
+    }
+
 </script>

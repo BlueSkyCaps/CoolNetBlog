@@ -233,23 +233,6 @@ $("#toUnlockBtn").click(
     }
 );
 
-// 统一按钮定时弹出提示文本 
-// idStr:对应按钮元素id；tipMsg:要弹出显示的提示文本；dis:是否时间到禁用指定按钮；lazyText:定时到时是否改变按钮的文本
-function PopoverShow(idStr, tipMsg, dis=false, lazyText=""){
-    $('#'+idStr).attr('data-bs-content', tipMsg);
-    var popover = new bootstrap.Popover($('#'+idStr));
-    popover.show();
-    setTimeout(function(){
-        popover.dispose();
-        if(lazyText!==""){
-            $('#'+idStr).text(lazyText);
-        }
-        if(dis){
-            $('#'+idStr).attr("disabled","disabled");
-        }
-    }, 2000);
-}
-
 var commentShowIndex = 0;
 
 // 发表评论
@@ -262,16 +245,16 @@ $("#toCommentBtn").click(
         var content = $('#cContentInput').val().trim();
 
         if(email==null||email==""||name==null||name==""||content==null||content==""){
-            PopoverShow("toCommentBtn", "请把内容填写完整哦!~");
+            Gb_PopoverShow("toCommentBtn", "请把内容填写完整哦!~");
             return;
         }
         if(content.length<5){
-            PopoverShow("toCommentBtn", "评论内容太少啦!~");
+            Gb_PopoverShow("toCommentBtn", "评论内容太少啦!~");
             return;
         }
         if (!!!(/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,10})+$/.test(email)))
         {
-            PopoverShow("toCommentBtn", "不是有效的邮箱!~");
+            Gb_PopoverShow("toCommentBtn", "不是有效的邮箱!~");
             return;
         }
 
@@ -291,16 +274,16 @@ $("#toCommentBtn").click(
                 }),
                 success: function(data, status){
                     if(data['code']==1){
-                        PopoverShow("toCommentBtn", data['tipMessage']);
+                        Gb_PopoverShow("toCommentBtn", data['tipMessage']);
                         $('#cEmailInput').val("");
                         $('#cNameInput').val("");
                         $('#cContentInput').val("");
                     }else{
-                        PopoverShow("toCommentBtn", data['tipMessage']);
+                        Gb_PopoverShow("toCommentBtn", data['tipMessage']);
                     }
                 },
                 error: function(err){
-                    PopoverShow("toCommentBtn", "评论失败,刷新再试试吧err");
+                    Gb_PopoverShow("toCommentBtn", "评论失败,刷新再试试吧err");
                     console.log(err)
                 }
             }
@@ -327,9 +310,9 @@ $("#loadCommentBtn").on("click",
                             // 没有更多评论数据 禁用按钮
                             if(commentShowIndex <= 0){
                                 $('#commentShowDiv').hide();//收起评论区域
-                                PopoverShow("commentShowBtn", "暂无评论",true,"此内容暂无评论~");
+                                Gb_PopoverShow("commentShowBtn", "暂无评论",true,"此内容暂无评论~");
                             }else{
-                                PopoverShow("loadCommentBtn", "暂无更多评论啦~",true);
+                                Gb_PopoverShow("loadCommentBtn", "暂无更多评论啦~",true);
                             }
                             return;
                         }
@@ -395,10 +378,10 @@ $("#loadCommentBtn").on("click",
                         if(commentShowIndex < 1){
                             $('#commentShowDiv').hide();//收起评论区域
                             // 有问题 来自第一次点击"网友的评论" 在"网友的评论"按钮显示提示文本
-                            PopoverShow("commentShowBtn", data['tipMessage']);
+                            Gb_PopoverShow("commentShowBtn", data['tipMessage']);
                         }else{
                             // 有问题 不是第一次点击"网友的评论" 而是后续点击加载评论 在"加载评论"按钮显示提示文本
-                            PopoverShow("loadCommentBtn", data['tipMessage']);
+                            Gb_PopoverShow("loadCommentBtn", data['tipMessage']);
                         }
                     }
                 },
@@ -406,17 +389,17 @@ $("#loadCommentBtn").on("click",
                     commentShowIndex--;
                     if(commentShowIndex < 1){
                         $('#commentShowDiv').hide();//收起评论区域
-                        PopoverShow("commentShowBtn", "加载评论失败err,重试一下?!");
+                        Gb_PopoverShow("commentShowBtn", "加载评论失败err,重试一下?!");
                     }else{
-                         PopoverShow("loadCommentBtn", "加载评论失败err,重试一下?!");
+                         Gb_PopoverShow("loadCommentBtn", "加载评论失败err,重试一下?!");
                     }
                     console.log(err)
                 },
                 complete: function(){
-                    // 无论如何 还原"网友的评论"按钮最初的文本
+                    // 无论如何执行此回调 还原"网友的评论"按钮最初的文本
                     $("#commentShowBtn").removeAttr("disabled");
                     $("#commentShowBtn").text("网友的评论▼");
-                    //↑↑↑若是第一次加载评论且没有任何评论 PopoverShow()会在之后定时执行：改变按钮的文本为"此内容暂无评论"
+                    //↑↑↑若是第一次加载评论且没有任何评论 Gb_PopoverShow()会在之后定时执行：改变按钮的文本为"此内容暂无评论"
                 }
             }
         );
@@ -440,7 +423,7 @@ $(document).on("click",".loadReplyBtn",
                     if(data['code']==1){
                         if(data['data']['replies'].length<=0)
                         {
-                            PopoverShow(targerRpLoadBtn.attr("id"), "暂无更多回复啦~",true);
+                            Gb_PopoverShow(targerRpLoadBtn.attr("id"), "暂无更多回复啦~",true);
                             return;
                         }
                         // 追加当前获取的回复数据到当前聚焦的评论底部
@@ -472,11 +455,11 @@ $(document).on("click",".loadReplyBtn",
                             targerRpLoadBtn.attr("theNextIndex", theNextIndex)
                         }
                     }else{
-                        PopoverShow(targerRpLoadBtn.attr("id"), data['tipMessage']);
+                        Gb_PopoverShow(targerRpLoadBtn.attr("id"), data['tipMessage']);
                     }
                 },
                 error: function(err){
-                    PopoverShow(targerRpLoadBtn.attr("id"), "加载评论失败err,重试一下?!");
+                    Gb_PopoverShow(targerRpLoadBtn.attr("id"), "加载评论失败err,重试一下?!");
                     console.log(err)
                 }
             }
@@ -506,12 +489,12 @@ function thumbUpBtnClick(target, id, type){
                 }
                 // bootstrap显示按钮弹出层 作为提示
                 var thumbUpBtnId = target.getAttribute('id');
-                PopoverShow(thumbUpBtnId, data['tipMessage']);
+                Gb_PopoverShow(thumbUpBtnId, data['tipMessage']);
 
             },
             error: function(err){
                 var thumbUpBtnId = target.getAttribute('id');
-                PopoverShow(thumbUpBtnId, "表态失败，好意心领啦err");
+                Gb_PopoverShow(thumbUpBtnId, "表态失败，好意心领啦err");
             }
         }
     );
@@ -558,17 +541,17 @@ function toReply(){
     var content = $('#rContentInput').val().trim();
 
     if(email==null||email==""||name==null||name==""||content==null||content==""){
-        PopoverShow("ReplyModalOk", "请把内容填写完整哦!~");
+        Gb_PopoverShow("ReplyModalOk", "请把内容填写完整哦!~");
         return;
     }
     if(content.length<5){
-        PopoverShow("ReplyModalOk", "回复内容太少啦!~");
+        Gb_PopoverShow("ReplyModalOk", "回复内容太少啦!~");
         return;
     }
     // 两个@@其实是一个 razor语法转义
     if (!!!(/^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,10})+$/.test(email)))
     {
-        PopoverShow("ReplyModalOk", "不是有效的邮箱!~");
+        Gb_PopoverShow("ReplyModalOk", "不是有效的邮箱!~");
         return;
     }
     var cid = $('#rCommentIdInput').val().trim();
@@ -576,7 +559,7 @@ function toReply(){
     var layer = $('#rLayerInput').val();
     if(Gb_IsWhiteSpaceOrNull(cid)||Gb_IsWhiteSpaceOrNull(toNmae)||Gb_IsWhiteSpaceOrNull(layer))
     {
-        PopoverShow("ReplyModalOk", "不允许的操作，请重试!~");
+        Gb_PopoverShow("ReplyModalOk", "不允许的操作，请重试!~");
         return;
     }   
     // 1回复某个回复，加上艾特符号；0回复评论，不用加
@@ -607,11 +590,11 @@ function toReply(){
                         }, 2000);
 
                     }else{
-                        PopoverShow("ReplyModalOk", data['tipMessage']);
+                        Gb_PopoverShow("ReplyModalOk", data['tipMessage']);
                     }
                 },
                 error: function(err){
-                    PopoverShow("ReplyModalOk", "回复失败,重新再试试吧err");
+                    Gb_PopoverShow("ReplyModalOk", "回复失败,重新再试试吧err");
                     console.log(err)
                 }
             }

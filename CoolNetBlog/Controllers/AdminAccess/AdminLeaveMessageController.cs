@@ -84,17 +84,22 @@ namespace CoolNetBlog.Controllers.Admin
         /// <returns></returns>
         public async Task<IActionResult> LeaveMessageAmManagement(string? pt)
         {
+            // 清空列表。 因为是静态模型数据 刷新会追加回复列表
+            slvm.NotPassComments?.Clear();
+            slvm.NotPassReplies?.Clear();
             // 默认返回未审核的评论和回复列表 30条
             slvm.NotPassComments = await _commentReader.GetListBuilder().Where(c=>c.IsPassed==false||c.IsPassed==null)
                 .OrderBy(c=>c.CommentTime, SqlSugar.OrderByType.Desc).Take(30).ToListAsync();
-            var notPassRepliesTmp = await _replyVmReader.GetListBuilder().Where(c => c.IsPassed == false || c.IsPassed == null)
-                .OrderBy(c => c.ReplyTime, SqlSugar.OrderByType.Desc).Take(30).ToListAsync();
+
+
+            var notPassRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == false || r.IsPassed == null)
+                .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Take(30).ToListAsync();
             
-            foreach (var reply in notPassRepliesTmp)
+            foreach (var replyTmp in notPassRepliesTmp)
             {
                 // 获取当前此条回复对应的评论
-                reply.RelatedComment = await _commentReader.FindOneByIdAsync(reply.CommentId);
-                slvm.NotPassReplies?.Add(reply);
+                replyTmp.RelatedComment = await _commentReader.FindOneByIdAsync(replyTmp.CommentId);
+                slvm.NotPassReplies?.Add(replyTmp);
             }
             // 自动封装已有的数据
             slvm = (LeaveMessageViewModel)WrapMustNeedPassFields(slvm);
@@ -123,14 +128,14 @@ namespace CoolNetBlog.Controllers.Admin
         public async Task<JsonResult> GetNotPassReplies(string? pt, int index)
         {
             ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
-            var notPassRepliesTmp = await _replyVmReader.GetListBuilder().Where(c => c.IsPassed == false || c.IsPassed == null)
-                .OrderBy(c => c.ReplyTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 30).Take(30).ToListAsync();
+            var notPassRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == false || r.IsPassed == null)
+                .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 30).Take(30).ToListAsync();
             List<ReplyCarryCmtViewModel> notPassReplies = new List<ReplyCarryCmtViewModel>();
-            foreach (var reply in notPassRepliesTmp)
+            foreach (var replyTmp in notPassRepliesTmp)
             {
                 // 获取当前此条回复所属的评论
-                reply.RelatedComment = await _commentReader.FindOneByIdAsync(reply.CommentId);
-                notPassReplies.Add(reply);
+                replyTmp.RelatedComment = await _commentReader.FindOneByIdAsync(replyTmp.CommentId);
+                notPassReplies.Add(replyTmp);
             }
             result.Code = ValueCodes.Success;
             result.Data = new { NotPassReplies = notPassReplies };

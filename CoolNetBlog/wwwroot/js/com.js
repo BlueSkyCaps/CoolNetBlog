@@ -81,3 +81,25 @@ String.prototype.trimF = function (p) {
         return this.replace(/(\s*$)/g, "");
     return this.replace(/(^\s*)|(\s*$)/g, "");
 };
+
+/**
+ * bootstrap.Popover组件 统一按钮定时弹出提示文本
+ * @param {any} idStr 对应按钮元素id
+ * @param {any} tipMsg 要弹出显示的提示文本
+ * @param {any} dis 是否时间到禁用指定按钮
+ * @param {any} lazyText 定时到时是否改变按钮的文本
+ */
+function Gb_PopoverShow(idStr, tipMsg, dis = false, lazyText = "") {
+    $('#' + idStr).attr('data-bs-content', tipMsg);
+    var popover = new bootstrap.Popover($('#' + idStr));
+    popover.show();
+    setTimeout(function () {
+        popover.dispose();
+        if (lazyText !== "") {
+            $('#' + idStr).text(lazyText);
+        }
+        if (dis) {
+            $('#' + idStr).attr("disabled", "disabled");
+        }
+    }, 2000);
+}
