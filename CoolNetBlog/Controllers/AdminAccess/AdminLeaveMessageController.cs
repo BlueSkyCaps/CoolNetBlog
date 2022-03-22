@@ -19,15 +19,15 @@ namespace CoolNetBlog.Controllers.Admin
         private static LeaveMessageViewModel slvm = new();
         private BaseSugar _baseSugar;
         private SugarDataBaseStorage<Article, int> _articleReader;
-        private SugarDataBaseStorage<Comment, int> _commentReader;
-        private SugarDataBaseStorage<ReplyCarryCmtViewModel, int> _replyVmReader;
+        private SugarDataBaseStorage<CommentCarryViewModel, int> _commentVmReader;
+        private SugarDataBaseStorage<ReplyCarryViewModel, int> _replyVmReader;
 
         public AdminLeaveMessageController():base()
         {
             _baseSugar = new BaseSugar();
             _articleReader = new SugarDataBaseStorage<Article, int>(_baseSugar._dbHandler);
-            _commentReader = new SugarDataBaseStorage<Comment, int>(_baseSugar._dbHandler);
-            _replyVmReader = new SugarDataBaseStorage<ReplyCarryCmtViewModel, int>(_baseSugar._dbHandler);
+            _commentVmReader = new SugarDataBaseStorage<CommentCarryViewModel, int>(_baseSugar._dbHandler);
+            _replyVmReader = new SugarDataBaseStorage<ReplyCarryViewModel, int>(_baseSugar._dbHandler);
         }
 
         /// <summary>
@@ -43,10 +43,10 @@ namespace CoolNetBlog.Controllers.Admin
                 ModelState.AddModelError("", "删除失败:菜单Id无效，重启浏览器再试吧？。");
                 return View("MenuAmManagement", slvm);
             }
-            Comment delable;
+            CommentCarryViewModel delable;
             try
             {
-                delable = await _commentReader.FindOneByIdAsync(id);
+                delable = await _commentVmReader.FindOneByIdAsync(id);
             }
             catch (Exception)
             {
@@ -61,7 +61,7 @@ namespace CoolNetBlog.Controllers.Admin
                 return View("MenuAmManagement", slvm);
             }
             
-            var ef = await _commentReader.DeleteAsync(delable);
+            var ef = await _commentVmReader.DeleteAsync(delable);
             return RedirectToAction("LeaveMessageAmManagement", "AdminLeaveMessage", new { pt = slvm.PassToken });
 
         }
@@ -88,17 +88,30 @@ namespace CoolNetBlog.Controllers.Admin
             slvm.NotPassComments?.Clear();
             slvm.NotPassReplies?.Clear();
             // 默认返回未审核的评论和回复列表 30条
-            slvm.NotPassComments = await _commentReader.GetListBuilder().Where(c=>c.IsPassed==false||c.IsPassed==null)
+            slvm.NotPassComments = await _commentVmReader.GetListBuilder().Where(c=>c.IsPassed==false||c.IsPassed==null)
                 .OrderBy(c=>c.CommentTime, SqlSugar.OrderByType.Desc).Take(5).ToListAsync();
 
 
             var notPassRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == false || r.IsPassed == null)
                 .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Take(5).ToListAsync();
-            
+            foreach (var cmv in slvm.NotPassComments)
+            {
+                // 获取评论所在文章
+                if (cmv.SourceType==1)
+                {
+                    cmv.RelatedArticle = await _articleReader.FindOneByIdAsync(cmv.SourceId);
+                }
+            }
+
             foreach (var replyTmp in notPassRepliesTmp)
             {
                 // 获取当前此条回复对应的评论
-                replyTmp.RelatedComment = await _commentReader.FindOneByIdAsync(replyTmp.CommentId);
+                replyTmp.RelatedComment = await _commentVmReader.FindOneByIdAsync(replyTmp.CommentId);
+                // 获取回复所在文章
+                if (replyTmp.RelatedComment.SourceType == 1)
+                {
+                    replyTmp.RelatedArticle = await _articleReader.FindOneByIdAsync(replyTmp.RelatedComment.SourceId);
+                }
                 slvm.NotPassReplies?.Add(replyTmp);
             }
             // 自动封装已有的数据
@@ -116,7 +129,7 @@ namespace CoolNetBlog.Controllers.Admin
             ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
             try
             {
-                var notPassComments = await _commentReader.GetListBuilder().Where(c => c.IsPassed == false || c.IsPassed == null)
+                var notPassComments = await _commentVmReader.GetListBuilder().Where(c => c.IsPassed == false || c.IsPassed == null)
                     .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Skip((index-1)*5).Take(5).ToListAsync();
                 result.Code = ValueCodes.Success;
                 result.Data = new { NotPassComments= notPassComments };
@@ -142,11 +155,11 @@ namespace CoolNetBlog.Controllers.Admin
             {
                 var notPassRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == false || r.IsPassed == null)
                     .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 5).Take(5).ToListAsync();
-                List<ReplyCarryCmtViewModel> notPassReplies = new List<ReplyCarryCmtViewModel>();
+                List<ReplyCarryViewModel> notPassReplies = new List<ReplyCarryViewModel>();
                 foreach (var replyTmp in notPassRepliesTmp)
                 {
                     // 获取当前此条回复所属的评论
-                    replyTmp.RelatedComment = await _commentReader.FindOneByIdAsync(replyTmp.CommentId);
+                    replyTmp.RelatedComment = await _commentVmReader.FindOneByIdAsync(replyTmp.CommentId);
                     notPassReplies.Add(replyTmp);
                 }
                 result.Code = ValueCodes.Success;

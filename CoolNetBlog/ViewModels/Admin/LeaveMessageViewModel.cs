@@ -10,15 +10,24 @@ namespace CoolNetBlog.ViewModels.Admin
         /// <summary>
         /// 当前未审核的评论
         /// </summary>
-        public IList<Comment>? NotPassComments { get; set; } = new List<Comment>();
+        public IList<CommentCarryViewModel>? NotPassComments { get; set; } = new List<CommentCarryViewModel>();
         /// <summary>
         /// 当前未审核的回复
         /// </summary>
-        public IList<ReplyCarryCmtViewModel>? NotPassReplies { get; set; } = new List<ReplyCarryCmtViewModel>();
+        public IList<ReplyCarryViewModel>? NotPassReplies { get; set; } = new List<ReplyCarryViewModel>();
 
     }
-    public class ReplyCarryCmtViewModel:Reply
+
+    public class CommentCarryViewModel : Comment
     {
+        [SqlSugar.SugarColumn(IsIgnore = true)]
+        public Article? RelatedArticle { get; set; } = new Article();
+        
+    }
+    public class ReplyCarryViewModel:Reply
+    {
+        [SqlSugar.SugarColumn(IsIgnore = true)]
+        public Article? RelatedArticle { get; set; } = new Article();
         [SqlSugar.SugarColumn(IsIgnore =true)]
         public Comment? RelatedComment { get; set; } = new Comment();
     }
