@@ -29,7 +29,7 @@
                             <span>站点:</span><span class="text-info bg-dark">@(string.IsNullOrWhiteSpace(item.SiteUrl)?"无":item.SiteUrl)</span><br>
                             <span>评论时间:</span><span class="text-info bg-dark">@item.CommentTime</span><br>
                             <span>IP:</span><span class="text-info bg-dark">@item.ClientIp</span><br>
-                            <span>页面链接:</span><span class="text-info bg-dark"><a target="_blank" href="@item.RelatedArticleUrl">@(string.IsNullOrWhiteSpace(item.RelatedArticle?.Title)?"无标题":item.RelatedArticle?.Title)</a></span>
+                            <span>页面链接:</span><span class="text-info"><a target="_blank" href="@item.RelatedArticleUrl">@(string.IsNullOrWhiteSpace(item.RelatedArticle?.Title)?"无标题":item.RelatedArticle?.Title)</a></span>
                         </p>
                         <p class="card-text text-info bg-dark">@item.Content</p>
                         <p class="card-text">
@@ -85,7 +85,7 @@
                             <span>站点:</span><span class="text-info bg-dark">@(string.IsNullOrWhiteSpace(item.SiteUrl)?"无":item.SiteUrl)</span><br>
                             <span>回复时间:</span><span class="text-info bg-dark">@item.ReplyTime</span><br>
                             <span>IP:</span><span class="text-info bg-dark">@item.ClientIp</span><br>
-                            <span>页面链接:</span><span class="text-info bg-dark"><a target="_blank" href="@item.RelatedArticleUrl">@(string.IsNullOrWhiteSpace(item.RelatedArticle?.Title)?"无标题":item.RelatedArticle?.Title)</a></span>
+                            <span>页面链接:</span><span class="text-info"><a target="_blank" href="@item.RelatedArticleUrl">@(string.IsNullOrWhiteSpace(item.RelatedArticle?.Title)?"无标题":item.RelatedArticle?.Title)</a></span>
                         </p>
                         <p class="card-text text-info bg-dark">@item.Content</p>
                         <p class="card-text">
@@ -241,12 +241,15 @@
 
         $.each(theCommentsData, function(i,cmtItem){
             var siteUrlStr = !Gb_IsWhiteSpaceOrNull(cmtItem.siteUrl)?cmtItem.siteUrl:"无";
+            var articleTitle = !Gb_IsWhiteSpaceOrNull(cmtItem.relatedArticle?.title)?cmtItem.relatedArticle?.title:"无标题";
             comLinkStr += '<div class="card comment-card"><div class="card-body"><p class="card-title"><span>昵称:</span><span class="text-info bg-dark">'+
             cmtItem.name+'</span><br><span>邮箱:</span><span class="text-info bg-dark">'+
             cmtItem.email+'</span><br><span>站点:</span><span class="text-info bg-dark">'+
             siteUrlStr+'</span><br><span>评论时间:</span><span class="text-info bg-dark">'+
             cmtItem.commentTime+'</span><br><span>IP:</span><span class="text-info bg-dark">'+
-            cmtItem.clientIp+'</span><br></p><p class="card-text text-info bg-dark">'+
+            cmtItem.clientIp+'</span><br><span>页面链接:</span><span class="text-info"><a target="_blank" href="'+
+            cmtItem.relatedArticleUrl+'">'+
+            articleTitle+'</a></span></p><p class="card-text text-info bg-dark">'+
             cmtItem.content+'</p><p class="card-text"><button type="button" class="btn btn-primary btn-sm">通过</button>'+
             '<button type="button" class="btn btn-primary btn-sm">通过并回复</button>'+
             '<button type="button" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>'+
@@ -262,15 +265,17 @@
 
         $.each(theRepliesData, function(i,rpItem){
         var siteUrlStr = !Gb_IsWhiteSpaceOrNull(rpItem.siteUrl)?rpItem.siteUrl:"无";
+        var articleTitle = !Gb_IsWhiteSpaceOrNull(rpItem.relatedArticle?.title)?rpItem.relatedArticle?.title:"无标题";
         var siteUrlRelatedCmtStr = !Gb_IsWhiteSpaceOrNull(rpItem.relatedComment?.siteUrl)?rpItem.relatedComment?.siteUrl:"无";
             comLinkStr += '<div class="card reply-card"><div class="card-body"><p class="card-title"><span>昵称:</span><span class="text-info bg-dark">'+
             rpItem.name+'</span><br><span>邮箱:</span><span class="text-info bg-dark">'+
             rpItem.email+'</span><br><span>站点:</span><span class="text-info bg-dark">'+
             siteUrlStr+'</span><br><span>回复时间:</span><span class="text-info bg-dark">'+
             rpItem.replyTime+'</span><br><span>IP:</span><span class="text-info bg-dark">'+
-            rpItem.clientIp+'</span><br></p><p class="card-text text-info bg-dark">'+
-            rpItem.content+'</p>'+
-            '<p class="card-text"><div class="accordion accordion-flush" id="accordionFlush'+
+            rpItem.clientIp+'</span><br><span>页面链接:</span><span class="text-info"><a target="_blank" href="'+
+            rpItem.relatedArticleUrl+'">'+
+            articleTitle+'</a></span></p><p class="card-text text-info bg-dark">'+
+            rpItem.content+'</p><p class="card-text"><div class="accordion accordion-flush" id="accordionFlush'+
             rpItem.id+'RelatedComment"><div class="accordion-item"><h2 class="accordion-header" id="flush-heading'+
             rpItem.id+'RelatedComment"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse'+
             rpItem.id+'RelatedComment" aria-expanded="false" aria-controls="flush-collapse'+
