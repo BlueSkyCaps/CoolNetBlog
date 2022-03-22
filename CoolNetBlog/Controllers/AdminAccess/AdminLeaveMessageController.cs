@@ -100,6 +100,7 @@ namespace CoolNetBlog.Controllers.Admin
                 if (cmv.SourceType==1)
                 {
                     cmv.RelatedArticle = await _articleReader.FindOneByIdAsync(cmv.SourceId);
+                    cmv.RelatedArticleUrl = "/Detail?articleId="+ cmv.SourceId;
                 }
             }
 
@@ -111,6 +112,7 @@ namespace CoolNetBlog.Controllers.Admin
                 if (replyTmp.RelatedComment.SourceType == 1)
                 {
                     replyTmp.RelatedArticle = await _articleReader.FindOneByIdAsync(replyTmp.RelatedComment.SourceId);
+                    replyTmp.RelatedArticleUrl = "/Detail?articleId=" + replyTmp.RelatedComment.SourceId;
                 }
                 slvm.NotPassReplies?.Add(replyTmp);
             }
@@ -131,6 +133,15 @@ namespace CoolNetBlog.Controllers.Admin
             {
                 var notPassComments = await _commentVmReader.GetListBuilder().Where(c => c.IsPassed == false || c.IsPassed == null)
                     .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Skip((index-1)*5).Take(5).ToListAsync();
+                foreach (var cmv in notPassComments)
+                {
+                    // 获取评论所在文章
+                    if (cmv.SourceType == 1)
+                    {
+                        cmv.RelatedArticle = await _articleReader.FindOneByIdAsync(cmv.SourceId);
+                        cmv.RelatedArticleUrl = "/Detail?articleId=" + cmv.SourceId;
+                    }
+                }
                 result.Code = ValueCodes.Success;
                 result.Data = new { NotPassComments= notPassComments };
 
@@ -160,6 +171,12 @@ namespace CoolNetBlog.Controllers.Admin
                 {
                     // 获取当前此条回复所属的评论
                     replyTmp.RelatedComment = await _commentVmReader.FindOneByIdAsync(replyTmp.CommentId);
+                    // 获取回复所在文章
+                    if (replyTmp.RelatedComment.SourceType == 1)
+                    {
+                        replyTmp.RelatedArticle = await _articleReader.FindOneByIdAsync(replyTmp.RelatedComment.SourceId);
+                        replyTmp.RelatedArticleUrl = "/Detail?articleId=" + replyTmp.RelatedComment.SourceId;
+                    }
                     notPassReplies.Add(replyTmp);
                 }
                 result.Code = ValueCodes.Success;

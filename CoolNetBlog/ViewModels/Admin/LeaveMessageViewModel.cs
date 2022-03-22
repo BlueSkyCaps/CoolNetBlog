@@ -22,12 +22,19 @@ namespace CoolNetBlog.ViewModels.Admin
     {
         [SqlSugar.SugarColumn(IsIgnore = true)]
         public Article? RelatedArticle { get; set; } = new Article();
-        
+
+        [SqlSugar.SugarColumn(IsIgnore = true)]
+        public string? RelatedArticleUrl { get; set; } = "";
+
     }
     public class ReplyCarryViewModel:Reply
     {
         [SqlSugar.SugarColumn(IsIgnore = true)]
         public Article? RelatedArticle { get; set; } = new Article();
+        
+        [SqlSugar.SugarColumn(IsIgnore = true)]
+        public string? RelatedArticleUrl { get; set; }="";
+        
         [SqlSugar.SugarColumn(IsIgnore =true)]
         public Comment? RelatedComment { get; set; } = new Comment();
     }
