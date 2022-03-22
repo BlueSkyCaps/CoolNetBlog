@@ -77,7 +77,7 @@ namespace CoolNetBlog.Bll
             _homeGlobalView.DetailArticleData.ThumbUpNumbers = thumbData;
             _homeGlobalView.CurrentTitle = _homeGlobalView.DetailArticleData.IsShowTitle&& 
                 !string.IsNullOrWhiteSpace(_homeGlobalView.DetailArticleData.Title) ? 
-                _homeGlobalView.DetailArticleData.Title: _homeGlobalView.HomeSiteSettingData.SiteName;
+                _homeGlobalView.DetailArticleData.Title: "正阅读无题文章"+_homeGlobalView.DetailArticleData.Id;
         }
 
 

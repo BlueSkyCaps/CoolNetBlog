@@ -14,7 +14,7 @@
       </button>
     </h2>
     <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-      <div class="accordion-body">
+      <div class="accordion-body" id="comment-body">
         @{
             if (Model?.NotPassComments?.Count>0)
             {
@@ -180,13 +180,11 @@
                             return;
                         }
                         // 重绘当前获取数据
-                        $.each(data['data'], function(i,item){
-                            if(dtype==1){
-
-                            }else{
-
-                            }
-                        });  
+                        if(dtype==1){
+                            linkReplyComStr((data['data']);
+                        }else{
+                            linkReplyComStr((data['data']);
+                        }
                         // 更改页索引的值
                         var dtypeAttrValue = dtype==1?"comment":"reply";//bluesky-data-type的具体值 comment还是reply
                         var pgType = ('#'+targetId).attr('bluesky-page-type');
@@ -210,13 +208,73 @@
         );
     }
 
-    function linkCommentComStr(){
-        var comStr = "";
-        return comStr;
+    // 拼接评论列表为一系列卡片元素
+    function linkCommentComStr(theData){
+        var comLinkStr = "";
+
+        $.each(theData, function(i,item){
+            var siteUrlStr = !Gb_IsWhiteSpaceOrNull(theData.notPassComments.siteUrl)?theData.notPassComments.siteUrl:"无";
+            comLinkStr += '<div class="card"><div class="card-body"><p class="card-title"><span>昵称:</span><span class="text-info bg-dark">'+
+            theData.notPassComments.name+'</span><span>邮箱:</span><span class="text-info bg-dark">'+
+            theData.notPassComments.email+'</span><span>站点:</span><span class="text-info bg-dark">'+
+            siteUrlStr+'</span><br><span>评论时间:</span><span class="text-info bg-dark">'+
+            theData.notPassComments.commentTime+'</span><span>IP:</span><span class="text-info bg-dark">'+
+            theData.notPassComments.clientIp+'</span></p><p class="card-text text-info bg-dark">'+
+            theData.notPassComments.content+'</p><p class="card-text"><button type="button" class="btn btn-primary btn-sm">通过</button>'+
+            '<button type="button" class="btn btn-primary btn-sm">通过并回复</button>'+
+            '<button type="button" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>'+
+            '<button type="button" class="btn btn-danger btn-sm">删除</button>'+
+            '<button type="button" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div>';
+        });  
+        return comLinkStr;
     }
 
-    function linkReplyComStr(){
-        var comStr = "";
-        return comStr;
+    // 拼接回复列表为一系列卡片元素
+    function linkReplyComStr(theData){
+        var comLinkStr = "";
+        $.each(theData, function(i,item){
+        var siteUrlStr = !Gb_IsWhiteSpaceOrNull(theData.notPassComments.siteUrl)?theData.notPassComments.siteUrl:"无";
+            comLinkStr += '<div class="card"><div class="card-body"><p class="card-title"><span>昵称:</span><span class="text-info bg-dark">'+
+            theData.notPassComments.name+'</span><span>邮箱:</span><span class="text-info bg-dark">'+
+            theData.notPassComments.email+'</span><span>站点:</span><span class="text-info bg-dark">'+
+            siteUrlStr+'</span><br><span>评论时间:</span><span class="text-info bg-dark">'+
+            theData.notPassComments.replyTime+'</span><span>IP:</span><span class="text-info bg-dark">'+
+            theData.notPassComments.clientIp+'</span></p><p class="card-text text-info bg-dark">'+
+            theData.notPassComments.content+'</p>'+
+            
+            '<p class="card-text"><button type="button" class="btn btn-primary btn-sm">通过</button>'+
+            '<button type="button" class="btn btn-primary btn-sm">通过并回复</button>'+
+            '<button type="button" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>'+
+            '<button type="button" class="btn btn-danger btn-sm">删除</button>'+
+            '<button type="button" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div>';
+        });  
+        return comLinkStr;
     }
 </script>
+
+'<p class="card-text"><div class="accordion accordion-flush" id="accordionFlush'+@(item.Id)RelatedComment">
+<div class="accordion-item">
+<h2 class="accordion-header" id="flush-heading@(item.Id)RelatedComment">
+<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse@(item.Id)RelatedComment" aria-expanded="false" aria-controls="flush-collapse@(item.Id)RelatedComment">
+--显示此回复所在的评论--
+</button>
+</h2>
+<div id="flush-collapse@(item.Id)RelatedComment" class="accordion-collapse collapse" aria-labelledby="flush-heading@(item.Id)RelatedComment" data-bs-parent="#accordionFlush@(item.Id)RelatedComment">
+<div class="accordion-body">
+<div class="card">
+<div class="card-body">
+<p class="card-title">
+<span>昵称:</span><span class="text-info bg-dark">@item?.RelatedComment?.Name</span>
+<span>邮箱:</span><span class="text-info bg-dark">@item?.RelatedComment?.Email</span>
+<span>站点:</span><span class="text-info bg-dark">@(string.IsNullOrWhiteSpace(item?.RelatedComment?.SiteUrl)?"无":item?.RelatedComment?.SiteUrl)</span><br>
+<span>评论时间:</span><span class="text-info bg-dark">@item?.RelatedComment?.CommentTime</span>
+<span>IP:</span><span class="text-info bg-dark">@item?.RelatedComment?.ClientIp</span>
+</p>
+<p class="card-text text-info bg-dark">@item?.RelatedComment?.Content</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</p>'
