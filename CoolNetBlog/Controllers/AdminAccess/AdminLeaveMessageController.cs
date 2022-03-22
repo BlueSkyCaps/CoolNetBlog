@@ -89,11 +89,11 @@ namespace CoolNetBlog.Controllers.Admin
             slvm.NotPassReplies?.Clear();
             // 默认返回未审核的评论和回复列表 30条
             slvm.NotPassComments = await _commentReader.GetListBuilder().Where(c=>c.IsPassed==false||c.IsPassed==null)
-                .OrderBy(c=>c.CommentTime, SqlSugar.OrderByType.Desc).Take(30).ToListAsync();
+                .OrderBy(c=>c.CommentTime, SqlSugar.OrderByType.Desc).Take(5).ToListAsync();
 
 
             var notPassRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == false || r.IsPassed == null)
-                .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Take(30).ToListAsync();
+                .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Take(5).ToListAsync();
             
             foreach (var replyTmp in notPassRepliesTmp)
             {
@@ -114,11 +114,21 @@ namespace CoolNetBlog.Controllers.Admin
         public async Task<JsonResult> GetNotPassComments(string? pt, int index)
         {
             ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
-            var notPassComments = await _commentReader.GetListBuilder().Where(c => c.IsPassed == false || c.IsPassed == null)
-                .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Skip((index-1)*30).Take(30).ToListAsync();
-            result.Code = ValueCodes.Success;
-            result.Data = new { NotPassComments= notPassComments };
-            return Json(result);
+            try
+            {
+                var notPassComments = await _commentReader.GetListBuilder().Where(c => c.IsPassed == false || c.IsPassed == null)
+                    .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Skip((index-1)*5).Take(5).ToListAsync();
+                result.Code = ValueCodes.Success;
+                result.Data = new { NotPassComments= notPassComments };
+
+            }
+            catch (Exception e)
+            {
+                result.Code = ValueCodes.Error;
+                result.HideMessage = "获取未审核的某页评论列表发生异常:"+e.Message;
+                result.TipMessage = "加载数据失败请重试";
+            }
+            return Json(result);    
         }
 
         /// <summary>
@@ -128,17 +138,26 @@ namespace CoolNetBlog.Controllers.Admin
         public async Task<JsonResult> GetNotPassReplies(string? pt, int index)
         {
             ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
-            var notPassRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == false || r.IsPassed == null)
-                .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 30).Take(30).ToListAsync();
-            List<ReplyCarryCmtViewModel> notPassReplies = new List<ReplyCarryCmtViewModel>();
-            foreach (var replyTmp in notPassRepliesTmp)
+            try
             {
-                // 获取当前此条回复所属的评论
-                replyTmp.RelatedComment = await _commentReader.FindOneByIdAsync(replyTmp.CommentId);
-                notPassReplies.Add(replyTmp);
+                var notPassRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == false || r.IsPassed == null)
+                    .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 5).Take(5).ToListAsync();
+                List<ReplyCarryCmtViewModel> notPassReplies = new List<ReplyCarryCmtViewModel>();
+                foreach (var replyTmp in notPassRepliesTmp)
+                {
+                    // 获取当前此条回复所属的评论
+                    replyTmp.RelatedComment = await _commentReader.FindOneByIdAsync(replyTmp.CommentId);
+                    notPassReplies.Add(replyTmp);
+                }
+                result.Code = ValueCodes.Success;
+                result.Data = new { NotPassReplies = notPassReplies };
             }
-            result.Code = ValueCodes.Success;
-            result.Data = new { NotPassReplies = notPassReplies };
+            catch (Exception e)
+            {
+                result.Code = ValueCodes.Error;
+                result.HideMessage = "获取未审核的某页评回复列表发生异常:" + e.Message;
+                result.TipMessage = "加载数据失败请重试";
+            }
             return Json(result);
         }
 

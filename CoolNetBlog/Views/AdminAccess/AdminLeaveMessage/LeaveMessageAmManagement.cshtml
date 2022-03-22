@@ -18,6 +18,7 @@
         @{
             if (Model?.NotPassComments?.Count>0)
             {
+                  <div id="comment-card">
                   @foreach (var item in Model?.NotPassComments)
                   {
                     <div class="card">
@@ -41,13 +42,14 @@
                     </div>
                     <br>
                   }
+                  </div>
                   <nav aria-label="...">
                   <ul class="pagination">
                   <li class="page-item">
-                  <a id="commentPrePageBtn" bluesky-data-type="comment" bluesky-page-type="pre" class="page-link" data-bs-placement="bottom" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="" href="javascript:;" onclick="commentOrReplyPageClick(this)" bluesky-index="0">往上</a>
+                  <button id="commentPrePageBtn" bluesky-data-type="comment" bluesky-page-type="pre" class="page-link" data-bs-placement="bottom" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="" href="javascript:;" onclick="commentOrReplyPageClick(this)" bluesky-index="0">往上</button>
                   </li>
                   <li class="page-item">
-                  <a id="commentNextPageBtn" bluesky-data-type="comment" bluesky-page-type="Next" class="page-link" data-bs-placement="bottom" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="" href="javascript:;" onclick="commentOrReplyPageClick(this)" bluesky-index="2">往下</a>
+                  <button id="commentNextPageBtn" bluesky-data-type="comment" bluesky-page-type="Next" class="page-link" data-bs-placement="bottom" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="" href="javascript:;" onclick="commentOrReplyPageClick(this)" bluesky-index="2">往下</button>
                   </li>
                   </ul>
                   </nav>
@@ -71,9 +73,10 @@
         @{
             if (Model?.NotPassReplies?.Count>0)
             {
+                  <div id="reply-card">
                   @foreach (var item in Model?.NotPassReplies)
                   {
-                    <div class="card">
+                    <div class="card reply-card">
                         <div class="card-body">
                         <p class="card-title">
                             <span>昵称:</span><span class="text-info bg-dark">@item.Name</span>
@@ -121,13 +124,14 @@
                     </div>
                     <br>
                   }
+                  </div>
                   <nav aria-label="...">
                   <ul class="pagination">
                   <li class="page-item">
-                  <a id="replyPrePageBtn" bluesky-data-type="reply" bluesky-page-type="pre" class="page-link" data-bs-placement="bottom" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="" href="javascript:;" onclick="commentOrReplyPageClick(this)" bluesky-index="0">往上</a>
+                  <button id="replyPrePageBtn" bluesky-data-type="reply" bluesky-page-type="pre" class="page-link" data-bs-placement="bottom" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="" href="javascript:;" onclick="commentOrReplyPageClick(this)" bluesky-index="0">往上</button>
                   </li>
                   <li class="page-item">
-                  <a id="replyNextPageBtn" bluesky-data-type="reply" bluesky-page-type="Next"class="page-link" data-bs-placement="bottom" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="" href="javascript:;" onclick="commentOrReplyPageClick(this)" bluesky-index="2">往下</a>
+                  <button id="replyNextPageBtn" bluesky-data-type="reply" bluesky-page-type="Next"class="page-link" data-bs-placement="bottom" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="" href="javascript:;" onclick="commentOrReplyPageClick(this)" bluesky-index="2">往下</button>
                   </li>
                   </ul>
                   </nav>
@@ -154,13 +158,14 @@
         var dtypeValue = $('#'+targetId).attr('bluesky-data-type');
         var url = "";
         var dtype = 0;
-        if(dtypeValue=="commemt"){
+        if(dtypeValue=="comment"){
             url = '/AdminLeaveMessage/GetNotPassComments?pt='+pt+'&index='+needIndex;
             dtype = 1;
         }else{
             url = '/AdminLeaveMessage/GetNotPassReplies?pt='+pt+'&index='+needIndex;
             dtype = 2;
         }
+
         repaintMessageCom(targetId, dtype, url);
     }
 
@@ -173,32 +178,52 @@
                 contentType: "application/json; charset=utf-8",
                 success: function(data, status){
                     if(data['code']==1){
-                        if(data['data'].length<=0)
-                        {
-                            // 没有更多数据
-                            Gb_PopoverShow(targetId, "无更多数据",true);
-                            return;
-                        }
-                        // 重绘当前获取数据
+                        // 重绘为当前获取的数据
                         if(dtype==1){
-                            linkReplyComStr((data['data']);
+                            alert('dtype==1');
+                            if(data['data']['notPassComments'].length<=0)
+                            {
+                                // 没有更多评论数据
+                                Gb_PopoverShow(targetId, "无更多数据");
+                                return;
+                            }
+                            $("#comment-card").children().remove();
+                            var newDomStr = linkCommentComStr(data['data']['notPassComments']);
+                            $("#comment-card").append(newDomStr);
                         }else{
-                            linkReplyComStr((data['data']);
+                            alert('dtype==2');
+                            if(data['data']['notPassReplies'].length<=0)
+                            {
+                                // 没有更多回复数据
+                                Gb_PopoverShow(targetId, "无更多数据");
+                                return;
+                            }
+                            $("#reply-card").children().remove();
+                            var newDomStr = linkReplyComStr(data['data']['notPassReplies']);
+                            $("#reply-card").append(newDomStr);
                         }
                         // 更改页索引的值
-                        var dtypeAttrValue = dtype==1?"comment":"reply";//bluesky-data-type的具体值 comment还是reply
-                        var pgType = ('#'+targetId).attr('bluesky-page-type');
-                        // 点击的是"往上"还是"往下"
+                        var pgType = $('#'+targetId).attr('bluesky-page-type');
+                        // bluesky-data-type的具体值 comment还是reply
+                        var dtypeAttrValue = dtype==1?"comment":"reply";
+                        // 按钮id为，往上：commentPrePageBtn|replyPrePageBtn 往下：commentNextPageBtn，replyNextPageBtn
+                        var dTypePreBtnIndex = $('#'+dtypeAttrValue+"PrePageBtn").attr('bluesky-index');
+                        var dTypeNextBtnIndex = $('#'+dtypeAttrValue+"NextPageBtn").attr('bluesky-index');
+
+                        // 点击的是"往上"还是"往下"，往上：上页下页都减去1，往下：上页下页都加1
                         if(pgType=="pre"){
-                            $('a[bluesky-data-type]$="'+dtypeAttrValue+'"').attr('bluesky-index', parseInt($('#'+targetId).attr('bluesky-index'))-1);
+                            $('#'+dtypeAttrValue+"PrePageBtn").attr('bluesky-index', parseInt(dTypePreBtnIndex)-1);
+                            $('#'+dtypeAttrValue+"NextPageBtn").attr('bluesky-index', parseInt(dTypeNextBtnIndex)-1);
                         }else{
-                            $('a[bluesky-data-type]$="'+dtypeAttrValue+'"').attr('bluesky-index', parseInt($('#'+targetId).attr('bluesky-index'))+1);
+                            $('#'+dtypeAttrValue+"PrePageBtn").attr('bluesky-index', parseInt(dTypePreBtnIndex)+1);
+                            $('#'+dtypeAttrValue+"NextPageBtn").attr('bluesky-index', parseInt(dTypeNextBtnIndex)+1);
                         }
                     }else{
-                        
+                        Gb_PopoverShow(targetId, data['tipMessage'],true);
                     }
                 },
                 error: function(err){
+                    Gb_PopoverShow(targetId, "加载失败err",true);
                     console.log(err)
                 },
                 complete: function(){
@@ -209,72 +234,61 @@
     }
 
     // 拼接评论列表为一系列卡片元素
-    function linkCommentComStr(theData){
+    function linkCommentComStr(theCommentsData){
         var comLinkStr = "";
 
-        $.each(theData, function(i,item){
-            var siteUrlStr = !Gb_IsWhiteSpaceOrNull(theData.notPassComments.siteUrl)?theData.notPassComments.siteUrl:"无";
-            comLinkStr += '<div class="card"><div class="card-body"><p class="card-title"><span>昵称:</span><span class="text-info bg-dark">'+
-            theData.notPassComments.name+'</span><span>邮箱:</span><span class="text-info bg-dark">'+
-            theData.notPassComments.email+'</span><span>站点:</span><span class="text-info bg-dark">'+
+        $.each(theCommentsData, function(i,cmtItem){
+            var siteUrlStr = !Gb_IsWhiteSpaceOrNull(cmtItem.siteUrl)?cmtItem.siteUrl:"无";
+            comLinkStr += '<div class="card comment-card"><div class="card-body"><p class="card-title"><span>昵称:</span><span class="text-info bg-dark">'+
+            cmtItem.name+'</span><span>邮箱:</span><span class="text-info bg-dark">'+
+            cmtItem.email+'</span><span>站点:</span><span class="text-info bg-dark">'+
             siteUrlStr+'</span><br><span>评论时间:</span><span class="text-info bg-dark">'+
-            theData.notPassComments.commentTime+'</span><span>IP:</span><span class="text-info bg-dark">'+
-            theData.notPassComments.clientIp+'</span></p><p class="card-text text-info bg-dark">'+
-            theData.notPassComments.content+'</p><p class="card-text"><button type="button" class="btn btn-primary btn-sm">通过</button>'+
+            cmtItem.commentTime+'</span><span>IP:</span><span class="text-info bg-dark">'+
+            cmtItem.clientIp+'</span></p><p class="card-text text-info bg-dark">'+
+            cmtItem.content+'</p><p class="card-text"><button type="button" class="btn btn-primary btn-sm">通过</button>'+
             '<button type="button" class="btn btn-primary btn-sm">通过并回复</button>'+
             '<button type="button" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>'+
             '<button type="button" class="btn btn-danger btn-sm">删除</button>'+
-            '<button type="button" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div>';
+            '<button type="button" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div><br>';
         });  
         return comLinkStr;
     }
 
     // 拼接回复列表为一系列卡片元素
-    function linkReplyComStr(theData){
+    function linkReplyComStr(theRepliesData){
         var comLinkStr = "";
-        $.each(theData, function(i,item){
-        var siteUrlStr = !Gb_IsWhiteSpaceOrNull(theData.notPassComments.siteUrl)?theData.notPassComments.siteUrl:"无";
-            comLinkStr += '<div class="card"><div class="card-body"><p class="card-title"><span>昵称:</span><span class="text-info bg-dark">'+
-            theData.notPassComments.name+'</span><span>邮箱:</span><span class="text-info bg-dark">'+
-            theData.notPassComments.email+'</span><span>站点:</span><span class="text-info bg-dark">'+
-            siteUrlStr+'</span><br><span>评论时间:</span><span class="text-info bg-dark">'+
-            theData.notPassComments.replyTime+'</span><span>IP:</span><span class="text-info bg-dark">'+
-            theData.notPassComments.clientIp+'</span></p><p class="card-text text-info bg-dark">'+
-            theData.notPassComments.content+'</p>'+
-            
-            '<p class="card-text"><button type="button" class="btn btn-primary btn-sm">通过</button>'+
+
+        $.each(theRepliesData, function(i,rpItem){
+        var siteUrlStr = !Gb_IsWhiteSpaceOrNull(rpItem.siteUrl)?rpItem.siteUrl:"无";
+        var siteUrlRelatedCmtStr = !Gb_IsWhiteSpaceOrNull(rpItem.relatedComment.siteUrl)?rpItem.relatedComment.siteUrl:"无";
+            comLinkStr += '<div class="card reply-card"><div class="card-body"><p class="card-title"><span>昵称:</span><span class="text-info bg-dark">'+
+            rpItem.name+'</span><span>邮箱:</span><span class="text-info bg-dark">'+
+            rpItem.email+'</span><span>站点:</span><span class="text-info bg-dark">'+
+            siteUrlStr+'</span><br><span>回复时间:</span><span class="text-info bg-dark">'+
+            rpItem.replyTime+'</span><span>IP:</span><span class="text-info bg-dark">'+
+            rpItem.clientIp+'</span></p><p class="card-text text-info bg-dark">'+
+            rpItem.content+'</p>'+
+            '<p class="card-text"><div class="accordion accordion-flush" id="accordionFlush'+
+            rpItem.id+'RelatedComment"><div class="accordion-item"><h2 class="accordion-header" id="flush-heading'+
+            rpItem.id+'RelatedComment"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse'+
+            rpItem.id+'RelatedComment" aria-expanded="false" aria-controls="flush-collapse'+
+            rpItem.id+'RelatedComment">--显示此回复所在的评论--</button></h2><div id="flush-collapse'+
+            rpItem.id+'RelatedComment" class="accordion-collapse collapse" aria-labelledby="flush-heading'+
+            rpItem.id+'RelatedComment" data-bs-parent="#accordionFlush'+
+            rpItem.id+'RelatedComment"><div class="accordion-body"><div class="card"><div class="card-body"><p class="card-title"><span>昵称:</span><span class="text-info bg-dark">'+
+            rpItem.relatedComment?.name+'</span><span>邮箱:</span><span class="text-info bg-dark">'+
+            rpItem.relatedComment?.email+'</span><span>站点:</span><span class="text-info bg-dark">'+
+            siteUrlRelatedCmtStr+'</span><br><span>评论时间:</span><span class="text-info bg-dark">'+
+            rpItem.relatedComment?.commentTime+'</span><span>IP:</span><span class="text-info bg-dark">'+
+            rpItem.relatedComment?.clientIp+'</span></p><p class="card-text text-info bg-dark">'+
+            rpItem.relatedComment?.content+'</p></div></div></div></div></div></div>'+
+            '</p><p class="card-text"><button type="button" class="btn btn-primary btn-sm">通过</button>'+
             '<button type="button" class="btn btn-primary btn-sm">通过并回复</button>'+
             '<button type="button" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>'+
             '<button type="button" class="btn btn-danger btn-sm">删除</button>'+
-            '<button type="button" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div>';
+            '<button type="button" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div><br>';
         });  
         return comLinkStr;
     }
 </script>
 
-'<p class="card-text"><div class="accordion accordion-flush" id="accordionFlush'+@(item.Id)RelatedComment">
-<div class="accordion-item">
-<h2 class="accordion-header" id="flush-heading@(item.Id)RelatedComment">
-<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse@(item.Id)RelatedComment" aria-expanded="false" aria-controls="flush-collapse@(item.Id)RelatedComment">
---显示此回复所在的评论--
-</button>
-</h2>
-<div id="flush-collapse@(item.Id)RelatedComment" class="accordion-collapse collapse" aria-labelledby="flush-heading@(item.Id)RelatedComment" data-bs-parent="#accordionFlush@(item.Id)RelatedComment">
-<div class="accordion-body">
-<div class="card">
-<div class="card-body">
-<p class="card-title">
-<span>昵称:</span><span class="text-info bg-dark">@item?.RelatedComment?.Name</span>
-<span>邮箱:</span><span class="text-info bg-dark">@item?.RelatedComment?.Email</span>
-<span>站点:</span><span class="text-info bg-dark">@(string.IsNullOrWhiteSpace(item?.RelatedComment?.SiteUrl)?"无":item?.RelatedComment?.SiteUrl)</span><br>
-<span>评论时间:</span><span class="text-info bg-dark">@item?.RelatedComment?.CommentTime</span>
-<span>IP:</span><span class="text-info bg-dark">@item?.RelatedComment?.ClientIp</span>
-</p>
-<p class="card-text text-info bg-dark">@item?.RelatedComment?.Content</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</p>'
