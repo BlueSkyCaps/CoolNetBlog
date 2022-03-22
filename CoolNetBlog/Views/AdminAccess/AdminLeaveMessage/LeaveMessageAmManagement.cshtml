@@ -164,7 +164,7 @@
         repaintMessageCom(targetId, dtype, url);
     }
 
-    // ajax调用加载数据 targetId：点击的按钮id；type：1评论2回复；
+    // ajax调用加载数据 targetId：点击的按钮id；dtype：1评论2回复；
     function repaintMessageCom(targetId, dtype, url){
         $.ajax (
             {
@@ -210,4 +210,13 @@
         );
     }
 
+    function linkCommentComStr(){
+        var comStr = "";
+        return comStr;
+    }
+
+    function linkReplyComStr(){
+        var comStr = "";
+        return comStr;
+    }
 </script>
