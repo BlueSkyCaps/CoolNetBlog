@@ -78,6 +78,7 @@ namespace CoolNetBlog.Controllers.Admin
                 result.TipMessage = "删除失败请刷新重试";
                 return Json(result);
             }
+            result.TipMessage = "删除成功。";
             // 处理发送邮件提醒
             if (vm.SendEmail)
             {
@@ -85,11 +86,12 @@ namespace CoolNetBlog.Controllers.Admin
                 {
                     // send email
                     result.Code = ValueCodes.Success;
+                    result.TipMessage = "删除成功，邮件已发送。";
                 }
                 catch (Exception e)
                 {
                     result.HideMessage = $"删除某{(vm.DType == 1 ? "评论" : "回复")}成功，尝试发送邮件异常:" + e.Message;
-                    result.TipMessage = "已被删除，但邮件发送失败";
+                    result.TipMessage = "已被删除，但邮件发送失败。";
                 }
 
             }

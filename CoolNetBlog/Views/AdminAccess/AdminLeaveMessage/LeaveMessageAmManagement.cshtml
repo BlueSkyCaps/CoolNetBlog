@@ -116,11 +116,11 @@
                             </div>
                         </p>
                         <p class="card-text">
-                            <button type="button" class="btn btn-primary btn-sm">通过</button>
-                            <button type="button" class="btn btn-primary btn-sm">通过并回复</button>
-                            <button type="button" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>
-                            <button type="button" class="btn btn-danger btn-sm">删除</button>
-                            <button type="button" class="btn btn-danger btn-sm">删除且发送邮件提醒</button>
+                            <button type="button" onclick="passMsg(2,false,false)" class="btn btn-primary btn-sm">通过</button>
+                            <button type="button" onclick="passMsg(2,true,false)" class="btn btn-primary btn-sm">通过并回复</button>
+                            <button type="button" onclick="passMsg(2,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>
+                            <button type="button" onclick="delMsg(2,false)" class="btn btn-danger btn-sm">删除</button>
+                            <button type="button" onclick="delMsg(2,true)" class="btn btn-danger btn-sm ">删除且发送邮件提醒</button>
                         </p>
                         </div>
                     </div>
@@ -146,6 +146,13 @@
     </div>
   </div>
 </div>
+
+<!-- UIkit css -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/css/uikit.min.css" />
+<!-- UIkit JS -->
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit-icons.min.js"></script>
+
 <script>
     // 未审核的评论 数据加载按钮
     function commentOrReplyPageClick(target){
@@ -296,6 +303,20 @@
             '<button type="button" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div><br>';
         });  
         return comLinkStr;
+    }
+
+    // 删除某评论或回复
+    function delMsg(dtype, sendEmail){
+        UIkit.notification({
+            message: 'my-message!',
+            status: 'primary',
+            pos: 'top-center',
+            timeout: 2000
+        });
+    }
+
+    function passMsg(dtype){
+
     }
 </script>
 
