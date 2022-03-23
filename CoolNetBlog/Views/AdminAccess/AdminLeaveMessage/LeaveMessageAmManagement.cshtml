@@ -21,7 +21,7 @@
                   <div id="comment-card">
                   @foreach (var item in Model?.NotPassComments)
                   {
-                    <div class="card">
+                    <div class="card" itemCardId="@item.Id">
                         <div class="card-body">
                         <p class="card-title">
                             <span>昵称:</span><span class="text-info bg-dark">@item.Name</span><br>
@@ -33,11 +33,11 @@
                         </p>
                         <p class="card-text text-info bg-dark">@item.Content</p>
                         <p class="card-text">
-                            <button type="button" class="btn btn-primary btn-sm">通过</button>
-                            <button type="button" class="btn btn-primary btn-sm">通过并回复</button>
-                            <button type="button" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>
-                            <button type="button" class="btn btn-danger btn-sm">删除</button>
-                            <button type="button" class="btn btn-danger btn-sm">删除且发送邮件提醒</button>
+                            <button type="button" onclick="passMsg(1,false,false)" class="btn btn-primary btn-sm">通过</button>
+                            <button type="button" onclick="passMsg(1,true,false)" class="btn btn-primary btn-sm">通过并回复</button>
+                            <button type="button" onclick="passMsg(1,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>
+                            <button type="button" onclick="delMsg(3,false)" class="btn btn-danger btn-sm">删除</button>
+                            <button type="button" onclick="delMsg(3,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button>
                         </p>
                         </div>
                     </div>
@@ -77,7 +77,7 @@
                   <div id="reply-card">
                   @foreach (var item in Model?.NotPassReplies)
                   {
-                    <div class="card reply-card">
+                    <div class="card" itemCardId="@item.Id">
                         <div class="card-body">
                         <p class="card-title">
                             <span>昵称:</span><span class="text-info bg-dark">@item.Name</span><br>
@@ -116,11 +116,11 @@
                             </div>
                         </p>
                         <p class="card-text">
-                            <button type="button" onclick="passMsg(2,false,false)" class="btn btn-primary btn-sm">通过</button>
-                            <button type="button" onclick="passMsg(2,true,false)" class="btn btn-primary btn-sm">通过并回复</button>
-                            <button type="button" onclick="passMsg(2,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>
-                            <button type="button" onclick="delMsg(2,false)" class="btn btn-danger btn-sm">删除</button>
-                            <button type="button" onclick="delMsg(2,true)" class="btn btn-danger btn-sm ">删除且发送邮件提醒</button>
+                            <button type="button" onclick="passMsg(1,false,false)" class="btn btn-primary btn-sm">通过</button>
+                            <button type="button" onclick="passMsg(1,true,false)" class="btn btn-primary btn-sm">通过并回复</button>
+                            <button type="button" onclick="passMsg(1,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>
+                            <button type="button" onclick="delMsg(3,false)" class="btn btn-danger btn-sm">删除</button>
+                            <button type="button" onclick="delMsg(3,true)" class="btn btn-danger btn-sm ">删除且发送邮件提醒</button>
                         </p>
                         </div>
                     </div>
@@ -243,7 +243,9 @@
         $.each(theCommentsData, function(i,cmtItem){
             var siteUrlStr = !Gb_IsWhiteSpaceOrNull(cmtItem.siteUrl)?cmtItem.siteUrl:"无";
             var articleTitle = !Gb_IsWhiteSpaceOrNull(cmtItem.relatedArticle?.title)?cmtItem.relatedArticle?.title:"无标题";
-            comLinkStr += '<div class="card comment-card"><div class="card-body"><p class="card-title"><span>昵称:</span><span class="text-info bg-dark">'+
+            comLinkStr += '<div class="card" itemCardId="'+
+            cmtItem.id+
+            '"><div class="card-body"><p class="card-title"><span>昵称:</span><span class="text-info bg-dark">'+
             cmtItem.name+'</span><br><span>邮箱:</span><span class="text-info bg-dark">'+
             cmtItem.email+'</span><br><span>站点:</span><span class="text-info bg-dark">'+
             siteUrlStr+'</span><br><span>评论时间:</span><span class="text-info bg-dark">'+
@@ -268,7 +270,9 @@
         var siteUrlStr = !Gb_IsWhiteSpaceOrNull(rpItem.siteUrl)?rpItem.siteUrl:"无";
         var articleTitle = !Gb_IsWhiteSpaceOrNull(rpItem.relatedArticle?.title)?rpItem.relatedArticle?.title:"无标题";
         var siteUrlRelatedCmtStr = !Gb_IsWhiteSpaceOrNull(rpItem.relatedComment?.siteUrl)?rpItem.relatedComment?.siteUrl:"无";
-            comLinkStr += '<div class="card reply-card"><div class="card-body"><p class="card-title"><span>昵称:</span><span class="text-info bg-dark">'+
+            comLinkStr += '<div class="card" itemCardId="'+
+            rpItem.id+
+            '"><div class="card-body"><p class="card-title"><span>昵称:</span><span class="text-info bg-dark">'+
             rpItem.name+'</span><br><span>邮箱:</span><span class="text-info bg-dark">'+
             rpItem.email+'</span><br><span>站点:</span><span class="text-info bg-dark">'+
             siteUrlStr+'</span><br><span>回复时间:</span><span class="text-info bg-dark">'+
@@ -299,7 +303,7 @@
         return comLinkStr;
     }
 
-    function delMsgAjaxCall(id, dtype, sendEmail, emailMessage){
+    function delMsgAjaxCall(url, id, dtype, sendEmail, emailMessage=""){
         $.ajax (
             {
                 url: url,
@@ -315,8 +319,6 @@
                 success: function(data, status){
                     if(data['code']==1){
                         
-                        }
-                        
                     }else{
                         Gb_NotifShow(data['tipMessage']);
                     }
@@ -326,7 +328,6 @@
                     console.log(err)
                 },
                 complete: function(){
-                    // 无论如何执行此回调
                 }
             }
         );
@@ -339,7 +340,7 @@
             //open dialog
             return;
         }
-        delMsgAjaxCall();
+        delMsgAjaxCall(url,id,dtype,sendEmail);
         
     }
 
