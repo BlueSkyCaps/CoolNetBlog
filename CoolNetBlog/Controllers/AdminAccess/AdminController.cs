@@ -98,8 +98,14 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 ModelState.AddModelError("", "重置账户：新管理员昵称或密码过于长。");
                 return View("Login");
             }
+            if (string.IsNullOrWhiteSpace(vm.Email))
+            {
+                ModelState.AddModelError("", "重置账户：请输入一个你的专用邮箱");
+                return View("Login");
+            }
             am.Password = ValueCompute.MakeMD5(vm.NewPassword);
             am.AccountName = vm.NewAccountName;
+            am.Email = vm.Email;
             am.Token = Guid.NewGuid().ToString().Replace("-", string.Empty);
             try
             {

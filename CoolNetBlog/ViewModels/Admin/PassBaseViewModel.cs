@@ -14,6 +14,8 @@ namespace CoolNetBlog.ViewModels.Admin
         /// </summary>
         [HiddenInput(DisplayValue = false)]
         public string? PassToken { get; set; }
+        [HiddenInput(DisplayValue = false)]
+        public string? Email { get; set; }
         /// <summary>
         /// 当前某页面所需展示的公共封装数据
         /// </summary>

@@ -29,6 +29,7 @@ namespace CoolNetBlog.Base
         {
             pvm.AccountName = spassVm.AccountName;
             pvm.PassToken = spassVm.PassToken;
+            pvm.Email = spassVm.Email;
             return pvm;
         }
 

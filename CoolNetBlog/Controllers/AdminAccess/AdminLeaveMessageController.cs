@@ -71,6 +71,12 @@ namespace CoolNetBlog.Controllers.Admin
                 result.TipMessage = "请先去基本管理面板填写你的网站域名";
                 return Json(result);
             }
+            if (string.IsNullOrWhiteSpace(slvm.Email))
+            {
+                result.HideMessage = "通过评论或回复时附带回复信息，当前管理员没有填写设置邮箱";
+                result.TipMessage = "你没有邮箱，请去登录入口进行重置密码操作，并输入你的专用邮箱。";
+                return Json(result);
+            }
             var adminUser = await _adminUserReader.FirstOrDefaultAsync(a=>a.AccountName==slvm.AccountName);
             _baseSugar._dbHandler.BeginTran();
             try
@@ -100,7 +106,7 @@ namespace CoolNetBlog.Controllers.Admin
                         IsAdmin = true,
                         ClientIp = "localhost",
                         Name = slvm.AccountName,
-                        Email = "",
+                        Email = slvm.Email,
                         SiteUrl = siteSett.Domain,
                         Content = vm.Message
                     };

@@ -9,5 +9,6 @@ namespace CoolNetBlog.ViewModels.Admin
         public string NewAccountName { get; set; } = "";
         public string NewPassword { get; set; } = "";
         public string NewPasswordRep { get; set; } = "";
+        public string? Email { get; set; } = "";
     }
 }
