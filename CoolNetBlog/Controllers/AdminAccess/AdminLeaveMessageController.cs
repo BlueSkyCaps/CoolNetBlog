@@ -35,37 +35,65 @@ namespace CoolNetBlog.Controllers.Admin
         /// </summary>
         /// <param name="id"></param>
         /// <param name="dType">1评论，2回复</param>
+        /// <param name="dType">是否发生邮件通知</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Delete([FromForm]int id, [FromForm] int dType) {
+        public async Task<IActionResult> DeleteOneMsg([FromBody]DeleteOneMsgViewModel vm) {
             ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
-            if (id<1)
+            if (vm.DeleteId < 1)
             {
                 result.HideMessage = "删除评论或回复失败：id无效";
                 result.TipMessage = "删除评论或回复失败，请刷新重试";
                 return Json(result);
             }
-            CommentCarryViewModel delable;
+            if (vm.SendEmail&&string.IsNullOrWhiteSpace(vm.EmailMessage))
+            {
+                result.HideMessage = "删除评论或回复附带邮件但邮件信息未填";
+                result.TipMessage = "附带邮件请填写邮件内容";
+                return Json(result);
+            }
+            _baseSugar._dbHandler.BeginTran();
             try
             {
-                delable = await _commentVmReader.FindOneByIdAsync(id);
+                if (vm.DType==1)
+                {
+                    var deleable = await _baseSugar._dbHandler.Queryable<Comment>().SingleAsync(c => c.Id == vm.DeleteId);
+                    await _baseSugar._dbHandler.Deleteable<Comment>().Where(deleable).ExecuteCommandAsync();
+                    // 删除此评论还要删除它的所有回复
+                    await _baseSugar._dbHandler.Deleteable<Reply>().Where(r=>r.CommentId== vm.DeleteId).ExecuteCommandAsync();
+                }
+                else
+                {
+                    // 删除回复
+                    var deleable = await _baseSugar._dbHandler.Queryable<Reply>().SingleAsync(c => c.Id == vm.DeleteId);
+                    await _baseSugar._dbHandler.Deleteable<Reply>().Where(deleable).ExecuteCommandAsync();
+                }
+                _baseSugar._dbHandler.CommitTran();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                ModelState.AddModelError("", "删除失败:没有此菜单Id，刷新再试吧？。");
-                return View("MenuAmManagement", slvm);
+                _baseSugar._dbHandler.RollbackTran();
+                result.Code = ValueCodes.Error;
+                result.HideMessage = $"删除某{(vm.DType == 1? "评论" : "回复")}失败:" + e.Message;
+                result.TipMessage = "删除失败请刷新重试";
+                return Json(result);
             }
-            bool exd = await _articleReader.AnyAsync(a=>a.MenuId==id);
-            if (exd)
+            // 处理发送邮件提醒
+            if (vm.SendEmail)
             {
-                ModelState.AddModelError("", "删除失败:还有文章属于此菜单，你可以将文章归类为其他菜单再尝试删除;" +
-                    "也可以重新命名为合适的菜单名哦！");
-                return View("MenuAmManagement", slvm);
-            }
-            
-            var ef = await _commentVmReader.DeleteAsync(delable);
-            return RedirectToAction("LeaveMessageAmManagement", "AdminLeaveMessage", new { pt = slvm.PassToken });
+                try
+                {
+                    // send email
+                    result.Code = ValueCodes.Success;
+                }
+                catch (Exception e)
+                {
+                    result.HideMessage = $"删除某{(vm.DType == 1 ? "评论" : "回复")}成功，尝试发送邮件异常:" + e.Message;
+                    result.TipMessage = "已被删除，但邮件发送失败";
+                }
 
+            }
+            return Json(result);
         }
 
         /// <summary>
@@ -75,9 +103,7 @@ namespace CoolNetBlog.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> AdminReply(ReplyViewModel vm)
         {
-            RemoveSomeValid();
             return RedirectToAction("LeaveMessageAmManagement", "AdminLeaveMessage", new { pt = slvm.PassToken });
-
         }
 
         /// <summary>
@@ -197,7 +223,7 @@ namespace CoolNetBlog.Controllers.Admin
         /// 根据关键词删除匹配的评论
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> GetComments(string? pt,int type,  string? kw)
+        public async Task<IActionResult> UseWordDelete(string? pt,int type,  string? kw)
         {
             IList<Article> articles;
             if (!string.IsNullOrWhiteSpace(kw))

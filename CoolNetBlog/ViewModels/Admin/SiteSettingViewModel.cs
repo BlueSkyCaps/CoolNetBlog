@@ -3,7 +3,6 @@
     public class SiteSettingViewModel:PassBaseViewModel
     {
         public string SiteName { get; set; }
-
         public string Host { get; set; }
         public string Domain { get; set; }
         public string FashionQuotes { get; set; }

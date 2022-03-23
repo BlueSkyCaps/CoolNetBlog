@@ -8,8 +8,5 @@ namespace CoolNetBlog.ViewModels.Admin
         [DataType(DataType.Password)]
         [Display(Name = "密码:")]
         public string Password { get; set; }
-
-
-   
     }
 }
