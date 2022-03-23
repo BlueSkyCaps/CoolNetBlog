@@ -36,8 +36,8 @@
                             <button type="button" onclick="passMsg(this,1,false,false)" class="btn btn-primary btn-sm">通过</button>
                             <button type="button" onclick="passMsg(this,1,true,false)" class="btn btn-primary btn-sm">通过并回复</button>
                             <button type="button" onclick="passMsg(this,1,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>
-                            <button type="button" onclick="delMsg(this,3,false)" class="btn btn-danger btn-sm">删除</button>
-                            <button type="button" onclick="delMsg(this,3,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button>
+                            <button type="button" onclick="delMsg(this,1,false)" class="btn btn-danger btn-sm">删除</button>
+                            <button type="button" onclick="delMsg(this,1,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button>
                         </p>
                         </div>
                     </div>
@@ -116,11 +116,11 @@
                             </div>
                         </p>
                         <p class="card-text">
-                            <button type="button" onclick="passMsg(this,1,false,false)" class="btn btn-primary btn-sm">通过</button>
-                            <button type="button" onclick="passMsg(this,1,true,false)" class="btn btn-primary btn-sm">通过并回复</button>
-                            <button type="button" onclick="passMsg(this,1,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>
-                            <button type="button" onclick="delMsg(this,3,false)" class="btn btn-danger btn-sm">删除</button>
-                            <button type="button" onclick="delMsg(this,3,true)" class="btn btn-danger btn-sm ">删除且发送邮件提醒</button>
+                            <button type="button" onclick="passMsg(this,2,false,false)" class="btn btn-primary btn-sm">通过</button>
+                            <button type="button" onclick="passMsg(this,2,true,false)" class="btn btn-primary btn-sm">通过并回复</button>
+                            <button type="button" onclick="passMsg(this,2,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>
+                            <button type="button" onclick="delMsg(this,2,false)" class="btn btn-danger btn-sm">删除</button>
+                            <button type="button" onclick="delMsg(this,2,true)" class="btn btn-danger btn-sm ">删除且发送邮件提醒</button>
                         </p>
                         </div>
                     </div>
@@ -146,7 +146,6 @@
     </div>
   </div>
 </div>
-
 
 
 <script>
@@ -180,7 +179,6 @@
             {
                 url: url,
                 type: "GET",
-                contentType: "application/json; charset=utf-8",
                 success: function(data, status){
                     if(data['code']==1){
                         // 重绘为当前获取的数据
@@ -256,8 +254,8 @@
             cmtItem.content+'</p><p class="card-text"><button type="button" onclick="passMsg(this,1,false,false)" class="btn btn-primary btn-sm">通过</button>'+
             '<button type="button" onclick="passMsg(this,1,true,false)" class="btn btn-primary btn-sm">通过并回复</button>'+
             '<button type="button" onclick="passMsg(this,1,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>'+
-            '<button type="button" onclick="delMsg(this,3,false)" class="btn btn-danger btn-sm">删除</button>'+
-            '<button type="button" onclick="delMsg(this,3,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div><br>';
+            '<button type="button" onclick="delMsg(this,1,false)" class="btn btn-danger btn-sm">删除</button>'+
+            '<button type="button" onclick="delMsg(this,1,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div><br>';
         });  
         return comLinkStr;
     }
@@ -294,11 +292,11 @@
             rpItem.relatedComment?.commentTime+'</span><span>IP:</span><span class="text-info bg-dark">'+
             rpItem.relatedComment?.clientIp+'</span></p><p class="card-text text-info bg-dark">'+
             rpItem.relatedComment?.content+'</p></div></div></div></div></div></div>'+
-            '</p><p class="card-text"><button type="button" onclick="passMsg(this,1,false,false)" class="btn btn-primary btn-sm">通过</button>'+
-            '<button type="button" onclick="passMsg(this,1,true,false)" class="btn btn-primary btn-sm">通过并回复</button>'+
-            '<button type="button" onclick="passMsg(this,1,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>'+
-            '<button type="button" onclick="delMsg(this,3,false)" class="btn btn-danger btn-sm">删除</button>'+
-            '<button type="button" onclick="delMsg(this,3,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div><br>';
+            '</p><p class="card-text"><button type="button" onclick="passMsg(this,2,false,false)" class="btn btn-primary btn-sm">通过</button>'+
+            '<button type="button" onclick="passMsg(this,2,true,false)" class="btn btn-primary btn-sm">通过并回复</button>'+
+            '<button type="button" onclick="passMsg(this,2,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>'+
+            '<button type="button" onclick="delMsg(this,2,false)" class="btn btn-danger btn-sm">删除</button>'+
+            '<button type="button" onclick="delMsg(this,2,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div><br>';
         });  
         return comLinkStr;
     }
@@ -318,7 +316,7 @@
                 }),
                 success: function(data, status){
                     if(data['code']==1){
-                        
+                        Gb_NotifShow(data['tipMessage']);
                     }else{
                         Gb_NotifShow(data['tipMessage']);
                     }
@@ -335,16 +333,16 @@
 
     // 删除某评论或回复
     function delMsg(targer, dtype, sendEmail){
-        var url = '/AdminLeaveMessage/DeleteOneMsg';
+        var passToken = $('#pt').val();
+        var url = '/AdminLeaveMessage/DeleteOneMsg?pt='+passToken;
         var id = $(targer).closest('.card').attr('itemCardId');
-        alert(id);
-        return;
         if(sendEmail){
             //open dialog
+            delMsgAjaxCall(url,id,dtype,sendEmail);
+
             return;
         }
         delMsgAjaxCall(url,id,dtype,sendEmail);
-        
     }
 
     function passMsg(targer, dtype){

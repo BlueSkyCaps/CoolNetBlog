@@ -38,7 +38,7 @@ namespace CoolNetBlog.Controllers.Admin
         /// <param name="dType">是否发生邮件通知</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> DeleteOneMsg([FromBody]DeleteOneMsgViewModel vm) {
+        public async Task<IActionResult> DeleteOneMsg(string? pt, [FromBody]DeleteOneMsgViewModel vm) {
             ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
             if (vm.DeleteId < 1)
             {
