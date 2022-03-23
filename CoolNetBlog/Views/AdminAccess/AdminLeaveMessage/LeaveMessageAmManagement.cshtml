@@ -299,7 +299,7 @@
         return comLinkStr;
     }
 
-    function delMsgAjaxCall(){
+    function delMsgAjaxCall(id, dtype, sendEmail, emailMessage){
         $.ajax (
             {
                 url: url,
@@ -307,57 +307,22 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({
-                    "DeleteId":DeleteId,
+                    "DeleteId":id,
                     "DType":dtype,
                     "SendEmail":sendEmail,
-                    "EmailMessage":EmailMessage,
+                    "EmailMessage":emailMessage,
                 }),
                 success: function(data, status){
                     if(data['code']==1){
-                        // 重绘为当前获取的数据
-                        if(dtype==1){
-                            if(data['data']['notPassComments'].length<=0)
-                            {
-                                // 没有更多评论数据
-                                Gb_PopoverShow(targetId, "无更多数据");
-                                return;
-                            }
-                            $("#comment-card").children().remove();
-                            var newDomStr = linkCommentComStr(data['data']['notPassComments']);
-                            $("#comment-card").append(newDomStr);
-                        }else{
-                            if(data['data']['notPassReplies'].length<=0)
-                            {
-                                // 没有更多回复数据
-                                Gb_PopoverShow(targetId, "无更多数据");
-                                return;
-                            }
-                            $("#reply-card").children().remove();
-                            var newDomStr = linkReplyComStr(data['data']['notPassReplies']);
-                            $("#reply-card").append(newDomStr);
+                        
                         }
-                        // 更改页索引的值
-                        var pgType = $('#'+targetId).attr('bluesky-page-type');
-                        // bluesky-data-type的具体值 comment还是reply
-                        var dtypeAttrValue = dtype==1?"comment":"reply";
-                        // 按钮id为，往上：commentPrePageBtn|replyPrePageBtn 往下：commentNextPageBtn，replyNextPageBtn
-                        var dTypePreBtnIndex = $('#'+dtypeAttrValue+"PrePageBtn").attr('bluesky-index');
-                        var dTypeNextBtnIndex = $('#'+dtypeAttrValue+"NextPageBtn").attr('bluesky-index');
-
-                        // 点击的是"往上"还是"往下"，往上：上页下页都减去1，往下：上页下页都加1
-                        if(pgType=="pre"){
-                            $('#'+dtypeAttrValue+"PrePageBtn").attr('bluesky-index', parseInt(dTypePreBtnIndex)-1);
-                            $('#'+dtypeAttrValue+"NextPageBtn").attr('bluesky-index', parseInt(dTypeNextBtnIndex)-1);
-                        }else{
-                            $('#'+dtypeAttrValue+"PrePageBtn").attr('bluesky-index', parseInt(dTypePreBtnIndex)+1);
-                            $('#'+dtypeAttrValue+"NextPageBtn").attr('bluesky-index', parseInt(dTypeNextBtnIndex)+1);
-                        }
+                        
                     }else{
-                        Gb_PopoverShow(targetId, data['tipMessage'],true);
+                        Gb_NotifShow(data['tipMessage']);
                     }
                 },
                 error: function(err){
-                    Gb_PopoverShow(targetId, "加载失败err",true);
+                    Gb_NotifShow("删除失败err", "danger");
                     console.log(err)
                 },
                 complete: function(){

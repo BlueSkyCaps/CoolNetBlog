@@ -104,11 +104,17 @@ function Gb_PopoverShow(idStr, tipMsg, dis = false, lazyText = "") {
     }, 2000);
 }
 
-function Gb_Notif() {
+/**
+ * UIkit.notification组件 通知信息
+ * @param {any} message 文本
+ * @param {any} status 状态样式
+ * @param {any} pos 显示位置
+ */
+function Gb_NotifShow(message = "", status = "primary", pos = 'top-center') {
     UIkit.notification({
-        message: 'my-message!',
-        status: 'primary',
-        pos: 'top-center',
+        message: message,
+        status: status,
+        pos: pos,
         timeout: 2000
     });
 }
