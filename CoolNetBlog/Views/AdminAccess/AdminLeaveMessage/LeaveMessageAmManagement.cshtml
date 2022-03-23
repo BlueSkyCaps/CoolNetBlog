@@ -18,7 +18,7 @@
         @{
             if (Model?.NotPassComments?.Count>0)
             {
-                  <div id="comment-card">
+                  <div id="comment-cards">
                   @foreach (var item in Model?.NotPassComments)
                   {
                     <div class="card" itemCardId="@item.Id">
@@ -33,11 +33,11 @@
                         </p>
                         <p class="card-text text-info bg-dark">@item.Content</p>
                         <p class="card-text">
-                            <button type="button" onclick="passMsg(1,false,false)" class="btn btn-primary btn-sm">通过</button>
-                            <button type="button" onclick="passMsg(1,true,false)" class="btn btn-primary btn-sm">通过并回复</button>
-                            <button type="button" onclick="passMsg(1,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>
-                            <button type="button" onclick="delMsg(3,false)" class="btn btn-danger btn-sm">删除</button>
-                            <button type="button" onclick="delMsg(3,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button>
+                            <button type="button" onclick="passMsg(this,1,false,false)" class="btn btn-primary btn-sm">通过</button>
+                            <button type="button" onclick="passMsg(this,1,true,false)" class="btn btn-primary btn-sm">通过并回复</button>
+                            <button type="button" onclick="passMsg(this,1,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>
+                            <button type="button" onclick="delMsg(this,3,false)" class="btn btn-danger btn-sm">删除</button>
+                            <button type="button" onclick="delMsg(this,3,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button>
                         </p>
                         </div>
                     </div>
@@ -74,7 +74,7 @@
         @{
             if (Model?.NotPassReplies?.Count>0)
             {
-                  <div id="reply-card">
+                  <div id="reply-cards">
                   @foreach (var item in Model?.NotPassReplies)
                   {
                     <div class="card" itemCardId="@item.Id">
@@ -116,11 +116,11 @@
                             </div>
                         </p>
                         <p class="card-text">
-                            <button type="button" onclick="passMsg(1,false,false)" class="btn btn-primary btn-sm">通过</button>
-                            <button type="button" onclick="passMsg(1,true,false)" class="btn btn-primary btn-sm">通过并回复</button>
-                            <button type="button" onclick="passMsg(1,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>
-                            <button type="button" onclick="delMsg(3,false)" class="btn btn-danger btn-sm">删除</button>
-                            <button type="button" onclick="delMsg(3,true)" class="btn btn-danger btn-sm ">删除且发送邮件提醒</button>
+                            <button type="button" onclick="passMsg(this,1,false,false)" class="btn btn-primary btn-sm">通过</button>
+                            <button type="button" onclick="passMsg(this,1,true,false)" class="btn btn-primary btn-sm">通过并回复</button>
+                            <button type="button" onclick="passMsg(this,1,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>
+                            <button type="button" onclick="delMsg(this,3,false)" class="btn btn-danger btn-sm">删除</button>
+                            <button type="button" onclick="delMsg(this,3,true)" class="btn btn-danger btn-sm ">删除且发送邮件提醒</button>
                         </p>
                         </div>
                     </div>
@@ -191,9 +191,9 @@
                                 Gb_PopoverShow(targetId, "无更多数据");
                                 return;
                             }
-                            $("#comment-card").children().remove();
+                            $("#comment-cards").children().remove();
                             var newDomStr = linkCommentComStr(data['data']['notPassComments']);
-                            $("#comment-card").append(newDomStr);
+                            $("#comment-cards").append(newDomStr);
                         }else{
                             if(data['data']['notPassReplies'].length<=0)
                             {
@@ -201,9 +201,9 @@
                                 Gb_PopoverShow(targetId, "无更多数据");
                                 return;
                             }
-                            $("#reply-card").children().remove();
+                            $("#reply-cards").children().remove();
                             var newDomStr = linkReplyComStr(data['data']['notPassReplies']);
-                            $("#reply-card").append(newDomStr);
+                            $("#reply-cards").append(newDomStr);
                         }
                         // 更改页索引的值
                         var pgType = $('#'+targetId).attr('bluesky-page-type');
@@ -253,11 +253,11 @@
             cmtItem.clientIp+'</span><br><span>页面链接:</span><span class="text-info"><a target="_blank" href="'+
             cmtItem.relatedArticleUrl+'">'+
             articleTitle+'</a></span></p><p class="card-text text-info bg-dark">'+
-            cmtItem.content+'</p><p class="card-text"><button type="button" class="btn btn-primary btn-sm">通过</button>'+
-            '<button type="button" class="btn btn-primary btn-sm">通过并回复</button>'+
-            '<button type="button" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>'+
-            '<button type="button" class="btn btn-danger btn-sm">删除</button>'+
-            '<button type="button" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div><br>';
+            cmtItem.content+'</p><p class="card-text"><button type="button" onclick="passMsg(this,1,false,false)" class="btn btn-primary btn-sm">通过</button>'+
+            '<button type="button" onclick="passMsg(this,1,true,false)" class="btn btn-primary btn-sm">通过并回复</button>'+
+            '<button type="button" onclick="passMsg(this,1,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>'+
+            '<button type="button" onclick="delMsg(this,3,false)" class="btn btn-danger btn-sm">删除</button>'+
+            '<button type="button" onclick="delMsg(this,3,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div><br>';
         });  
         return comLinkStr;
     }
@@ -294,11 +294,11 @@
             rpItem.relatedComment?.commentTime+'</span><span>IP:</span><span class="text-info bg-dark">'+
             rpItem.relatedComment?.clientIp+'</span></p><p class="card-text text-info bg-dark">'+
             rpItem.relatedComment?.content+'</p></div></div></div></div></div></div>'+
-            '</p><p class="card-text"><button type="button" class="btn btn-primary btn-sm">通过</button>'+
-            '<button type="button" class="btn btn-primary btn-sm">通过并回复</button>'+
-            '<button type="button" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>'+
-            '<button type="button" class="btn btn-danger btn-sm">删除</button>'+
-            '<button type="button" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div><br>';
+            '</p><p class="card-text"><button type="button" onclick="passMsg(this,1,false,false)" class="btn btn-primary btn-sm">通过</button>'+
+            '<button type="button" onclick="passMsg(this,1,true,false)" class="btn btn-primary btn-sm">通过并回复</button>'+
+            '<button type="button" onclick="passMsg(this,1,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>'+
+            '<button type="button" onclick="delMsg(this,3,false)" class="btn btn-danger btn-sm">删除</button>'+
+            '<button type="button" onclick="delMsg(this,3,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div><br>';
         });  
         return comLinkStr;
     }
@@ -334,8 +334,11 @@
     }
 
     // 删除某评论或回复
-    function delMsg(dtype, sendEmail){
+    function delMsg(targer, dtype, sendEmail){
         var url = '/AdminLeaveMessage/DeleteOneMsg';
+        var id = $(targer).closest('.card').attr('itemCardId');
+        alert(id);
+        return;
         if(sendEmail){
             //open dialog
             return;
@@ -344,7 +347,7 @@
         
     }
 
-    function passMsg(dtype){
+    function passMsg(targer, dtype){
 
     }
 </script>
