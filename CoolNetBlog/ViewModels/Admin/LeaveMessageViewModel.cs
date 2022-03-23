@@ -48,7 +48,21 @@ namespace CoolNetBlog.ViewModels.Admin
         public int DeleteId { get; set; }
         public int DType { get; set; }
         public bool SendEmail { get; set; }
-        public string? EmailMessage { get; set; }
+        public string EmailMessage { get; set; }
+        // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+    }
+
+    /// <summary>
+    /// 留言管理(评论、回复) 审核公开某个评论或回复
+    /// </summary>
+    public class PassOneMsgViewModel
+    {
+        //↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ post表单属性----
+        public int PassId { get; set; }
+        public int DType { get; set; }
+        public bool SupplyReply { get; set; }
+        public bool SendEmail { get; set; }
+        public string Message { get; set; }
         // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
     }
 }

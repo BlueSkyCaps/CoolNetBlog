@@ -35,7 +35,7 @@
                         <p class="card-text">
                             <button type="button" onclick="passMsg(this,1,false,false)" class="btn btn-primary btn-sm">通过</button>
                             <button type="button" onclick="passMsg(this,1,true,false)" class="btn btn-primary btn-sm">通过并回复</button>
-                            <button type="button" onclick="passMsg(this,1,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>
+                            <button type="button" onclick="passMsg(this,1,true,true)" class="btn btn-primary btn-sm">通过并回复且抄送邮件</button>
                             <button type="button" onclick="delMsg(this,1,false)" class="btn btn-danger btn-sm">删除</button>
                             <button type="button" onclick="delMsg(this,1,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button>
                         </p>
@@ -253,7 +253,7 @@
             articleTitle+'</a></span></p><p class="card-text text-info bg-dark">'+
             cmtItem.content+'</p><p class="card-text"><button type="button" onclick="passMsg(this,1,false,false)" class="btn btn-primary btn-sm">通过</button>'+
             '<button type="button" onclick="passMsg(this,1,true,false)" class="btn btn-primary btn-sm">通过并回复</button>'+
-            '<button type="button" onclick="passMsg(this,1,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>'+
+            '<button type="button" onclick="passMsg(this,1,true,true)" class="btn btn-primary btn-sm">通过并回复且抄送邮件</button>'+
             '<button type="button" onclick="delMsg(this,1,false)" class="btn btn-danger btn-sm">删除</button>'+
             '<button type="button" onclick="delMsg(this,1,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div><br>';
         });  
@@ -294,7 +294,7 @@
             rpItem.relatedComment?.content+'</p></div></div></div></div></div></div>'+
             '</p><p class="card-text"><button type="button" onclick="passMsg(this,2,false,false)" class="btn btn-primary btn-sm">通过</button>'+
             '<button type="button" onclick="passMsg(this,2,true,false)" class="btn btn-primary btn-sm">通过并回复</button>'+
-            '<button type="button" onclick="passMsg(this,2,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>'+
+            '<button type="button" onclick="passMsg(this,2,true,true)" class="btn btn-primary btn-sm">通过并回复且抄送邮件</button>'+
             '<button type="button" onclick="delMsg(this,2,false)" class="btn btn-danger btn-sm">删除</button>'+
             '<button type="button" onclick="delMsg(this,2,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div><br>';
         });  
@@ -317,6 +317,8 @@
                 success: function(data, status){
                     if(data['code']==1){
                         Gb_NotifShow(data['tipMessage']);
+                        // 成功删除，返回给调用函数来移除信息元素
+                        return true;
                     }else{
                         Gb_NotifShow(data['tipMessage']);
                     }
@@ -336,17 +338,35 @@
         var passToken = $('#pt').val();
         var url = '/AdminLeaveMessage/DeleteOneMsg?pt='+passToken;
         var id = $(targer).closest('.card').attr('itemCardId');
+        var callRes = false;
         if(sendEmail){
             //open dialog
-            delMsgAjaxCall(url,id,dtype,sendEmail);
-
+            callRes = delMsgAjaxCall(url,id,dtype,sendEmail);
             return;
         }
-        delMsgAjaxCall(url,id,dtype,sendEmail);
+        callRes = delMsgAjaxCall(url,id,dtype,sendEmail);
+        // 调用后是成功删除，移除信息元素
+        if(callRes){
+            $(targer).closest('.card').remove();
+        }
     }
 
+    // 审核通过某评论或回复
     function passMsg(targer, dtype){
-
+        var passToken = $('#pt').val();
+        var url = '/AdminLeaveMessage/PassOneMsg?pt='+passToken;
+        var id = $(targer).closest('.card').attr('itemCardId');
+        var callRes = false;
+        if(sendEmail){
+            //open dialog
+            callRes = delMsgAjaxCall(url,id,dtype,sendEmail);
+            return;
+        }
+        callRes = delMsgAjaxCall(url,id,dtype,sendEmail);
+        // 调用后是成功删除，移除信息元素
+        if(callRes){
+            $(targer).closest('.card').remove();
+        }
     }
 </script>
 
