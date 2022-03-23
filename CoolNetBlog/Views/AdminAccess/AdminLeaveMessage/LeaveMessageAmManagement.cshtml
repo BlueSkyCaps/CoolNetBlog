@@ -299,14 +299,7 @@
         return comLinkStr;
     }
 
-    function
-
-    // 删除某评论或回复
-    function delMsg(dtype, sendEmail){
-        var url = '/AdminLeaveMessage/DeleteOneMsg';
-        if(sendEmail){
-
-        }
+    function delMsgAjaxCall(){
         $.ajax (
             {
                 url: url,
@@ -372,12 +365,17 @@
                 }
             }
         );
-        UIkit.notification({
-            message: 'my-message!',
-            status: 'primary',
-            pos: 'top-center',
-            timeout: 2000
-        });
+    }
+
+    // 删除某评论或回复
+    function delMsg(dtype, sendEmail){
+        var url = '/AdminLeaveMessage/DeleteOneMsg';
+        if(sendEmail){
+            //open dialog
+            return;
+        }
+        delMsgAjaxCall();
+        
     }
 
     function passMsg(dtype){

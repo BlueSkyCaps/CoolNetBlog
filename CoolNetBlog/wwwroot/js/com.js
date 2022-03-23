@@ -103,3 +103,12 @@ function Gb_PopoverShow(idStr, tipMsg, dis = false, lazyText = "") {
         }
     }, 2000);
 }
+
+function Gb_Notif() {
+    UIkit.notification({
+        message: 'my-message!',
+        status: 'primary',
+        pos: 'top-center',
+        timeout: 2000
+    });
+}
