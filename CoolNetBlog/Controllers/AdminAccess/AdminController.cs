@@ -4,6 +4,8 @@ using CoolNetBlog.Base;
 using CoolNetBlog.Models;
 using CoolNetBlog.ViewModels.Admin;
 using Microsoft.AspNetCore.Mvc;
+using CommonObject.Constructs;
+using CommonObject.Enums;
 
 namespace CoolNetBlog.Controllers.AdminAccess
 {
@@ -110,7 +112,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
             am.Token = Guid.NewGuid().ToString().Replace("-", string.Empty);
             try
             {
-                var e = _adminUserSet.Update(am);
+                var e = await _adminUserSet.UpdateByIgColsAsync(am, new String[] { "SmtpHost", "EmailPassword", "SmtpPort", "SmtpIsUseSsl" });
                 if (e!=1)
                 {
                     throw new Exception();
@@ -125,6 +127,62 @@ namespace CoolNetBlog.Controllers.AdminAccess
             HttpContext.Response.Cookies.Delete("coolnetblogadminloginxiyuaneightfourone");
             _currentCookieValue = null;
             return View("Login");
+        }
+
+        /// <summary>
+        /// 更新smtp邮箱数据
+        /// </summary>
+        /// <param name="smtpEmailVm"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<JsonResult> UpSmtpEmailInfo(string? pt, [FromBody]AdminUser smtpEmailVm)
+        {
+            ValueResult result = new ValueResult();
+            result.Code = ValueCodes.UnKnow;
+            if (string.IsNullOrWhiteSpace(smtpEmailVm.Email)|| string.IsNullOrWhiteSpace(smtpEmailVm.SmtpHost) ||
+                smtpEmailVm.EmailPassword==null|| smtpEmailVm.EmailPassword.Length<=0 || smtpEmailVm.SmtpPort<=0 || smtpEmailVm.SmtpPort==null||
+                smtpEmailVm.SmtpIsUseSsl==null)
+            {
+                result.TipMessage = "请将邮箱smtp信息全部填写完整。";
+                return Json(result);
+            }
+            var am = await _adminUserSet.FirstOrDefaultAsync(a => a.AccountName == smtpEmailVm.AccountName);
+            if (am is null)
+            {
+                result.Code = ValueCodes.Error;
+                result.HideMessage = "修改邮箱smtp信息时失败，当前管理员AccountName在AdminUser表不存在。";
+                result.TipMessage = "更新失败 请重新登录试试。";
+                return Json(result);
+            }
+
+            // 更新当前管理员的邮箱服务数据字段
+            //am.EmailPassword = ValueCompute.MakeMD5(smtpEmailVm.EmailPassword);
+            am.EmailPassword = smtpEmailVm.EmailPassword;
+            am.SmtpHost = smtpEmailVm.SmtpHost;
+            am.Email = smtpEmailVm.Email;
+            am.SmtpPort = smtpEmailVm.SmtpPort;
+            am.SmtpIsUseSsl = smtpEmailVm.SmtpIsUseSsl;
+            try
+            {
+                var e = _adminUserSet.Update(am);
+                if (e != 1)
+                {
+                    throw new Exception();
+                }
+            }
+            catch (Exception e)
+            {
+                result.Code = ValueCodes.Error;
+                result.HideMessage = "修改邮箱smtp信息时失败，更新数据表引发异常："+e.Message;
+                result.TipMessage = "更新失败 请重新登录试试。";
+                return Json(result);
+            }
+
+            // 修改邮箱信息密码成功 当前管理员用户的全局Email变量重赋值
+            spassVm.Email = smtpEmailVm.Email;
+            result.Code = ValueCodes.Success;
+            result.TipMessage = "更改成功。";
+            return Json(result);
         }
 
         public IActionResult AdminHome(string? pt)
