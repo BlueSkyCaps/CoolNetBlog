@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Base\DataBase\**" />
+    <EmbeddedResource Remove="Base\DataBase\**" />
+    <None Remove="Base\DataBase\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="configs.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="configs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="3.1.1" />
+    <PackageReference Include="SqlSugarCore" Version="5.0.5.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CommonObject\CommonObject.csproj" />
+  </ItemGroup>
+
+</Project>

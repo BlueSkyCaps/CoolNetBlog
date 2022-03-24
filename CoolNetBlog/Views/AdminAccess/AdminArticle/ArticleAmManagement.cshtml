@@ -1,0 +1,59 @@
+﻿@model ArticleViewModel
+<div asp-validation-summary="All" class="text-danger">
+</div>
+<div  class="btn-group" role="group" aria-label="Basic example">
+    @{
+        //新增文章，不传参数文章id
+        // 若没有一个菜单 封锁住新增文章按钮
+        if (Model.HasAnyOneMenu)
+        {
+            <a class="btn btn-dark" asp-route-pt="@Model.PassToken" asp-action="ArticleEdit" asp-controller="AdminArticle">发表文章</a>
+        }else
+        {
+            <label class="text-warning">请先添加至少一个菜单</label>
+            <button class="btn btn-dark" disabled>发表文章</button>
+        }
+    }
+    
+</div>
+<div >
+<form method="get">
+<input name="kw" class="form-control me-2" type="search" placeholder="" aria-label="Search">
+<input hidden name="pt" value="@Model.PassToken">
+<button class="btn btn-dark" type="submit" asp-action="ArticleAmManagement" asp-controller="AdminArticle">搜索</button>
+</form>
+</div>
+<div class="list-group">
+    @foreach (var item in @Model.ArticlesOrg)
+    {
+         
+        //点击链接编辑文章，传文章id
+        <a asp-route-pt="@Model.PassToken" asp-route-id="@item.Id" asp-action="ArticleEdit" asp-controller="AdminArticle" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">@item.Title</h5>
+          <small>@item.UpdateTime</small>
+        </div>
+        <p class="mb-1">@item.Abstract</p>
+        <small class="text text-info">@(item.IsDraft?"草稿":"") </small><small>菜单：@item.Ig_MenuName</small>
+        </a>
+        <p>
+        <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+        更多操作
+        </button>
+        </p>
+        <div style="min-height: 120px;">
+        <div class="collapse collapse-horizontal" id="collapseWidthExample">
+        <div class="card card-body" style="width: 300px;">
+            <form method="post" class="d-flex">
+            <input hidden name="pt" value="@Model.PassToken">
+            <input hidden name="id" value="@item.Id">
+            <button class="btn btn-danger" type="submit"  asp-action="Delete" asp-controller="AdminArticle">确认删除</button>
+            </form>
+        </div>
+        </div>
+        </div>
+
+    }
+</div>
+<script>
+</script>

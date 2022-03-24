@@ -1,0 +1,90 @@
+﻿@model FilePathViewModel
+<div class="alert-danger">
+    @if (TempData?["Tips"]!=null)
+    {
+        <span>@TempData?["Tips"]?.ToString()</span>
+    }
+</div>
+
+<div>
+<form method="post" enctype="multipart/form-data" >
+<div class="input-group">
+    <input hidden name="pt" value="@Model.PassToken">
+    <input hidden name="type" value="img">
+    <input class="form-control me-2" name="helpName" placeholder="上传图片请输入一个好记的名称吧">
+    <input accept="image/gif,image/jpg,image/jpeg,image/png" name="file" type="file" class="form-control me-2" id="imgFileInput" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+    <button class="btn btn-dark" type="submit" asp-action="UpFile" asp-controller="AdminFile">上传图片</button>
+</div>
+</form>
+
+
+<form method="get">
+<input name="kw" class="" type="search" placeholder="" aria-label="Search">
+<input hidden name="pt" value="@Model.PassToken">
+<button class="btn btn-dark" type="submit" asp-action="FileAmManagement" asp-controller="AdminFile">搜索</button>
+</form>
+
+</div>
+
+<div class="card-group">
+   @foreach (var item in Model.FileImgPathsOrg)
+   {
+      <div class="card">
+        <img src="/articleImgs/@(item.FileRelPath)" class="card-img-top" alt="@Model.HelpName">
+        <div class="card-body">
+          <h5 class="card-title">@item.HelpName</h5>
+          <p class="card-text">实际文件名：@item.FileRelPath</p>
+
+          <p class="card-text"><small class="text-muted">@item.UploadTime</small></p>
+          <form method="post">
+            <input hidden name="pt" value="@Model.PassToken"/>
+            <input hidden name="id" value="@item.Id"/>
+            <input hidden name="type" value="@item.Type"/>
+            <input hidden name="fileRelPath" value="@item.FileRelPath"/>
+            <button class="btn btn-danger" asp-action="Delete" asp-controller="AdminFile" type="submit">删除</button>
+          </form>
+          <form method="post">
+            <input hidden name="pt" value="@Model.PassToken"/>
+            <input hidden name="id" value="@item.Id"/>
+            <input hidden name="fileRelPath" value="@item.FileRelPath"/>
+            <button class="btn btn-dark" asp-action="SetWishPicture" asp-controller="AdminFile" type="submit">设为"心愿图片"</button>
+          </form>
+        </div>
+      </div>
+   }
+  </div>
+
+</br>
+<!--上传链接文件而不是图片(html..)-->
+<form method="post" enctype="multipart/form-data" >
+<div class="input-group">
+    <input hidden name="pt" value="@Model.PassToken">
+    <input hidden name="type" value="other">
+    <input onclick="clearPreFileValue()" accept="text/html,application/pdf,application/vnd.ms-powerpoint,application/vnd.ms-excel,application/msword" name="file" type="file" class="form-control" id="otherFileInput" aria-describedby="inputGroupFileAddon05" aria-label="Upload">
+    <button class="btn btn-dark" type="submit" asp-action="UpFile" asp-controller="AdminFile">上传链接(html页面或其余文档)</button>
+</div>
+</form>
+<div class="card" style="width: 18rem;">
+    <div class="card-header">
+    其余链接
+    </div>
+    <ul class="list-group list-group-flush">
+        @foreach (var item in Model.FileOtherPathsOrg)
+        {
+            <li class="list-group-item">实际链接名：@item.FileRelPath
+                <form method="post">
+                <div class="input-group">
+                <input hidden name="pt" value="@Model.PassToken">
+                <input hidden name="id" value="@item.Id"/>
+                <input hidden name="type" value="other">
+                <input hidden name="fileRelPath" value="@item.FileRelPath"/>
+                <button class="btn btn-dark" asp-action="Delete" asp-controller="AdminFile" type="submit">删除</button>
+                </div>
+                </form>
+            </li>
+        }
+    </ul>
+</div>
+<script>
+
+</script>

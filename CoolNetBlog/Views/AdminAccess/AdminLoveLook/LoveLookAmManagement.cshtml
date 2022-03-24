@@ -1,0 +1,101 @@
+﻿@model LoveLookViewModel
+<div asp-validation-summary="All" class="text-danger"></div>
+<div>
+ <div><p><mark>给侧边栏"看看这些"组件添加链接。<br/>
+     若是你的文章，请勾选"内部文章链接"，然后输入文章的链接，<br/>
+     例如(忽略单引号，你可以点击你想添加的文章详情页来复制地址栏的值)：<br/>
+     'detail?articleId=1'、<br/>
+     'detail/你自定义文章uri'<br/>
+     若是"上传的文件链接"，请输入例如(忽略单引号，务必先通过[文件图片管理]入口上传文件链接):<br/>
+     'fun.html'、<br/>
+     'fun2.pdf'<br/>
+     若是"外部链接"，请输入完整的外部链接有效地址，例如(忽略单引号):<br/>
+     'www.baidu.com'、<br/>
+     'https://cn.bing.com/translator'<br/>
+ </mark></p></div>
+ <br/>
+<form method="post">
+    <div class="row">
+        <div class="form-check col-4">
+            <input class="form-check-input" type="radio"  id="exampleRadios1" asp-for="Type" value="1" checked>
+            <label class="form-check-label" for="exampleRadios1">
+            内部文章链接
+            </label>
+        </div>
+        <div class="form-check col-4">
+            <input class="form-check-input" type="radio"  id="exampleRadios2" asp-for="Type" value="2">
+            <label class="form-check-label" for="exampleRadios2">
+            上传的文件链接
+            </label>
+        </div>
+        <div class="form-check col-4">
+            <input class="form-check-input" type="radio"  id="exampleRadios2" asp-for="Type" value="3">
+            <label class="form-check-label" for="exampleRadios2">
+            外部链接
+            </label>
+        </div>
+
+    </div>
+    <div class="row">
+        <label class="form-input-label" for="RelHref">输入链接，切勿输入不存在的链接</label>
+        <input class="form-control form-control-lg" asp-for="RelHref">
+    </div>
+    <div class="row">
+        <label class="form-input-label" for="LinkName">自定义显示链接名，在侧边栏"看看这些"项中个性显示</label>
+        <input class="form-control form-control-lg" asp-for="LinkName">
+    </div>
+    <input hidden name="pt" value="@Model.PassToken">
+    <div class="row">
+        <div class="col-8">
+            <span></span>
+        </div>
+        <div class="col-4">
+            <button style="width:100%" class="btn btn-dark" type="submit" asp-action="Add" asp-controller="AdminLoveLook">添加链接</button>
+        </div>
+    </div>
+</form>
+</div>
+<br/>
+<div class="card" style="width: 18rem;">
+    <div class="card-header">
+    显示的链接("侧边栏 看看这些")
+    </div>
+    <ul class="list-group list-group-flush">
+        @{
+            var scheme = Context.Request.Scheme+"://";
+            var currentHost = Context.Request.Host.Host;
+            var port = Context.Request.Host.Port;
+            var hostV = scheme+currentHost + (port == null ? "" : ":"+port);
+            hostV = hostV.TrimEnd('/');
+        }
+        @foreach (var item in Model.LoveLooksOrg)
+        {
+            <li class="list-group-item">链接：@item.RelHref
+                <div>类型：@(item.Type==1?"内部文章链接":item.Type==2?"上传的文件链接":"外部链接")</div>
+                <div>添加时间：@item.AddedTime</div>
+                @if (item.Type==3)
+                {
+                    // 若是3外部链接类型 不必加host 因为外部是完整地址
+                    //  target="_blank"在新窗口打开链接 因为当前窗口打开会导致异步Layout页面错误
+                    <div><a href="@item.RelHref" target="_blank">点击访问</a></div>
+
+                }else{
+                    <div><a href="@(hostV+item.RelHref)" target="_blank">点击访问</a></div>
+                }
+                <form method="post">
+                <div class="input-group">
+                <input hidden name="pt" value="@Model.PassToken">
+                <input hidden name="id" value="@item.Id"/>
+                <button class="btn btn-dark" asp-action="DeleteLoveLook" asp-controller="AdminLoveLook" type="submit">删除</button>
+                </div>
+                </form>
+            </li>
+        }
+    </ul>
+</div>
+<script>
+    //$(".links").click(function(event){
+    //    var linkUrl = $('#'+event.target.id).attr('href');
+    //    window.location.href=linkUrl;
+    //});
+</script>
