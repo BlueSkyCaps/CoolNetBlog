@@ -114,6 +114,7 @@ namespace CoolNetBlog.Controllers.Admin
             string tmpMessagerName = "";
             string tmpMessagerEmail = "";
             string tmpAdmToMessagerContent = "";
+            string tmpMessagerOrgContent = "";
             Article tmpMessagerRelatedArt;
             try
             {
@@ -124,6 +125,7 @@ namespace CoolNetBlog.Controllers.Admin
                     await _baseSugar._dbHandler.Updateable<Comment>(cPassable).ExecuteCommandAsync();
                     tmpMessagerName = cPassable.Name;
                     tmpMessagerEmail = cPassable.Email;
+                    tmpMessagerOrgContent = cPassable.Content;
                     // 通过当前要处理通过的评论找到文章
                     tmpMessagerRelatedArt = await _articleReader.FindOneByIdAsync(cPassable.Id);
                 }
@@ -134,6 +136,7 @@ namespace CoolNetBlog.Controllers.Admin
                     await _baseSugar._dbHandler.Updateable<Reply>(rPassable).ExecuteCommandAsync();
                     tmpMessagerName = rPassable.Name;
                     tmpMessagerEmail = rPassable.Email;
+                    tmpMessagerOrgContent = rPassable.Content;
                     // 通过当前要处理通过的回复找到评论
                     var relatedCmt = await _commentVmReader.FindOneByIdAsync(rPassable.CommentId);
                     // 通过评论找到文章
@@ -218,6 +221,12 @@ namespace CoolNetBlog.Controllers.Admin
             AdminUser adminUser = await _adminUserReader.FirstOrDefaultAsync(a => a.AccountName == slvm.AccountName);
             if (vm.SendEmail)
             {
+                if (string.IsNullOrWhiteSpace(vm.Message))
+                {
+                    result.HideMessage = "删除评论或回复时抄送邮件提醒，邮件提醒内容未填写";
+                    result.TipMessage = "邮件提醒内容未填写。";
+                    return Json(result);
+                }
                 if (adminUser == null)
                 {
                     result.Code = ValueCodes.Error;
@@ -235,6 +244,7 @@ namespace CoolNetBlog.Controllers.Admin
             }
             string tmpMessagerName = "";
             string tmpMessagerEmail = "";
+            string tmpMessagerOrgContent = "";
             string tmpAdmToMessagerContent = "";
             Article tmpMessagerRelatedArt;
             _baseSugar._dbHandler.BeginTran();
@@ -248,6 +258,7 @@ namespace CoolNetBlog.Controllers.Admin
                     await _baseSugar._dbHandler.Deleteable<Reply>().Where(r=>r.CommentId== vm.Id).ExecuteCommandAsync();
                     tmpMessagerName = cPassable.Name;
                     tmpMessagerEmail = cPassable.Email;
+                    tmpMessagerOrgContent = cPassable.Content;
                     // 通过评论找到文章
                     tmpMessagerRelatedArt = await _articleReader.FindOneByIdAsync(cPassable.Id);
                 }
@@ -258,6 +269,7 @@ namespace CoolNetBlog.Controllers.Admin
                     await _baseSugar._dbHandler.Deleteable<Reply>().Where(rPassable).ExecuteCommandAsync();
                     tmpMessagerName = rPassable.Name;
                     tmpMessagerEmail = rPassable.Email;
+                    tmpMessagerOrgContent = rPassable.Content;
                     // 通过当前要处理通过的回复找到评论
                     var relatedCmt = await _commentVmReader.FindOneByIdAsync(rPassable.CommentId);
                     // 通过评论找到文章
@@ -289,7 +301,7 @@ namespace CoolNetBlog.Controllers.Admin
                     var t = tmpMessagerRelatedArt.IsShowTitle ? tmpMessagerRelatedArt.Title : "无题链接";
                     tmpAdmToMessagerContent = $"您在<a href='/Detail/articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>进行了发言，" +
                         $"经过查阅此条发言已被<i>删除</i>，并且特意向您抄送这封邮件提示，您可以再次以合理的方式发表言论。删除原因如下：" +
-                        $"<br><p><mark>{tmpAdmToMessagerContent}</mark></p>";
+                        $"<br><p><mark>{vm.Message}</mark></p><br>您被删除的原内容：<br>{tmpMessagerOrgContent}";
                     mailSend.InputContent("发言被删除", tmpAdmToMessagerContent, true);
                     mailSend.Send();
                     result.TipMessage = "删除成功，邮件已发送。";
