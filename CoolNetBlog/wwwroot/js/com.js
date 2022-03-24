@@ -101,7 +101,7 @@ function Gb_PopoverShow(idStr, tipMsg, dis = false, lazyText = "") {
         if (dis) {
             $('#' + idStr).attr("disabled", "disabled");
         }
-    }, 2000);
+    }, 3000);
 }
 
 /**
@@ -110,7 +110,7 @@ function Gb_PopoverShow(idStr, tipMsg, dis = false, lazyText = "") {
  * @param {any} status 状态样式
  * @param {any} pos 显示位置
  */
-function Gb_NotifShow(message = "", status = "primary", pos = 'top-center') {
+function Gb_NotifShow(message = "", status = "success", pos = 'top-center') {
     UIkit.notification({
         message: message,
         status: status,

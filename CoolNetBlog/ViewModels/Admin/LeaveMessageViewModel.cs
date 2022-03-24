@@ -45,10 +45,10 @@ namespace CoolNetBlog.ViewModels.Admin
     public class DeleteOneMsgViewModel
     {
         //↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ post表单属性----
-        public int DeleteId { get; set; }
+        public int Id { get; set; }
         public int DType { get; set; }
         public bool SendEmail { get; set; }
-        public string EmailMessage { get; set; }
+        public string Message { get; set; }
         // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
     }
 
@@ -58,7 +58,7 @@ namespace CoolNetBlog.ViewModels.Admin
     public class PassOneMsgViewModel
     {
         //↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ post表单属性----
-        public int PassId { get; set; }
+        public int Id { get; set; }
         public int DType { get; set; }
         public bool SupplyReply { get; set; }
         public bool SendEmail { get; set; }

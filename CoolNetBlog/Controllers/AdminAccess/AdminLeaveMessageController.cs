@@ -16,7 +16,7 @@ namespace CoolNetBlog.Controllers.Admin
 
     public class AdminLeaveMessageController : BaseAdminController
     {
-        private static LeaveMessageViewModel slvm = new();
+        public static LeaveMessageViewModel slvm = new();
         private BaseSugar _baseSugar;
         private SugarDataBaseStorage<Article, int> _articleReader;
         private SugarDataBaseStorage<CommentCarryViewModel, int> _commentVmReader;
@@ -42,10 +42,10 @@ namespace CoolNetBlog.Controllers.Admin
         /// <param name="dType">是否发生邮件通知</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> DeleteOneMsg(string? pt, [FromBody] PassOneMsgViewModel vm)
+        public async Task<IActionResult> PassOneMsg(string? pt, [FromBody] PassOneMsgViewModel vm)
         {
             ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
-            if (vm.PassId < 1)
+            if (vm.Id < 1)
             {
                 result.HideMessage = "通过评论或回复失败：id无效";
                 result.TipMessage = "通过评论或回复失败，请刷新重试";
@@ -83,13 +83,13 @@ namespace CoolNetBlog.Controllers.Admin
             {
                 if (vm.DType == 1)
                 {
-                    var passable = await _baseSugar._dbHandler.Queryable<Comment>().SingleAsync(c => c.Id == vm.PassId);
+                    var passable = await _baseSugar._dbHandler.Queryable<Comment>().SingleAsync(c => c.Id == vm.Id);
                     passable.IsPassed=true;
                     await _baseSugar._dbHandler.Updateable<Comment>(passable).ExecuteCommandAsync();
                 }
                 else
                 {
-                    var passable = await _baseSugar._dbHandler.Queryable<Reply>().SingleAsync(c => c.Id == vm.PassId);
+                    var passable = await _baseSugar._dbHandler.Queryable<Reply>().SingleAsync(c => c.Id == vm.Id);
                     passable.IsPassed = true;
                     await _baseSugar._dbHandler.Updateable<Reply>(passable).ExecuteCommandAsync();
                 }
@@ -100,7 +100,7 @@ namespace CoolNetBlog.Controllers.Admin
                 {
                     Reply supReply = new Reply
                     {
-                        CommentId = vm.PassId,
+                        CommentId = vm.Id,
                         ReplyTime = DateTime.Now,
                         IsPassed = true,
                         IsAdmin = true,
@@ -123,14 +123,13 @@ namespace CoolNetBlog.Controllers.Admin
                 result.TipMessage = "通过失败请刷新重试";
                 return Json(result);
             }
-            
+            result.Code = ValueCodes.Success;
             // 处理发送邮件提醒
             if (vm.SendEmail)
             {
                 try
                 {
                     // send email
-                    result.Code = ValueCodes.Success;
                     result.TipMessage = result.TipMessage+"且邮件已发送给此网友。";
                 }
                 catch (Exception e)
@@ -152,13 +151,13 @@ namespace CoolNetBlog.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> DeleteOneMsg(string? pt, [FromBody]DeleteOneMsgViewModel vm) {
             ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
-            if (vm.DeleteId < 1)
+            if (vm.Id < 1)
             {
                 result.HideMessage = "删除评论或回复失败：id无效";
                 result.TipMessage = "删除评论或回复失败，请刷新重试";
                 return Json(result);
             }
-            if (vm.SendEmail&&string.IsNullOrWhiteSpace(vm.EmailMessage))
+            if (vm.SendEmail&&string.IsNullOrWhiteSpace(vm.Message))
             {
                 result.HideMessage = "删除评论或回复附带邮件但邮件信息未填";
                 result.TipMessage = "附带邮件请填写邮件内容";
@@ -169,15 +168,15 @@ namespace CoolNetBlog.Controllers.Admin
             {
                 if (vm.DType==1)
                 {
-                    var deleable = await _baseSugar._dbHandler.Queryable<Comment>().SingleAsync(c => c.Id == vm.DeleteId);
+                    var deleable = await _baseSugar._dbHandler.Queryable<Comment>().SingleAsync(c => c.Id == vm.Id);
                     await _baseSugar._dbHandler.Deleteable<Comment>().Where(deleable).ExecuteCommandAsync();
                     // 删除此评论还要删除它的所有回复
-                    await _baseSugar._dbHandler.Deleteable<Reply>().Where(r=>r.CommentId== vm.DeleteId).ExecuteCommandAsync();
+                    await _baseSugar._dbHandler.Deleteable<Reply>().Where(r=>r.CommentId== vm.Id).ExecuteCommandAsync();
                 }
                 else
                 {
                     // 删除回复
-                    var deleable = await _baseSugar._dbHandler.Queryable<Reply>().SingleAsync(c => c.Id == vm.DeleteId);
+                    var deleable = await _baseSugar._dbHandler.Queryable<Reply>().SingleAsync(c => c.Id == vm.Id);
                     await _baseSugar._dbHandler.Deleteable<Reply>().Where(deleable).ExecuteCommandAsync();
                 }
                 _baseSugar._dbHandler.CommitTran();
@@ -190,14 +189,15 @@ namespace CoolNetBlog.Controllers.Admin
                 result.TipMessage = "删除失败请刷新重试";
                 return Json(result);
             }
+            result.Code = ValueCodes.Success;
             result.TipMessage = "删除成功。";
+
             // 处理发送邮件提醒
             if (vm.SendEmail)
             {
                 try
                 {
                     // send email
-                    result.Code = ValueCodes.Success;
                     result.TipMessage = "删除成功，邮件已发送。";
                 }
                 catch (Exception e)

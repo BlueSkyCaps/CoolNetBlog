@@ -118,7 +118,7 @@
                         <p class="card-text">
                             <button type="button" onclick="passMsg(this,2,false,false)" class="btn btn-primary btn-sm">通过</button>
                             <button type="button" onclick="passMsg(this,2,true,false)" class="btn btn-primary btn-sm">通过并回复</button>
-                            <button type="button" onclick="passMsg(this,2,true,true)" class="btn btn-primary btn-sm">通过并回复且附送邮件</button>
+                            <button type="button" onclick="passMsg(this,2,true,true)" class="btn btn-primary btn-sm">通过并回复且抄送邮件</button>
                             <button type="button" onclick="delMsg(this,2,false)" class="btn btn-danger btn-sm">删除</button>
                             <button type="button" onclick="delMsg(this,2,true)" class="btn btn-danger btn-sm ">删除且发送邮件提醒</button>
                         </p>
@@ -228,6 +228,7 @@
                             $('#'+dtypeAttrValue+"PrePageBtn").attr('bluesky-index', parseInt(dTypePreBtnIndex)+1);
                             $('#'+dtypeAttrValue+"NextPageBtn").attr('bluesky-index', parseInt(dTypeNextBtnIndex)+1);
                         }
+                        window.scrollTo(0,0);
                     }else{
                         Gb_PopoverShow(targetId, data['tipMessage'],true);
                     }
@@ -310,8 +311,8 @@
         return comLinkStr;
     }
 
-    // ajax调用删除某评论或回复
-    function delMsgAjaxCall(url, id, dtype, sendEmail, emailMessage=""){
+    // ajax调用 通过|删除某评论或回复
+    function passOrDelMsgAjaxCall(url, id, dtype, supplyReply=false, sendEmail=false, message=""){
         $.ajax (
             {
                 url: url,
@@ -319,22 +320,23 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify({
-                    "DeleteId":id,
+                    "Id":id,
                     "DType":dtype,
+                    "SupplyReply":supplyReply,
                     "SendEmail":sendEmail,
-                    "EmailMessage":emailMessage,
+                    "Message":message,
                 }),
                 success: function(data, status){
                     if(data['code']==1){
                         Gb_NotifShow(data['tipMessage']);
-                        // 成功删除，返回给调用函数来移除信息元素
-                        return true;
+                        // 成功删除或通过，刷新当前页
+                        currentIndexUrlToCall(dtype);
                     }else{
-                        Gb_NotifShow(data['tipMessage']);
+                        Gb_NotifShow(data['tipMessage'], 'primary');
                     }
                 },
                 error: function(err){
-                    Gb_NotifShow("删除失败err", "danger");
+                    Gb_NotifShow("失败err", "danger");
                     console.log(err)
                 },
                 complete: function(){
@@ -348,41 +350,47 @@
         var passToken = $('#pt').val();
         var url = '/AdminLeaveMessage/DeleteOneMsg?pt='+passToken;
         var id = $(targer).closest('.card').attr('itemCardId');
-        var callRes = false;
         if(sendEmail){
-            //open dialog
-            callRes = delMsgAjaxCall(url,id,dtype,sendEmail);
+            // 若删除某评论需要附带邮件提醒，输入提醒内容
+            UIkit.modal.prompt('输入邮件提醒内容:', '').then(function(msg) {
+                if(!Gb_IsWhiteSpaceOrNull(msg)){
+                    passOrDelMsgAjaxCall(url, id, dtype, false, sendEmail, msg.trimF());
+                    return;
+                }
+                Gb_NotifShow("请输入提醒内容", "primary");
+            });
             return;
         }
-        callRes = delMsgAjaxCall(url,id,dtype,sendEmail);
-        // 调用后是成功删除，刷新当前页
-        if(callRes){
-            currentIndexUrlToCall(targer,dtype);
-        }
+        // 删除某评论不需要发邮件
+        passOrDelMsgAjaxCall(url,id,dtype,false,sendEmail,null);
+        
     }
 
     // 审核通过某评论或回复
-    function passMsg(targer, dtype){
+    function passMsg(targer, dtype, supplyReply, sendEmail){
         var passToken = $('#pt').val();
         var url = '/AdminLeaveMessage/PassOneMsg?pt='+passToken;
         var id = $(targer).closest('.card').attr('itemCardId');
-        var callRes = false;
-        if(sendEmail){
-            //open dialog
-            callRes = delMsgAjaxCall(url,id,dtype,sendEmail);
+        if(supplyReply){
+            // 若通过某评论需要一并回复，输入回复内容 是否抄送邮件直接根据按钮传递的sendEmail值 必须选择回复才能决定抄送邮件
+            UIkit.modal.prompt('输入回复内容:', '').then(function(msg) {
+                if(!Gb_IsWhiteSpaceOrNull(msg)){
+                    passOrDelMsgAjaxCall(url, id, dtype, true, sendEmail, msg.trimF());
+                    return;
+                }
+                Gb_NotifShow("请输入回复内容", "primary");
+            });
             return;
         }
-        callRes = delMsgAjaxCall(url,id,dtype,sendEmail);
-        // 调用后是成功通过，刷新当前页
-        if(callRes){
-            currentIndexUrlToCall(targer,dtype);
-        }
+        // 通过某评论不需要追加回复
+        passOrDelMsgAjaxCall(url,id,dtype,false,false,null);
     }
 
-    function currentIndexUrlToCall(targer,dtype){
-        //$(targer).closest('.card').remove();
+    // 点击删除或通过按钮成功后 判断当前操作类型 计算当前页 传递当前页url给ajax调用刷新当前页
+    function currentIndexUrlToCall(dtype){
         // 重新调用当前页的列表数据 追加为最新数据
         var currntIndexUrl = "";
+        var passToken = $('#pt').val();
         if(dtype==1){
             // 评论操作类型，未审核评论下一页按钮id为commentNextPageBtn，获取它的下一页按钮的索引值-1就是当前分页索引
             var currentIndex = parseInt($('#commentNextPageBtn').attr('bluesky-index'))-1;
@@ -393,11 +401,11 @@
             currntIndexUrl = '/AdminLeaveMessage/GetNotPassReplies?pt='+passToken+'&index='+currentIndex;
         }
         // ajax最终调用
-        ctrBtnRepaintMessageCom(currntIndexUrl);
+        ctrBtnRepaintMessageCom(currntIndexUrl, dtype);
     }
 
-    // 点击删除或通过按钮成功后加载 ajax调用重绘当前页为最新数据(不是分页按钮)
-    function ctrBtnRepaintMessageCom(url){
+    // 点击删除或通过按钮成功后 ajax调用重绘当前页为最新数据(不是分页按钮)
+    function ctrBtnRepaintMessageCom(url, dtype){
         $.ajax (
             {
                 url: url,
@@ -426,8 +434,9 @@
                             var newDomStr = linkReplyComStr(data['data']['notPassReplies']);
                             $("#reply-cards").append(newDomStr);
                         }
+                        window.scrollTo(0,0);
                     }else{
-                        Gb_NotifShow("(通过|删除)重绘当前页 "+data['data']['tipMessage'], "danger");
+                        Gb_NotifShow("(通过|删除)重绘当前页 "+data['data']['tipMessage'], "'primary'");
                     }
                 },
                 error: function(err){
