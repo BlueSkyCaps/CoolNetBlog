@@ -1,4 +1,4 @@
-﻿using CommonObject.Classes;
+﻿using CommonObject.Constructs;
 using CommonObject.Enums;
 using ComponentsServices.Base;
 using CoolNetBlog.Models;

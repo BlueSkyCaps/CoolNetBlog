@@ -5,10 +5,6 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.2" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CommonObject\CommonObject.csproj" />
     <ProjectReference Include="..\ComponentsServices\ComponentsServices.csproj" />

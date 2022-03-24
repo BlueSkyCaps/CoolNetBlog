@@ -1,11 +1,14 @@
-﻿using CommonObject.Classes;
+﻿using CommonObject.Constructs;
 using CommonObject.Enums;
 using ComponentsServices.Base;
+using ComponentsServices.Mail.MailKit;
 using CoolNetBlog.Base;
 using CoolNetBlog.Models;
 using CoolNetBlog.ViewModels;
 using CoolNetBlog.ViewModels.Admin;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using System.Net.Mail;
 
 namespace CoolNetBlog.Controllers.Admin
 {
@@ -38,8 +41,6 @@ namespace CoolNetBlog.Controllers.Admin
         /// 根据Id审核通过评论或回复
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="dType">1评论，2回复</param>
-        /// <param name="dType">是否发生邮件通知</param>
         /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> PassOneMsg(string? pt, [FromBody] PassOneMsgViewModel vm)
@@ -79,19 +80,25 @@ namespace CoolNetBlog.Controllers.Admin
             }
             var adminUser = await _adminUserReader.FirstOrDefaultAsync(a=>a.AccountName==slvm.AccountName);
             _baseSugar._dbHandler.BeginTran();
+            string tmpMessagerName = "";
+            string tmpMessagerEmail = "";
             try
             {
                 if (vm.DType == 1)
                 {
-                    var passable = await _baseSugar._dbHandler.Queryable<Comment>().SingleAsync(c => c.Id == vm.Id);
-                    passable.IsPassed=true;
-                    await _baseSugar._dbHandler.Updateable<Comment>(passable).ExecuteCommandAsync();
+                    var cPassable = await _baseSugar._dbHandler.Queryable<Comment>().SingleAsync(c => c.Id == vm.Id);
+                    cPassable.IsPassed=true;
+                    await _baseSugar._dbHandler.Updateable<Comment>(cPassable).ExecuteCommandAsync();
+                    tmpMessagerName = cPassable.Name;
+                    tmpMessagerEmail = cPassable.Email;
                 }
                 else
                 {
-                    var passable = await _baseSugar._dbHandler.Queryable<Reply>().SingleAsync(c => c.Id == vm.Id);
-                    passable.IsPassed = true;
-                    await _baseSugar._dbHandler.Updateable<Reply>(passable).ExecuteCommandAsync();
+                    var rPassable = await _baseSugar._dbHandler.Queryable<Reply>().SingleAsync(c => c.Id == vm.Id);
+                    rPassable.IsPassed = true;
+                    await _baseSugar._dbHandler.Updateable<Reply>(rPassable).ExecuteCommandAsync();
+                    tmpMessagerName = rPassable.Name;
+                    tmpMessagerEmail = rPassable.Email;
                 }
                 result.TipMessage = "已公开此条言论，会在评论区显示。";
 
@@ -108,8 +115,9 @@ namespace CoolNetBlog.Controllers.Admin
                         Name = slvm.AccountName,
                         Email = slvm.Email,
                         SiteUrl = siteSett.Domain,
-                        Content = vm.Message
                     };
+                    // 2回复某个回复，加上艾特符号；1回复评论，不用加
+                    supReply.Content = vm.DType == 1 ? vm.Message : $"@{tmpMessagerName}：{vm.Message}";
                     await _baseSugar._dbHandler.Insertable<Reply>(supReply).ExecuteCommandAsync();
                     result.TipMessage = "已公开此条言论，会在评论区显示。且显示了你的回复。";
                 }
@@ -130,6 +138,12 @@ namespace CoolNetBlog.Controllers.Admin
                 try
                 {
                     // send email
+                    MailSendHelper mailSend = new MailSendHelper();
+                    mailSend.InputEmailServerAddr("smtp.qq.com", 465, true);
+                    mailSend.InputYourEmail(slvm.AccountName, slvm.Email);
+                    mailSend.InputFriendEmail(tmpMessagerName, tmpMessagerEmail);
+                    mailSend.InputContent("你的留言", "");
+                    mailSend.Send();
                     result.TipMessage = result.TipMessage+"且邮件已发送给此网友。";
                 }
                 catch (Exception e)

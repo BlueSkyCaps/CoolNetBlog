@@ -1,6 +1,6 @@
 ﻿using CommonObject.Enums;
 
-namespace CommonObject.Classes
+namespace CommonObject.Constructs
 {
     public class ValueResult
     {
