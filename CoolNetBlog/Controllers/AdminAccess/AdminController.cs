@@ -60,6 +60,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
             {
                 PassToken = am.Token,
                 AccountName = am.AccountName,
+                Email = am.Email,
             };
             return RedirectToAction("AdminHome", "Admin", new { pt = am.Token });
         }

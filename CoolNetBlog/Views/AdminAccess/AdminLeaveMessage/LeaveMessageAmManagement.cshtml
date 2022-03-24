@@ -146,10 +146,19 @@
     </div>
   </div>
 </div>
-
+<div id="supplyMsgmodal" class="uk-flex-top" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+    <button class="uk-modal-close-default" type="button" uk-close></button>
+    <div class="row">
+        <span style="width:10%"></span>
+        <textarea  style="width:80%" id="supplyMsgInput" type="text" maxlength="137" class="form-control" placeholder="附带信息.."></textarea>
+        <span style="width:10%"></span>
+    </div>
+    </div>
+</div>
 
 <script>
-    // 未审核的评论 数据加载按钮
+    // 未审核的评论或回复 数据加载按钮
     function commentOrReplyPageClick(target){
         var targetId = target.getAttribute('id');
         var needIndex = $('#'+targetId).attr('bluesky-index');
@@ -170,11 +179,11 @@
             dtype = 2;
         }
 
-        repaintMessageCom(targetId, dtype, url);
+        pageBtnRepaintMessageCom(targetId, dtype, url);
     }
 
-    // ajax调用加载数据 targetId：点击的按钮id；dtype：1评论2回复；
-    function repaintMessageCom(targetId, dtype, url){
+    // 分页加载 ajax调用加载数据 targetId：点击的按钮id；dtype：1评论2回复；
+    function pageBtnRepaintMessageCom(targetId, dtype, url){
         $.ajax (
             {
                 url: url,
@@ -301,6 +310,7 @@
         return comLinkStr;
     }
 
+    // ajax调用删除某评论或回复
     function delMsgAjaxCall(url, id, dtype, sendEmail, emailMessage=""){
         $.ajax (
             {
@@ -345,9 +355,9 @@
             return;
         }
         callRes = delMsgAjaxCall(url,id,dtype,sendEmail);
-        // 调用后是成功删除，移除信息元素
+        // 调用后是成功删除，刷新当前页
         if(callRes){
-            $(targer).closest('.card').remove();
+            currentIndexUrlToCall(targer,dtype);
         }
     }
 
@@ -363,10 +373,72 @@
             return;
         }
         callRes = delMsgAjaxCall(url,id,dtype,sendEmail);
-        // 调用后是成功删除，移除信息元素
+        // 调用后是成功通过，刷新当前页
         if(callRes){
-            $(targer).closest('.card').remove();
+            currentIndexUrlToCall(targer,dtype);
         }
+    }
+
+    function currentIndexUrlToCall(targer,dtype){
+        //$(targer).closest('.card').remove();
+        // 重新调用当前页的列表数据 追加为最新数据
+        var currntIndexUrl = "";
+        if(dtype==1){
+            // 评论操作类型，未审核评论下一页按钮id为commentNextPageBtn，获取它的下一页按钮的索引值-1就是当前分页索引
+            var currentIndex = parseInt($('#commentNextPageBtn').attr('bluesky-index'))-1;
+            currntIndexUrl = '/AdminLeaveMessage/GetNotPassComments?pt='+passToken+'&index='+currentIndex;
+        }else{
+            // 回复操作类型，未审核回复下一页按钮id为replyNextPageBtn，获取它的下一页按钮的索引值-1就是当前分页索引
+            var currentIndex = parseInt($('#replyNextPageBtn').attr('bluesky-index'))-1;
+            currntIndexUrl = '/AdminLeaveMessage/GetNotPassReplies?pt='+passToken+'&index='+currentIndex;
+        }
+        // ajax最终调用
+        ctrBtnRepaintMessageCom(currntIndexUrl);
+    }
+
+    // 点击删除或通过按钮成功后加载 ajax调用重绘当前页为最新数据(不是分页按钮)
+    function ctrBtnRepaintMessageCom(url){
+        $.ajax (
+            {
+                url: url,
+                type: "GET",
+                success: function(data, status){
+                    if(data['code']==1){
+                        // 重绘为当前获取的数据
+                        if(dtype==1){
+                            if(data['data']['notPassComments'].length<=0)
+                            {
+                                // 当前页没有更多评论数据 意味着当前页的获取量可能超过了总量，重定向到第一页初始化
+                                window.location.href="/AdminLeaveMessage/LeaveMessageAmManagement?pt="+$('#pt').val();
+                                return;
+                            }
+                            $("#comment-cards").children().remove();
+                            var newDomStr = linkCommentComStr(data['data']['notPassComments']);
+                            $("#comment-cards").append(newDomStr);
+                        }else{
+                            if(data['data']['notPassReplies'].length<=0)
+                            {
+                                // 当前页没有更多回复数据 意味着当前页的获取量可能超过了总量，重定向到第一页初始化
+                                window.location.href="/AdminLeaveMessage/LeaveMessageAmManagement?pt="+$('#pt').val();
+                                return;
+                            }
+                            $("#reply-cards").children().remove();
+                            var newDomStr = linkReplyComStr(data['data']['notPassReplies']);
+                            $("#reply-cards").append(newDomStr);
+                        }
+                    }else{
+                        Gb_NotifShow("(通过|删除)重绘当前页 "+data['data']['tipMessage'], "danger");
+                    }
+                },
+                error: function(err){
+                    Gb_NotifShow("(通过|删除)重绘当前页 加载失败err", "danger");
+                    console.log(err)
+                },
+                complete: function(){
+                    // 无论如何执行此回调
+                }
+            }
+        );
     }
 </script>
 
