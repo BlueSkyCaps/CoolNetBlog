@@ -45,7 +45,7 @@ namespace ComponentsServices.Mail.MailKit
         /// <param name="host"></param>
         /// <param name="port"></param>
         /// <param name="useSsl"></param>
-        public void InputEmailServerAddr(string host, int port, bool useSsl=false)
+        public void InputSmtpServerHost(string host, int port, bool useSsl=false)
         {
             _host = host;
             _port = port;
@@ -79,15 +79,17 @@ namespace ComponentsServices.Mail.MailKit
         /// </summary>
         /// <param name="subject">主题</param>
         /// <param name="bodyContent">邮件内容</param>
-        public void InputContent(string subject, string bodyContent)
+        /// <param name="useHtmlText">是否内容文本是html格式的文本</param>
+        public void InputContent(string subject, string bodyContent, bool useHtmlText=false)
         {
             emailData.Subject = subject;
-
-            emailData.Body = new TextPart("plain")
+            var textType = useHtmlText ? "html" : "plain";
+            emailData.Body = new TextPart(textType)
             {
                 Text = bodyContent
             };
         }
+
 
         /// <summary>
         /// 尝试发送邮件

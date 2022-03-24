@@ -72,16 +72,21 @@ namespace CoolNetBlog.Controllers.Admin
                 result.TipMessage = "请先去基本管理面板填写你的网站域名";
                 return Json(result);
             }
-            if (string.IsNullOrWhiteSpace(slvm.Email))
-            {
-                result.HideMessage = "通过评论或回复时附带回复信息，当前管理员没有填写设置邮箱";
-                result.TipMessage = "你没有邮箱，请去登录入口进行重置密码操作，并输入你的专用邮箱。";
-                return Json(result);
-            }
             var adminUser = await _adminUserReader.FirstOrDefaultAsync(a=>a.AccountName==slvm.AccountName);
+            if (vm.SupplyReply&&vm.SendEmail&& adminUser != null)
+            {
+                if (string.IsNullOrWhiteSpace(adminUser.Email) || string.IsNullOrWhiteSpace(adminUser.EmailPassword))
+                {
+                    result.HideMessage = "通过评论或回复时抄送回复信息，当前管理员没有设置邮箱";
+                    result.TipMessage = "邮箱信息填写不全，请去邮箱设置面板进行设置。";
+                    return Json(result);
+                }
+            }
             _baseSugar._dbHandler.BeginTran();
             string tmpMessagerName = "";
             string tmpMessagerEmail = "";
+            string tmpAdmToMessagerContent = "";
+            Article tmpMessagerRelatedArt;
             try
             {
                 if (vm.DType == 1)
@@ -91,6 +96,8 @@ namespace CoolNetBlog.Controllers.Admin
                     await _baseSugar._dbHandler.Updateable<Comment>(cPassable).ExecuteCommandAsync();
                     tmpMessagerName = cPassable.Name;
                     tmpMessagerEmail = cPassable.Email;
+                    // 通过当前要处理通过的评论找到文章
+                    tmpMessagerRelatedArt = await _articleReader.FindOneByIdAsync(cPassable.Id);
                 }
                 else
                 {
@@ -99,6 +106,10 @@ namespace CoolNetBlog.Controllers.Admin
                     await _baseSugar._dbHandler.Updateable<Reply>(rPassable).ExecuteCommandAsync();
                     tmpMessagerName = rPassable.Name;
                     tmpMessagerEmail = rPassable.Email;
+                    // 通过当前要处理通过的回复找到评论
+                    var relatedCmt = await _commentVmReader.FindOneByIdAsync(rPassable.CommentId);
+                    // 通过评论找到文章
+                    tmpMessagerRelatedArt = await _articleReader.FindOneByIdAsync(relatedCmt.Id);
                 }
                 result.TipMessage = "已公开此条言论，会在评论区显示。";
 
@@ -112,12 +123,13 @@ namespace CoolNetBlog.Controllers.Admin
                         IsPassed = true,
                         IsAdmin = true,
                         ClientIp = "localhost",
-                        Name = slvm.AccountName,
-                        Email = slvm.Email,
+                        Name = adminUser.AccountName,
+                        Email = adminUser.Email,
                         SiteUrl = siteSett.Domain,
                     };
                     // 2回复某个回复，加上艾特符号；1回复评论，不用加
                     supReply.Content = vm.DType == 1 ? vm.Message : $"@{tmpMessagerName}：{vm.Message}";
+                    tmpAdmToMessagerContent = supReply.Content;
                     await _baseSugar._dbHandler.Insertable<Reply>(supReply).ExecuteCommandAsync();
                     result.TipMessage = "已公开此条言论，会在评论区显示。且显示了你的回复。";
                 }
@@ -133,16 +145,18 @@ namespace CoolNetBlog.Controllers.Admin
             }
             result.Code = ValueCodes.Success;
             // 处理发送邮件提醒
-            if (vm.SendEmail)
+            if (vm.SupplyReply&&vm.SendEmail&& adminUser != null)
             {
                 try
                 {
                     // send email
                     MailSendHelper mailSend = new MailSendHelper();
-                    mailSend.InputEmailServerAddr("smtp.qq.com", 465, true);
-                    mailSend.InputYourEmail(slvm.AccountName, slvm.Email);
+                    mailSend.InputSmtpServerHost("smtp.qq.com", 465, true);
+                    mailSend.InputYourEmail(adminUser.AccountName, adminUser.Email);
                     mailSend.InputFriendEmail(tmpMessagerName, tmpMessagerEmail);
-                    mailSend.InputContent("你的留言", "");
+                    tmpAdmToMessagerContent = $"你在<{tmpMessagerRelatedArt.Title}>进行了发言，此条发言已被审核公开。{Environment.NewLine}"+
+                        tmpAdmToMessagerContent;
+                    mailSend.InputContent("你的发言得到了博主回应", tmpAdmToMessagerContent,true);
                     mailSend.Send();
                     result.TipMessage = result.TipMessage+"且邮件已发送给此网友。";
                 }
