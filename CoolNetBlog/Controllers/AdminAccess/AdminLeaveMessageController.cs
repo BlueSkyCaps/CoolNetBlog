@@ -58,28 +58,56 @@ namespace CoolNetBlog.Controllers.Admin
                 result.TipMessage = "附带回复请填写回复的内容";
                 return Json(result);
             }
-            var siteSett = await _siteSettingReader.FirstOrDefaultAsync(s=>1==1);
-            if (siteSett == null)
+            SiteSetting siteSett = await _siteSettingReader.FirstOrDefaultAsync(s=>1==1);
+            AdminUser adminUser = await _adminUserReader.FirstOrDefaultAsync(a=>a.AccountName==slvm.AccountName);
+           
+            
+            
+            if (vm.SupplyReply)
             {
-                result.Code = ValueCodes.Error;
-                result.HideMessage = "通过评论或回复时附带回复信息，SiteSetting表找不到";
-                result.TipMessage = "引发错误，请重新登录试试";
-                return Json(result);
-            }
-            if (string.IsNullOrWhiteSpace(siteSett.Domain))
-            {
-                result.HideMessage = "通过评论或回复时附带回复信息，SiteSetting中域名没有填写需补充";
-                result.TipMessage = "请先去基本管理面板填写你的网站域名";
-                return Json(result);
-            }
-            var adminUser = await _adminUserReader.FirstOrDefaultAsync(a=>a.AccountName==slvm.AccountName);
-            if (vm.SupplyReply&&vm.SendEmail&& adminUser != null)
-            {
-                if (string.IsNullOrWhiteSpace(adminUser.Email) || string.IsNullOrWhiteSpace(adminUser.EmailPassword))
+                if (string.IsNullOrWhiteSpace(vm.Message))
                 {
-                    result.HideMessage = "通过评论或回复时抄送回复信息，当前管理员没有设置邮箱";
+                    result.HideMessage = "通过评论或回复时附带回复信息，回复信息未填";
+                    result.TipMessage = "附带回复请填写回复信息";
+                    return Json(result);
+                }
+                if (siteSett == null)
+                {
+                    result.Code = ValueCodes.Error;
+                    result.HideMessage = "通过评论或回复时附带回复信息，SiteSetting表找不到";
+                    result.TipMessage = "引发错误，请重新登录试试";
+                    return Json(result);
+                }
+                if (string.IsNullOrWhiteSpace(siteSett.Domain))
+                {
+                    result.HideMessage = "通过评论或回复时附带回复信息，SiteSetting中域名没有填写需补充";
+                    result.TipMessage = "请先去基本管理面板填写你的网站域名";
+                    return Json(result);
+                }
+                if (adminUser == null)
+                {
+                    result.Code = ValueCodes.Error;
+                    result.HideMessage = "通过评论或回复时附带回复信息，AdminUser表找不到当前管理员数据";
+                    result.TipMessage = "引发错误，请重新登录试试";
+                    return Json(result);
+                }
+                if (string.IsNullOrWhiteSpace(adminUser.Email))
+                {
+                    result.HideMessage = "通过评论或回复时附带回复信息，当前管理员没有设置邮箱";
                     result.TipMessage = "邮箱信息填写不全，请去邮箱设置面板进行设置。";
                     return Json(result);
+                }
+                // 需要抄送邮件，验证
+                if (vm.SendEmail)
+                {
+                    // 判断EmailPassword是不是空足矣，因为邮箱设置必须全部填写完整才会更新数据表
+                    if (string.IsNullOrWhiteSpace(adminUser.EmailPassword))
+                    {
+                        result.HideMessage = "通过评论或回复时抄送邮件，当前管理员没有设置邮箱";
+                        result.TipMessage = "邮箱信息填写不全，请去邮箱设置面板进行设置。";
+                        return Json(result);
+                    }
+
                 }
             }
             _baseSugar._dbHandler.BeginTran();
@@ -154,9 +182,11 @@ namespace CoolNetBlog.Controllers.Admin
                     mailSend.InputSmtpServerHost("smtp.qq.com", 465, true);
                     mailSend.InputYourEmail(adminUser.AccountName, adminUser.Email);
                     mailSend.InputFriendEmail(tmpMessagerName, tmpMessagerEmail);
-                    tmpAdmToMessagerContent = $"你在<{tmpMessagerRelatedArt.Title}>进行了发言，此条发言已被审核公开。{Environment.NewLine}"+
-                        tmpAdmToMessagerContent;
-                    mailSend.InputContent("你的发言得到了博主回应", tmpAdmToMessagerContent,true);
+                    var t = tmpMessagerRelatedArt.IsShowTitle ? tmpMessagerRelatedArt.Title : "无题链接";
+                    tmpAdmToMessagerContent = $"您在<a href='/Detail/articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>进行了发言，" +
+                        $"经过审核此条发言已被<i>公开</i>，并且特意向您抄送这封邮件已表达我对此的兴趣。我的回复内容如下：" +
+                        $"<br><p><mark>{tmpAdmToMessagerContent}</mark></p>";
+                    mailSend.InputContent("发言得到了博主回应", tmpAdmToMessagerContent,true);
                     mailSend.Send();
                     result.TipMessage = result.TipMessage+"且邮件已发送给此网友。";
                 }
@@ -185,27 +215,53 @@ namespace CoolNetBlog.Controllers.Admin
                 result.TipMessage = "删除评论或回复失败，请刷新重试";
                 return Json(result);
             }
-            if (vm.SendEmail&&string.IsNullOrWhiteSpace(vm.Message))
+            AdminUser adminUser = await _adminUserReader.FirstOrDefaultAsync(a => a.AccountName == slvm.AccountName);
+            if (vm.SendEmail)
             {
-                result.HideMessage = "删除评论或回复附带邮件但邮件信息未填";
-                result.TipMessage = "附带邮件请填写邮件内容";
-                return Json(result);
+                if (adminUser == null)
+                {
+                    result.Code = ValueCodes.Error;
+                    result.HideMessage = "删除评论或回复时抄送邮件提醒，AdminUser表找不到当前管理员数据";
+                    result.TipMessage = "引发错误，请重新登录试试";
+                    return Json(result);
+                }
+                // 判断EmailPassword是不是空足矣，因为邮箱设置必须全部填写完整才会更新数据表
+                if (string.IsNullOrWhiteSpace(adminUser.EmailPassword))
+                {
+                    result.HideMessage = "删除评论或回复时抄送邮件提醒，当前管理员没有设置邮箱";
+                    result.TipMessage = "邮箱信息填写不全，请去邮箱设置面板进行设置。";
+                    return Json(result);
+                }
             }
+            string tmpMessagerName = "";
+            string tmpMessagerEmail = "";
+            string tmpAdmToMessagerContent = "";
+            Article tmpMessagerRelatedArt;
             _baseSugar._dbHandler.BeginTran();
             try
             {
                 if (vm.DType==1)
                 {
-                    var deleable = await _baseSugar._dbHandler.Queryable<Comment>().SingleAsync(c => c.Id == vm.Id);
-                    await _baseSugar._dbHandler.Deleteable<Comment>().Where(deleable).ExecuteCommandAsync();
+                    var cPassable = await _baseSugar._dbHandler.Queryable<Comment>().SingleAsync(c => c.Id == vm.Id);
+                    await _baseSugar._dbHandler.Deleteable<Comment>().Where(cPassable).ExecuteCommandAsync();
                     // 删除此评论还要删除它的所有回复
                     await _baseSugar._dbHandler.Deleteable<Reply>().Where(r=>r.CommentId== vm.Id).ExecuteCommandAsync();
+                    tmpMessagerName = cPassable.Name;
+                    tmpMessagerEmail = cPassable.Email;
+                    // 通过评论找到文章
+                    tmpMessagerRelatedArt = await _articleReader.FindOneByIdAsync(cPassable.Id);
                 }
                 else
                 {
                     // 删除回复
-                    var deleable = await _baseSugar._dbHandler.Queryable<Reply>().SingleAsync(c => c.Id == vm.Id);
-                    await _baseSugar._dbHandler.Deleteable<Reply>().Where(deleable).ExecuteCommandAsync();
+                    var rPassable = await _baseSugar._dbHandler.Queryable<Reply>().SingleAsync(c => c.Id == vm.Id);
+                    await _baseSugar._dbHandler.Deleteable<Reply>().Where(rPassable).ExecuteCommandAsync();
+                    tmpMessagerName = rPassable.Name;
+                    tmpMessagerEmail = rPassable.Email;
+                    // 通过当前要处理通过的回复找到评论
+                    var relatedCmt = await _commentVmReader.FindOneByIdAsync(rPassable.CommentId);
+                    // 通过评论找到文章
+                    tmpMessagerRelatedArt = await _articleReader.FindOneByIdAsync(relatedCmt.Id);
                 }
                 _baseSugar._dbHandler.CommitTran();
             }
@@ -226,6 +282,16 @@ namespace CoolNetBlog.Controllers.Admin
                 try
                 {
                     // send email
+                    MailSendHelper mailSend = new MailSendHelper();
+                    mailSend.InputSmtpServerHost("smtp.qq.com", 465, true);
+                    mailSend.InputYourEmail(adminUser.AccountName, adminUser.Email);
+                    mailSend.InputFriendEmail(tmpMessagerName, tmpMessagerEmail);
+                    var t = tmpMessagerRelatedArt.IsShowTitle ? tmpMessagerRelatedArt.Title : "无题链接";
+                    tmpAdmToMessagerContent = $"您在<a href='/Detail/articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>进行了发言，" +
+                        $"经过查阅此条发言已被<i>删除</i>，并且特意向您抄送这封邮件提示，您可以再次以合理的方式发表言论。删除原因如下：" +
+                        $"<br><p><mark>{tmpAdmToMessagerContent}</mark></p>";
+                    mailSend.InputContent("发言被删除", tmpAdmToMessagerContent, true);
+                    mailSend.Send();
                     result.TipMessage = "删除成功，邮件已发送。";
                 }
                 catch (Exception e)
