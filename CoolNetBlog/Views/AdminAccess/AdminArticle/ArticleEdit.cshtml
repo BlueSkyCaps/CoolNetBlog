@@ -52,7 +52,7 @@
     <div class="form-row align-items-center">
         <div class="col-auto my-1">
             <div class="custom-control custom-checkbox mr-sm-2">
-            <label class="custom-control-label">存放的菜单</label>
+            <label class="custom-control-label"><small>存放的菜单</small></label>
             </div>
         </div>
         <div class="col-auto my-1">
@@ -76,7 +76,7 @@
             }else{
                 <input asp-for="IsShowTitle"  class="form-check-input" type="checkbox">
             }
-            <label asp-for="IsShowTitle" class="form-check-label">(不勾选可以在文章列表中隐藏标题)</label>
+            <label asp-for="IsShowTitle" class="form-check-label"><small>(不勾选可以在文章列表中隐藏标题)</small></label>
             </div>
         </div>
     </div>
@@ -85,7 +85,7 @@
         <div class="col-sm-10">
             <div class="form-check">
             <input asp-for="IsDraft"  class="form-check-input" type="checkbox">
-            <label asp-for="IsDraft" class="form-check-label" for="gridCheck1">(草稿文章不会显示)</label>
+            <label asp-for="IsDraft" class="form-check-label" ><small>(草稿文章不会显示)</small></label>
             </div>
         </div>
     </div>
@@ -93,13 +93,22 @@
         <div class="col-sm-2">隐私文章</div>
         <div class="col-sm-10">
             <div class="form-check">
-            <input asp-for="IsLock"  class="form-check-input" type="checkbox" onchange="LockChange()">
-            <label asp-for="IsLock" class="form-check-label" for="gridCheck1">(是否隐私文章，隐私文章需在页面解锁才显示主体内容)</label>
+            <input asp-for="IsLock"  class="form-check-input" type="checkbox">
+            <label asp-for="IsLock" class="form-check-label" ><small>(是否隐私文章，隐私文章需在页面解锁才显示主体内容)</small></label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-2">特殊文章</div>
+        <div class="col-sm-10">
+            <div class="form-check">
+            <input asp-for="IsSpecial"  class="form-check-input" type="checkbox" onchange="LockChange()">
+            <label asp-for="IsSpecial" class="form-check-label" ><small>(是否是特殊文章，通常"关于"、"友链"等内容可以定义为特殊文章。特殊文章不会在列表显示和搜索到，你可以复制特殊文章的链接嵌入到博客你想显示的地方，例如"看看这些"组件。若想显示独立网页，还可以去后台面板上传HTML文件)</small></label>
             </div>
         </div>
     </div>
     <div id="lockHidDiv" class="form-group row" @(Model.IsLock?"":"hidden='hidden'")>
-        <label asp-for="LockPassword" class="col-sm-2 col-form-label">密码</label>
+        <label asp-for="LockPassword" class="col-sm-2 col-form-label"><small>密码</small></label>
         <div class="col-sm-10">
             <input asp-for="LockPassword" type="text" class="form-control" placeholder="若设为隐私文章，请设置解锁密码">
         </div>
@@ -108,7 +117,7 @@
     <div class="form-row align-items-center">
         <div class="col-auto my-1">
             <div class="custom-control custom-checkbox mr-sm-2">
-            <label class="custom-control-label">评论类型</label>
+            <label class="custom-control-label"><small>评论类型</small></label>
             </div>
         </div>
         <div class="col-auto my-1">
@@ -122,7 +131,7 @@
 
     <div class="form-group row">
     <label asp-for="Labels" class="col-sm-2 col-form-label">标签</label>
-    <p>(标签相当于文章提炼关键字词，可以设置自定义词汇，多个标签请用空格或逗号隔开吧！)</p>
+    <p><small>(标签相当于文章提炼关键字词，可以设置自定义词汇，多个标签请用空格或逗号隔开吧！)</small></p>
     <label class="col-sm-2 col-form-label"></label>
     <div class="col-sm-10">
         <input asp-for="Labels" type="text" class="form-control" maxlength="50">
@@ -130,7 +139,7 @@
     </div>
     <div class="form-group row">
     <label asp-for="CustUri" class="col-sm-2 col-form-label">自定义文章Uri</label>
-    <p>(你可以自定义文章Uri，这样可以使用特定的Uri访问此篇文章，若不需要可以忽略哦)</p>
+    <p><small>(你可以自定义文章Uri，这样可以使用特定的Uri访问此篇文章，若不需要可以忽略哦)</small></p>
     <label class="col-sm-2 col-form-label"></label>
     <div class="col-sm-10">
         <input asp-for="CustUri" type="text" class="form-control" maxlength="50">

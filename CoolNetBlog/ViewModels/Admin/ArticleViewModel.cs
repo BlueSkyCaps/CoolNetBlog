@@ -18,6 +18,7 @@ namespace CoolNetBlog.ViewModels.Admin
         public bool IsLock { get; set; }
         public string LockPassword { get; set; }
         public bool IsDraft { get; set; }
+        public bool IsSpecial { get; set; }
         public string? Labels { get; set; }
         public string? CustUri { get; set; }
         public int CommentType { get; set; }

@@ -358,7 +358,5 @@ namespace CoolNetBlog.Bll
             }
             return true;
         }
-
-           
     }
 }

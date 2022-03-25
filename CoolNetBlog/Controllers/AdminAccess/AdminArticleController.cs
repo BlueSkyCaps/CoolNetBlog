@@ -103,6 +103,7 @@ namespace CoolNetBlog.Controllers.Admin
             editable.LockPassword = vm.LockPassword;
             editable.IsLock = vm.IsLock;
             editable.IsDraft = vm.IsDraft;
+            editable.IsSpecial = vm.IsSpecial;
             editable.CustUri = string.IsNullOrWhiteSpace(vm.CustUri)?null: vm.CustUri?.Trim();
             editable.IsShowTitle = vm.IsShowTitle;
             editable.CommentType = vm.CommentType;
@@ -227,6 +228,7 @@ namespace CoolNetBlog.Controllers.Admin
                 vm.CustUri = orgArticle.CustUri;
                 vm.CommentType = orgArticle.CommentType;
                 vm.IsDraft = orgArticle.IsDraft;
+                vm.IsSpecial = orgArticle.IsSpecial;
                 vm.Labels = orgArticle.Labels;
                 vm.IsShowTitle = orgArticle.IsShowTitle;
                 vm.Content = orgArticle.Content;
