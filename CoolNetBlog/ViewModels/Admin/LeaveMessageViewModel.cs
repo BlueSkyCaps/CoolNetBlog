@@ -19,11 +19,11 @@ namespace CoolNetBlog.ViewModels.Admin
         /// <summary>
         /// 当前已公开的评论
         /// </summary>
-        public IList<CommentCarryViewModel>? PubComments { get; set; } = new List<CommentCarryViewModel>();
+        public IList<CommentCarryViewModel>? PublicComments { get; set; } = new List<CommentCarryViewModel>();
         /// <summary>
         /// 当前已公开的回复
         /// </summary>
-        public IList<ReplyCarryViewModel>? PubReplies { get; set; } = new List<ReplyCarryViewModel>();
+        public IList<ReplyCarryViewModel>? PublicReplies { get; set; } = new List<ReplyCarryViewModel>();
 
     }
 

@@ -352,8 +352,8 @@ namespace CoolNetBlog.Controllers.Admin
             // 清空列表。 因为是静态模型数据 刷新会追加回复列表
             slvm.NotPassComments?.Clear();
             slvm.NotPassReplies?.Clear();
-            slvm.PubComments?.Clear();
-            slvm.PubReplies?.Clear();
+            slvm.PublicComments?.Clear();
+            slvm.PublicReplies?.Clear();
             // 默认返回未审核的评论和回复列表
             slvm.NotPassComments = await _commentVmReader.GetListBuilder().Where(c=>c.IsPassed==false||c.IsPassed==null)
                 .OrderBy(c=>c.CommentTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
@@ -397,16 +397,16 @@ namespace CoolNetBlog.Controllers.Admin
             // 清空列表。 因为是静态模型数据 刷新会追加回复列表
             slvm.NotPassComments?.Clear();
             slvm.NotPassReplies?.Clear();
-            slvm.PubComments?.Clear();
-            slvm.PubReplies?.Clear();
+            slvm.PublicComments?.Clear();
+            slvm.PublicReplies?.Clear();
             // 默认返回已公开的评论和回复列表
-            slvm.PubComments = await _commentVmReader.GetListBuilder().Where(c => c.IsPassed == true)
+            slvm.PublicComments = await _commentVmReader.GetListBuilder().Where(c => c.IsPassed == true)
                 .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
 
 
             var pubRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == true)
                 .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
-            foreach (var cmv in slvm.PubComments)
+            foreach (var cmv in slvm.PublicComments)
             {
                 // 获取评论所在文章
                 if (cmv.SourceType == 1)
@@ -426,7 +426,7 @@ namespace CoolNetBlog.Controllers.Admin
                     replyTmp.RelatedArticle = await _articleReader.FindOneByIdAsync(replyTmp.RelatedComment.SourceId);
                     replyTmp.RelatedArticleUrl = "/Detail?articleId=" + replyTmp.RelatedComment.SourceId;
                 }
-                slvm.PubReplies?.Add(replyTmp);
+                slvm.PublicReplies?.Add(replyTmp);
             }
             // 自动封装已有的数据
             slvm = (LeaveMessageViewModel)WrapMustNeedPassFields(slvm);
@@ -506,14 +506,14 @@ namespace CoolNetBlog.Controllers.Admin
         /// 获取已公开的某页评论列表
         /// </summary>
         /// <returns></returns>
-        public async Task<JsonResult> GetPubComments(string? pt, int index)
+        public async Task<JsonResult> GetPublicComments(string? pt, int index)
         {
             ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
             try
             {
-                var pubComments = await _commentVmReader.GetListBuilder().Where(c => c.IsPassed == true)
+                var publicComments = await _commentVmReader.GetListBuilder().Where(c => c.IsPassed == true)
                     .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 20).Take(20).ToListAsync();
-                foreach (var cmv in pubComments)
+                foreach (var cmv in publicComments)
                 {
                     // 获取评论所在文章
                     if (cmv.SourceType == 1)
@@ -523,7 +523,7 @@ namespace CoolNetBlog.Controllers.Admin
                     }
                 }
                 result.Code = ValueCodes.Success;
-                result.Data = new { PubComments = pubComments };
+                result.Data = new { PublicComments = publicComments };
 
             }
             catch (Exception e)
@@ -539,15 +539,15 @@ namespace CoolNetBlog.Controllers.Admin
         /// 获取已公开的某页回复列表
         /// </summary>
         /// <returns></returns>
-        public async Task<JsonResult> GetPubReplies(string? pt, int index)
+        public async Task<JsonResult> GetPublicReplies(string? pt, int index)
         {
             ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
             try
             {
-                var pubRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == false || r.IsPassed == null)
+                var publicRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == false || r.IsPassed == null)
                     .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 20).Take(20).ToListAsync();
-                List<ReplyCarryViewModel> pubReplies = new List<ReplyCarryViewModel>();
-                foreach (var replyTmp in pubRepliesTmp)
+                List<ReplyCarryViewModel> publicReplies = new List<ReplyCarryViewModel>();
+                foreach (var replyTmp in publicRepliesTmp)
                 {
                     // 获取当前此条回复所属的评论
                     replyTmp.RelatedComment = await _commentVmReader.FindOneByIdAsync(replyTmp.CommentId);
@@ -557,10 +557,10 @@ namespace CoolNetBlog.Controllers.Admin
                         replyTmp.RelatedArticle = await _articleReader.FindOneByIdAsync(replyTmp.RelatedComment.SourceId);
                         replyTmp.RelatedArticleUrl = "/Detail?articleId=" + replyTmp.RelatedComment.SourceId;
                     }
-                    pubReplies.Add(replyTmp);
+                    publicReplies.Add(replyTmp);
                 }
                 result.Code = ValueCodes.Success;
-                result.Data = new { PubReplies = pubReplies };
+                result.Data = new { PublicReplies = publicReplies };
             }
             catch (Exception e)
             {

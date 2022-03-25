@@ -10,7 +10,7 @@
   <div class="accordion-item">
     <h2 class="accordion-header" id="flush-headingOne">
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-        未审核的评论
+        已公开的评论
       </button>
     </h2>
     <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
@@ -19,7 +19,7 @@
             if (Model?.NotPassComments?.Count>0)
             {
                   <div id="comment-cards">
-                  @foreach (var item in Model?.NotPassComments)
+                  @foreach (var item in Model?.PublicComments)
                   {
                     <div class="card" itemCardId="@item.Id">
                         <div class="card-body">
@@ -33,9 +33,6 @@
                         </p>
                         <p class="card-text text-info bg-dark">@item.Content</p>
                         <p class="card-text">
-                            <button type="button" onclick="passMsg(this,1,false,false)" class="btn btn-primary btn-sm">通过</button>
-                            <button type="button" onclick="passMsg(this,1,true,false)" class="btn btn-primary btn-sm">通过并回复</button>
-                            <button type="button" onclick="passMsg(this,1,true,true)" class="btn btn-primary btn-sm">通过并回复且抄送邮件</button>
                             <button type="button" onclick="delMsg(this,1,false)" class="btn btn-danger btn-sm">删除</button>
                             <button type="button" onclick="delMsg(this,1,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button>
                         </p>
@@ -56,7 +53,7 @@
                   </nav>
             }else
             {
-                <div class="alert alert-primary" role="alert">没有未审核的评论</div>
+                <div class="alert alert-primary" role="alert">没有任何被公开的评论</div>
             }
         }
       </div>
@@ -66,16 +63,16 @@
   <div class="accordion-item">
     <h2 class="accordion-header" id="flush-headingTwo">
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-        未审核的回复
+        已公开的回复
       </button>
     </h2>
     <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
       <div class="accordion-body">
         @{
-            if (Model?.NotPassReplies?.Count>0)
+            if (Model?.PublicReplies?.Count>0)
             {
                   <div id="reply-cards">
-                  @foreach (var item in Model?.NotPassReplies)
+                  @foreach (var item in Model?.PublicReplies)
                   {
                     <div class="card" itemCardId="@item.Id">
                         <div class="card-body">
@@ -116,9 +113,6 @@
                             </div>
                         </p>
                         <p class="card-text">
-                            <button type="button" onclick="passMsg(this,2,false,false)" class="btn btn-primary btn-sm">通过</button>
-                            <button type="button" onclick="passMsg(this,2,true,false)" class="btn btn-primary btn-sm">通过并回复</button>
-                            <button type="button" onclick="passMsg(this,2,true,true)" class="btn btn-primary btn-sm">通过并回复且抄送邮件</button>
                             <button type="button" onclick="delMsg(this,2,false)" class="btn btn-danger btn-sm">删除</button>
                             <button type="button" onclick="delMsg(this,2,true)" class="btn btn-danger btn-sm ">删除且发送邮件提醒</button>
                         </p>
@@ -139,7 +133,7 @@
                   </nav>
             }else
             {
-                <div class="alert alert-primary" role="alert">没有未审核的回复</div>
+                <div class="alert alert-primary" role="alert">没有任何被公开的回复</div>
             }
         }
       </div>
@@ -172,10 +166,10 @@
         var url = "";
         var dtype = 0;
         if(dtypeValue=="comment"){
-            url = '/AdminLeaveMessage/GetNotPassComments?pt='+pt+'&index='+needIndex;
+            url = '/AdminLeaveMessage/GetPublicComments?pt='+pt+'&index='+needIndex;
             dtype = 1;
         }else{
-            url = '/AdminLeaveMessage/GetNotPassReplies?pt='+pt+'&index='+needIndex;
+            url = '/AdminLeaveMessage/GetPublicReplies?pt='+pt+'&index='+needIndex;
             dtype = 2;
         }
 
@@ -192,24 +186,24 @@
                     if(data['code']==1){
                         // 重绘为当前获取的数据
                         if(dtype==1){
-                            if(data['data']['notPassComments'].length<=0)
+                            if(data['data']['publicComments'].length<=0)
                             {
                                 // 没有更多评论数据
                                 Gb_PopoverShow(targetId, "无更多数据");
                                 return;
                             }
                             $("#comment-cards").children().remove();
-                            var newDomStr = linkCommentComStr(data['data']['notPassComments']);
+                            var newDomStr = linkCommentComStr(data['data']['publicComments']);
                             $("#comment-cards").append(newDomStr);
                         }else{
-                            if(data['data']['notPassReplies'].length<=0)
+                            if(data['data']['publicReplies'].length<=0)
                             {
                                 // 没有更多回复数据
                                 Gb_PopoverShow(targetId, "无更多数据");
                                 return;
                             }
                             $("#reply-cards").children().remove();
-                            var newDomStr = linkReplyComStr(data['data']['notPassReplies']);
+                            var newDomStr = linkReplyComStr(data['data']['publicReplies']);
                             $("#reply-cards").append(newDomStr);
                         }
                         // 更改页索引的值
@@ -261,9 +255,7 @@
             cmtItem.clientIp+'</span><br><span>页面链接:</span><span class="text-info"><a target="_blank" href="'+
             cmtItem.relatedArticleUrl+'">'+
             articleTitle+'</a></span></p><p class="card-text text-info bg-dark">'+
-            cmtItem.content+'</p><p class="card-text"><button type="button" onclick="passMsg(this,1,false,false)" class="btn btn-primary btn-sm">通过</button>'+
-            '<button type="button" onclick="passMsg(this,1,true,false)" class="btn btn-primary btn-sm">通过并回复</button>'+
-            '<button type="button" onclick="passMsg(this,1,true,true)" class="btn btn-primary btn-sm">通过并回复且抄送邮件</button>'+
+            cmtItem.content+'</p><p class="card-text">'+
             '<button type="button" onclick="delMsg(this,1,false)" class="btn btn-danger btn-sm">删除</button>'+
             '<button type="button" onclick="delMsg(this,1,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div><br>';
         });  
@@ -302,9 +294,7 @@
             rpItem.relatedComment?.commentTime+'</span><span>IP:</span><span class="text-info bg-dark">'+
             rpItem.relatedComment?.clientIp+'</span></p><p class="card-text text-info bg-dark">'+
             rpItem.relatedComment?.content+'</p></div></div></div></div></div></div>'+
-            '</p><p class="card-text"><button type="button" onclick="passMsg(this,2,false,false)" class="btn btn-primary btn-sm">通过</button>'+
-            '<button type="button" onclick="passMsg(this,2,true,false)" class="btn btn-primary btn-sm">通过并回复</button>'+
-            '<button type="button" onclick="passMsg(this,2,true,true)" class="btn btn-primary btn-sm">通过并回复且抄送邮件</button>'+
+            '</p><p class="card-text">'+
             '<button type="button" onclick="delMsg(this,2,false)" class="btn btn-danger btn-sm">删除</button>'+
             '<button type="button" onclick="delMsg(this,2,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div><br>';
         });  
@@ -366,26 +356,6 @@
         
     }
 
-    // 审核通过某评论或回复
-    function passMsg(targer, dtype, supplyReply, sendEmail){
-        var passToken = $('#pt').val();
-        var url = '/AdminLeaveMessage/PassOneMsg?pt='+passToken;
-        var id = $(targer).closest('.card').attr('itemCardId');
-        if(supplyReply){
-            // 若通过某评论需要一并回复，输入回复内容 是否抄送邮件直接根据按钮传递的sendEmail值 必须选择回复才能决定抄送邮件
-            UIkit.modal.prompt('输入回复内容:', '').then(function(msg) {
-                if(!Gb_IsWhiteSpaceOrNull(msg)){
-                    passOrDelMsgAjaxCall(url, id, dtype, true, sendEmail, msg.trimF());
-                    return;
-                }
-                Gb_NotifShow("请输入回复内容", "primary");
-            });
-            return;
-        }
-        // 通过某评论不需要追加回复
-        passOrDelMsgAjaxCall(url,id,dtype,false,false,null);
-    }
-
     // 点击删除或通过按钮成功后 判断当前操作类型 计算当前页 传递当前页url给ajax调用刷新当前页
     function currentIndexUrlToCall(dtype){
         // 重新调用当前页的列表数据 追加为最新数据
@@ -394,11 +364,11 @@
         if(dtype==1){
             // 评论操作类型，未审核评论下一页按钮id为commentNextPageBtn，获取它的下一页按钮的索引值-1就是当前分页索引
             var currentIndex = parseInt($('#commentNextPageBtn').attr('bluesky-index'))-1;
-            currntIndexUrl = '/AdminLeaveMessage/GetNotPassComments?pt='+passToken+'&index='+currentIndex;
+            currntIndexUrl = '/AdminLeaveMessage/GetPublicComments?pt='+passToken+'&index='+currentIndex;
         }else{
             // 回复操作类型，未审核回复下一页按钮id为replyNextPageBtn，获取它的下一页按钮的索引值-1就是当前分页索引
             var currentIndex = parseInt($('#replyNextPageBtn').attr('bluesky-index'))-1;
-            currntIndexUrl = '/AdminLeaveMessage/GetNotPassReplies?pt='+passToken+'&index='+currentIndex;
+            currntIndexUrl = '/AdminLeaveMessage/GetPublicReplies?pt='+passToken+'&index='+currentIndex;
         }
         // ajax最终调用
         ctrBtnRepaintMessageCom(currntIndexUrl, dtype);
@@ -414,24 +384,24 @@
                     if(data['code']==1){
                         // 重绘为当前获取的数据
                         if(dtype==1){
-                            if(data['data']['notPassComments'].length<=0)
+                            if(data['data']['publicComments'].length<=0)
                             {
                                 // 当前页没有更多评论数据 意味着当前页的获取量可能超过了总量，重定向到第一页初始化
-                                window.location.href="/AdminLeaveMessage/LeaveNotPassAmManagement?pt="+$('#pt').val();
+                                window.location.href="/AdminLeaveMessage/LeavePublicAmManagement?pt="+$('#pt').val();
                                 return;
                             }
                             $("#comment-cards").children().remove();
-                            var newDomStr = linkCommentComStr(data['data']['notPassComments']);
+                            var newDomStr = linkCommentComStr(data['data']['publicComments']);
                             $("#comment-cards").append(newDomStr);
                         }else{
-                            if(data['data']['notPassReplies'].length<=0)
+                            if(data['data']['publicReplies'].length<=0)
                             {
                                 // 当前页没有更多回复数据 意味着当前页的获取量可能超过了总量，重定向到第一页初始化
-                                window.location.href="/AdminLeaveMessage/LeaveNotPassAmManagement?pt="+$('#pt').val();
+                                window.location.href="/AdminLeaveMessage/LeavePublicAmManagement?pt="+$('#pt').val();
                                 return;
                             }
                             $("#reply-cards").children().remove();
-                            var newDomStr = linkReplyComStr(data['data']['notPassReplies']);
+                            var newDomStr = linkReplyComStr(data['data']['publicReplies']);
                             $("#reply-cards").append(newDomStr);
                         }
                         window.scrollTo(0,0);
