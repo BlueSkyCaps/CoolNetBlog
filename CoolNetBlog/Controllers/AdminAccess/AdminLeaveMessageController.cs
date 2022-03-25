@@ -127,7 +127,7 @@ namespace CoolNetBlog.Controllers.Admin
                     tmpMessagerEmail = cPassable.Email;
                     tmpMessagerOrgContent = cPassable.Content;
                     // 通过当前要处理通过的评论找到文章
-                    tmpMessagerRelatedArt = await _articleReader.FindOneByIdAsync(cPassable.Id);
+                    tmpMessagerRelatedArt = await _articleReader.FindOneByIdAsync(cPassable.SourceId);
                 }
                 else
                 {
@@ -140,7 +140,7 @@ namespace CoolNetBlog.Controllers.Admin
                     // 通过当前要处理通过的回复找到评论
                     var relatedCmt = await _commentVmReader.FindOneByIdAsync(rPassable.CommentId);
                     // 通过评论找到文章
-                    tmpMessagerRelatedArt = await _articleReader.FindOneByIdAsync(relatedCmt.Id);
+                    tmpMessagerRelatedArt = await _articleReader.FindOneByIdAsync(relatedCmt.SourceId);
                 }
                 result.TipMessage = "已公开此条言论，会在评论区显示。";
 
@@ -182,15 +182,16 @@ namespace CoolNetBlog.Controllers.Admin
                 {
                     // send email
                     MailSendHelper mailSend = new MailSendHelper();
-                    mailSend.InputSmtpServerHost("smtp.qq.com", 465, true);
+                    mailSend.InputSmtpServerHost(adminUser.SmtpHost, (int)adminUser.SmtpPort, (bool)adminUser.SmtpIsUseSsl);
                     mailSend.InputYourEmail(adminUser.AccountName, adminUser.Email);
                     mailSend.InputFriendEmail(tmpMessagerName, tmpMessagerEmail);
                     var t = tmpMessagerRelatedArt.IsShowTitle ? tmpMessagerRelatedArt.Title : "无题链接";
-                    tmpAdmToMessagerContent = $"您在<a href='/Detail/articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>进行了发言，" +
+                    var n = !string.IsNullOrWhiteSpace(siteSett.SiteName) ? "-"+siteSett.SiteName : "";
+                    tmpAdmToMessagerContent = $"您在内容为<a href='/Detail/articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言，" +
                         $"经过审核此条发言已被<i>公开</i>，并且特意向您抄送这封邮件已表达我对此的兴趣。我的回复内容如下：" +
-                        $"<br><p><mark>{tmpAdmToMessagerContent}</mark></p>";
-                    mailSend.InputContent("发言得到了博主回应", tmpAdmToMessagerContent,true);
-                    mailSend.Send();
+                        $"<br><p><mark>{tmpAdmToMessagerContent}</mark></p><br>您的发言原内容：<br><small>{tmpMessagerOrgContent}</small>";
+                    mailSend.InputContent("发言收到了博主回应"+n, tmpAdmToMessagerContent,true);
+                    mailSend.SendByAuthenticate(adminUser.Email, adminUser.EmailPassword);
                     result.TipMessage = result.TipMessage+"且邮件已发送给此网友。";
                 }
                 catch (Exception e)
@@ -218,9 +219,17 @@ namespace CoolNetBlog.Controllers.Admin
                 result.TipMessage = "删除评论或回复失败，请刷新重试";
                 return Json(result);
             }
+            SiteSetting siteSett = await _siteSettingReader.FirstOrDefaultAsync(s => 1 == 1);
             AdminUser adminUser = await _adminUserReader.FirstOrDefaultAsync(a => a.AccountName == slvm.AccountName);
             if (vm.SendEmail)
             {
+                if (siteSett == null)
+                {
+                    result.Code = ValueCodes.Error;
+                    result.HideMessage = "删除评论或回复时抄送邮件提醒，SiteSetting表找不到";
+                    result.TipMessage = "引发错误，请重新登录试试";
+                    return Json(result);
+                }
                 if (string.IsNullOrWhiteSpace(vm.Message))
                 {
                     result.HideMessage = "删除评论或回复时抄送邮件提醒，邮件提醒内容未填写";
@@ -260,7 +269,7 @@ namespace CoolNetBlog.Controllers.Admin
                     tmpMessagerEmail = cPassable.Email;
                     tmpMessagerOrgContent = cPassable.Content;
                     // 通过评论找到文章
-                    tmpMessagerRelatedArt = await _articleReader.FindOneByIdAsync(cPassable.Id);
+                    tmpMessagerRelatedArt = await _articleReader.FindOneByIdAsync(cPassable.SourceId);
                 }
                 else
                 {
@@ -273,7 +282,7 @@ namespace CoolNetBlog.Controllers.Admin
                     // 通过当前要处理通过的回复找到评论
                     var relatedCmt = await _commentVmReader.FindOneByIdAsync(rPassable.CommentId);
                     // 通过评论找到文章
-                    tmpMessagerRelatedArt = await _articleReader.FindOneByIdAsync(relatedCmt.Id);
+                    tmpMessagerRelatedArt = await _articleReader.FindOneByIdAsync(relatedCmt.SourceId);
                 }
                 _baseSugar._dbHandler.CommitTran();
             }
@@ -295,15 +304,16 @@ namespace CoolNetBlog.Controllers.Admin
                 {
                     // send email
                     MailSendHelper mailSend = new MailSendHelper();
-                    mailSend.InputSmtpServerHost("smtp.qq.com", 465, true);
+                    mailSend.InputSmtpServerHost(adminUser.SmtpHost, (int)adminUser.SmtpPort, (bool)adminUser.SmtpIsUseSsl);
                     mailSend.InputYourEmail(adminUser.AccountName, adminUser.Email);
                     mailSend.InputFriendEmail(tmpMessagerName, tmpMessagerEmail);
                     var t = tmpMessagerRelatedArt.IsShowTitle ? tmpMessagerRelatedArt.Title : "无题链接";
-                    tmpAdmToMessagerContent = $"您在<a href='/Detail/articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>进行了发言，" +
+                    var n = !string.IsNullOrWhiteSpace(siteSett.SiteName) ? "-" + siteSett.SiteName : "";
+                    tmpAdmToMessagerContent = $"您在内容为<a href='/Detail/articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言，" +
                         $"经过查阅此条发言已被<i>删除</i>，并且特意向您抄送这封邮件提示，您可以再次以合理的方式发表言论。删除原因如下：" +
-                        $"<br><p><mark>{vm.Message}</mark></p><br>您被删除的原内容：<br>{tmpMessagerOrgContent}";
+                        $"<br><p><mark>{vm.Message}</mark></p><br>您被删除的发言原内容：<br><small>{tmpMessagerOrgContent}</small>";
                     mailSend.InputContent("发言被删除", tmpAdmToMessagerContent, true);
-                    mailSend.Send();
+                    mailSend.SendByAuthenticate(adminUser.Email, adminUser.EmailPassword);
                     result.TipMessage = "删除成功，邮件已发送。";
                 }
                 catch (Exception e)
