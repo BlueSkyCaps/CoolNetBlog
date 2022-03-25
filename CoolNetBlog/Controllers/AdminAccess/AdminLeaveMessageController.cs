@@ -189,7 +189,8 @@ namespace CoolNetBlog.Controllers.Admin
                     var n = !string.IsNullOrWhiteSpace(siteSett.SiteName) ? "-"+siteSett.SiteName : "";
                     tmpAdmToMessagerContent = $"您在内容为<a href='/Detail/articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言，" +
                         $"经过审核此条发言已被<i>公开</i>，并且特意向您抄送这封邮件已表达我对此的兴趣。我的回复内容如下：" +
-                        $"<br><p><mark>{tmpAdmToMessagerContent}</mark></p><br>您的发言原内容：<br><small>{tmpMessagerOrgContent}</small>";
+                        $"<br><p><mark>{tmpAdmToMessagerContent}</mark></p><br>您的发言原内容：<br><small>{tmpMessagerOrgContent}</small>" +
+                        $"<br>--该邮件为系统自动发送请勿回复|若您没有上述操作请忽略此邮件--";
                     mailSend.InputContent("发言收到了博主回应"+n, tmpAdmToMessagerContent,true);
                     mailSend.SendByAuthenticate(adminUser.Email, adminUser.EmailPassword);
                     result.TipMessage = result.TipMessage+"且邮件已发送给此网友。";
@@ -311,8 +312,9 @@ namespace CoolNetBlog.Controllers.Admin
                     var n = !string.IsNullOrWhiteSpace(siteSett.SiteName) ? "-" + siteSett.SiteName : "";
                     tmpAdmToMessagerContent = $"您在内容为<a href='/Detail/articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言，" +
                         $"经过查阅此条发言已被<i>删除</i>，并且特意向您抄送这封邮件提示，您可以再次以合理的方式发表言论。删除原因如下：" +
-                        $"<br><p><mark>{vm.Message}</mark></p><br>您被删除的发言原内容：<br><small>{tmpMessagerOrgContent}</small>";
-                    mailSend.InputContent("发言被删除", tmpAdmToMessagerContent, true);
+                        $"<br><p><mark>{vm.Message}</mark></p><br>您被删除的发言原内容：<br><small>{tmpMessagerOrgContent}</small>" +
+                        $"<br>--该邮件为系统自动发送请勿回复|若您没有上述操作请忽略此邮件--";
+                    mailSend.InputContent("发言被删除"+n, tmpAdmToMessagerContent, true);
                     mailSend.SendByAuthenticate(adminUser.Email, adminUser.EmailPassword);
                     result.TipMessage = "删除成功，邮件已发送。";
                 }
