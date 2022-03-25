@@ -349,7 +349,7 @@ namespace CoolNetBlog.Bll
                 var theRpCount = await _replySet.GetListBuilder().Where(r => r.ClientIp == cip)
                     .Where(r => r.ReplyTime >= currentBeginDay)
                     .Where(r => r.ReplyTime <= currentNextDay).CountAsync();
-                if ((theCmtCount+ theRpCount) > lmt)
+                if ((theCmtCount+ theRpCount) >= lmt)
                 {
                     _result.HideMessage = "新增评论,此ip超过当日限制次数";
                     _result.TipMessage = "你当日发言次数超过限制，第二天再来哦~";
