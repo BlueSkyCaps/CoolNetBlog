@@ -116,6 +116,7 @@ namespace CoolNetBlog.Controllers.Admin
             string tmpAdmToMessagerContent = "";
             string tmpMessagerOrgContent = "";
             Article tmpMessagerRelatedArt;
+            int opId = 0;
             try
             {
                 if (vm.DType == 1)
@@ -128,6 +129,8 @@ namespace CoolNetBlog.Controllers.Admin
                     tmpMessagerOrgContent = cPassable.Content;
                     // 通过当前要处理通过的评论找到文章
                     tmpMessagerRelatedArt = await _articleReader.FindOneByIdAsync(cPassable.SourceId);
+                    // 当前是审核评论 直接记录当前评论id
+                    opId = vm.Id;
                 }
                 else
                 {
@@ -141,15 +144,17 @@ namespace CoolNetBlog.Controllers.Admin
                     var relatedCmt = await _commentVmReader.FindOneByIdAsync(rPassable.CommentId);
                     // 通过评论找到文章
                     tmpMessagerRelatedArt = await _articleReader.FindOneByIdAsync(relatedCmt.SourceId);
+                    // 当前是审核回复 记录当前回复对应的评论id
+                    opId = relatedCmt.Id;
                 }
                 result.TipMessage = "已公开此条言论，会在评论区显示。";
 
-                // 处理给这条评论附带回复
+                // 处理给这条内容附带回复
                 if (vm.SupplyReply)
                 {
                     Reply supReply = new Reply
                     {
-                        CommentId = vm.Id,
+                        CommentId = opId,
                         ReplyTime = DateTime.Now,
                         IsPassed = true,
                         IsAdmin = true,
@@ -190,7 +195,7 @@ namespace CoolNetBlog.Controllers.Admin
                     tmpAdmToMessagerContent = $"您在内容为<a href='/Detail/articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言，" +
                         $"经过审核此条发言已被<i>公开</i>，并且特意向您抄送这封邮件已表达我对此的兴趣。我的回复内容如下：" +
                         $"<br><p><mark>{tmpAdmToMessagerContent}</mark></p><br>您的发言原内容：<br><small>{tmpMessagerOrgContent}</small>" +
-                        $"<br>--该邮件为系统自动发送请勿回复|若您没有上述操作请忽略此邮件--";
+                        $"<br><br>--该邮件为系统自动发送请勿回复--<br>--若您没有上述操作请忽略此邮件--";
                     mailSend.InputContent("发言收到了博主回应"+n, tmpAdmToMessagerContent,true);
                     mailSend.SendByAuthenticate(adminUser.Email, adminUser.EmailPassword);
                     result.TipMessage = result.TipMessage+"且邮件已发送给此网友。";
@@ -313,7 +318,7 @@ namespace CoolNetBlog.Controllers.Admin
                     tmpAdmToMessagerContent = $"您在内容为<a href='/Detail/articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言，" +
                         $"经过查阅此条发言已被<i>删除</i>，并且特意向您抄送这封邮件提示，您可以再次以合理的方式发表言论。删除原因如下：" +
                         $"<br><p><mark>{vm.Message}</mark></p><br>您被删除的发言原内容：<br><small>{tmpMessagerOrgContent}</small>" +
-                        $"<br>--该邮件为系统自动发送请勿回复|若您没有上述操作请忽略此邮件--";
+                        $"<br><br>--该邮件为系统自动发送请勿回复--<br>--若您没有上述操作请忽略此邮件--";
                     mailSend.InputContent("发言被删除"+n, tmpAdmToMessagerContent, true);
                     mailSend.SendByAuthenticate(adminUser.Email, adminUser.EmailPassword);
                     result.TipMessage = "删除成功，邮件已发送。";
