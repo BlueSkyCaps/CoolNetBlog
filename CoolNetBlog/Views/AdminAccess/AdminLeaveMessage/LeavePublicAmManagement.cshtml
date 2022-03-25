@@ -16,7 +16,7 @@
     <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
       <div class="accordion-body" id="comment-body">
         @{
-            if (Model?.NotPassComments?.Count>0)
+            if (Model?.PublicComments?.Count>0)
             {
                   <div id="comment-cards">
                   @foreach (var item in Model?.PublicComments)

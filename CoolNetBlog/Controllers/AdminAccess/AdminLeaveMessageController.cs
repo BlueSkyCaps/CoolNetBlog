@@ -204,7 +204,7 @@ namespace CoolNetBlog.Controllers.Admin
                     result.TipMessage = !isPub ? result.TipMessage + "已将其公开，但邮件发送失败。" : "已回复，但邮件发送失败。";
                 }
             }
-            result.TipMessage = !isPub ? result.TipMessage: "已回复，且邮件已发送给此网友。";
+            result.TipMessage = !isPub ? result.TipMessage: $"已回复。{(vm.SendEmail? "且邮件已发送给此网友" : "")}";
 
             return Json(result);
         }
@@ -355,11 +355,11 @@ namespace CoolNetBlog.Controllers.Admin
             slvm.PublicComments?.Clear();
             slvm.PublicReplies?.Clear();
             // 默认返回未审核的评论和回复列表
-            slvm.NotPassComments = await _commentVmReader.GetListBuilder().Where(c=>c.IsPassed==false||c.IsPassed==null)
+            slvm.NotPassComments = await _commentVmReader.GetListBuilder().Where(c=>c.IsAdmin==false&&(c.IsPassed==false||c.IsPassed==null))
                 .OrderBy(c=>c.CommentTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
 
 
-            var notPassRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == false || r.IsPassed == null)
+            var notPassRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsAdmin == false&&(r.IsPassed == false || r.IsPassed == null))
                 .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
             foreach (var cmv in slvm.NotPassComments)
             {
@@ -398,7 +398,7 @@ namespace CoolNetBlog.Controllers.Admin
             ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
             try
             {
-                var notPassComments = await _commentVmReader.GetListBuilder().Where(c => c.IsPassed == false || c.IsPassed == null)
+                var notPassComments = await _commentVmReader.GetListBuilder().Where(c => c.IsAdmin == false && (c.IsPassed == false || c.IsPassed == null))
                     .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Skip((index-1) * 20).Take(20).ToListAsync();
                 foreach (var cmv in notPassComments)
                 {
@@ -431,7 +431,7 @@ namespace CoolNetBlog.Controllers.Admin
             ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
             try
             {
-                var notPassRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == false || r.IsPassed == null)
+                var notPassRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsAdmin == false && (r.IsPassed == false || r.IsPassed == null))
                     .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 20).Take(20).ToListAsync();
                 List<ReplyCarryViewModel> notPassReplies = new List<ReplyCarryViewModel>();
                 foreach (var replyTmp in notPassRepliesTmp)
@@ -470,11 +470,11 @@ namespace CoolNetBlog.Controllers.Admin
             slvm.PublicComments?.Clear();
             slvm.PublicReplies?.Clear();
             // 默认返回已公开的评论和回复列表
-            slvm.PublicComments = await _commentVmReader.GetListBuilder().Where(c => c.IsPassed == true)
+            slvm.PublicComments = await _commentVmReader.GetListBuilder().Where(c => c.IsAdmin == false && c.IsPassed == true)
                 .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Take(2).ToListAsync();
 
 
-            var pubRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == true)
+            var pubRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsAdmin == false&&r.IsPassed == true)
                 .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Take(2).ToListAsync();
             foreach (var cmv in slvm.PublicComments)
             {
@@ -512,7 +512,7 @@ namespace CoolNetBlog.Controllers.Admin
             ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
             try
             {
-                var publicComments = await _commentVmReader.GetListBuilder().Where(c => c.IsPassed == true)
+                var publicComments = await _commentVmReader.GetListBuilder().Where(c => c.IsAdmin == false&&c.IsPassed == true)
                     .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 2).Take(2).ToListAsync();
                 foreach (var cmv in publicComments)
                 {
@@ -545,7 +545,7 @@ namespace CoolNetBlog.Controllers.Admin
             ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
             try
             {
-                var publicRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == false || r.IsPassed == null)
+                var publicRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsAdmin == false&&r.IsPassed == true )
                     .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 2).Take(2).ToListAsync();
                 List<ReplyCarryViewModel> publicReplies = new List<ReplyCarryViewModel>();
                 foreach (var replyTmp in publicRepliesTmp)
