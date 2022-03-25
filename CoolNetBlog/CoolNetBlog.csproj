@@ -21,6 +21,8 @@
     <Folder Include="wwwroot\articleImgs\" />
     <Folder Include="wwwroot\js\view\Home\" />
     <Folder Include="wwwroot\js\view\WarningPage\" />
+    <Folder Include="wwwroot\js\view\Home\" />
+    <Folder Include="wwwroot\js\view\WarningPage\" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

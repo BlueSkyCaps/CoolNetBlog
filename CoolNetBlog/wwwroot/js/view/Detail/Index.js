@@ -126,7 +126,7 @@ $("#loadCommentBtn").on("click",
                                 $.each(cItem['relatedReplies'], function (i, rItem) {
                                     var idStr = "comment" + cItem.id + "reply" + rItem.id;
                                     var replyTimeStr = Gb_GetFlowTimeStr(rItem.replyTime);
-                                    var adminBadgeStr = rItem.isAdmin ? '<small class="text-danger">(博主)</small>' : '';
+                                    var adminBadgeStr = rItem.isAdmin ? '<span class="badge bg-info text-dark">博主</span> ' : '';
                                     var siteUrlStr = !(Gb_IsWhiteSpaceOrNull(rItem.siteUrl)) ? ' <a target="_blank" href="' + rItem.siteUrl + '" class="text-dark">🌐</a>' : '';
                                     var replyContent = rItem.content;
                                     var replyInfoStr = '<small>' + replyTimeStr + siteUrlStr + ' <a href="javascript:;" onClick="toReplyDialog(this,1)" comment-id="{3}" to-name="{4}">回复TA</a></small>';
@@ -136,8 +136,8 @@ $("#loadCommentBtn").on("click",
                                         '</button></h2><div id="collapse{0}" class="accordion-collapse collapse" aria-labelledby="heading{0}" data-bs-parent="#accordion{0}"><div class="accordion-body text-end">' +
                                         '{2}' + '</div></div></div></div>';
                                     // 格式化占位符 第0个是元素的id 第1个是回复内容 第2个是回复时间|按钮组成的元素 
-                                    // 第3个是关联的评论id 第4个是昵称 第5个是站主徽标元素 第6个是网址链接元素
-                                    rpNodeStr += tmpRpNodeStr.format(idStr, replyContent, replyInfoStr, cItem.id, rItem.name, adminBadgeStr, siteUrlStr);
+                                    // 第3个是关联的评论id 第4个是昵称 第5个是站主徽标元素 
+                                    rpNodeStr += tmpRpNodeStr.format(idStr, replyContent, replyInfoStr, cItem.id, rItem.name, adminBadgeStr);
                                 });
                             }
                             // 格式化评论时间
@@ -152,7 +152,7 @@ $("#loadCommentBtn").on("click",
                                 'replyLoadBtn" theNextIndex="2" class="loadReplyBtn btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" ' +
                                 'data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">加载回复..</button></div>' : '';
 
-                            var adminBadgeStr = cItem.isAdmin ? '<small class="text-danger">(博主)</small>' : '';
+                            var adminBadgeStr = cItem.isAdmin ? '<span class="badge bg-info text-dark">博主</span> ' : '';
                             var siteUrlStr = !(Gb_IsWhiteSpaceOrNull(cItem.siteUrl)) ? ' <a target="_blank" href="' + cItem.siteUrl + '" class="text-dark">🌐</a>' : '';
                             var cmNodeStr = '<div class="card card-body commentItem"><p class="text-start card-title">' +
                                 adminBadgeStr +
@@ -231,16 +231,19 @@ $(document).on("click", ".loadReplyBtn",
                             var rpNodeStr = "";
                             var idStr = "comment" + cid + "reply" + rItem.id;
                             var replyTimeStr = Gb_GetFlowTimeStr(rItem.replyTime);
+                            var adminBadgeStr = rItem.isAdmin ? '<span class="badge bg-info text-dark">博主</span> ' : '';
+                            var siteUrlStr = !(Gb_IsWhiteSpaceOrNull(rItem.siteUrl)) ? ' <a target="_blank" href="' + rItem.siteUrl + '" class="text-dark">🌐</a>' : '';
                             var replyContent = rItem.content;
-                            var replyInfoStr = '<small>' + replyTimeStr + ' <a href="javascript:;" onClick="toReplyDialog(this,1)" comment-id="{3}" to-name="{4}">回复TA</a></small>';
+                            var replyInfoStr = '<small>' + replyTimeStr + siteUrlStr + ' <a href="javascript:;" onClick="toReplyDialog(this,1)" comment-id="{3}" to-name="{4}">回复TA</a></small>';
                             var tmpRpNodeStr = '<div class="accordion" id="accordion{0}"><div class="accordion-item"><h2 class="accordion-header" id="heading{0}">' +
                                 '<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{0}" aria-expanded="false" aria-controls="collapse{0}">' +
-                                '<p><small class="text text-info">{4}</small><br/>{1}</p>' +
+                                '<p>{5}<small class="text text-info">{4}</small><br/>{1}</p>' +
                                 '</button></h2><div id="collapse{0}" class="accordion-collapse collapse" aria-labelledby="heading{0}" data-bs-parent="#accordion{0}"><div class="accordion-body text-end">' +
                                 '{2}' + '</div></div></div></div>';
 
-                            // 格式化占位符 第0个是元素的id 第1个是回复内容 第2个是回复时间|按钮组成的元素 第3个是关联的评论id 第4个是昵称 
-                            rpNodeStr += tmpRpNodeStr.format(idStr, replyContent, replyInfoStr, cid, rItem.name);
+                            // 格式化占位符 第0个是元素的id 第1个是回复内容 第2个是回复时间|按钮组成的元素 
+                            // 第3个是关联的评论id 第4个是昵称 第5个是站主徽标元素
+                            rpNodeStr += tmpRpNodeStr.format(idStr, replyContent, replyInfoStr, rItem.id, rItem.name, adminBadgeStr);
 
                             // 追加到当前"加载回复"按钮的前面，此按钮被一层div包裹
                             targerRpLoadBtn.parent().before(rpNodeStr);
