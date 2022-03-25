@@ -417,7 +417,7 @@
                             if(data['data']['notPassComments'].length<=0)
                             {
                                 // 当前页没有更多评论数据 意味着当前页的获取量可能超过了总量，重定向到第一页初始化
-                                window.location.href="/AdminLeaveMessage/LeaveMessageAmManagement?pt="+$('#pt').val();
+                                window.location.href="/AdminLeaveMessage/LeaveNotPassAmManagement?pt="+$('#pt').val();
                                 return;
                             }
                             $("#comment-cards").children().remove();
@@ -427,7 +427,7 @@
                             if(data['data']['notPassReplies'].length<=0)
                             {
                                 // 当前页没有更多回复数据 意味着当前页的获取量可能超过了总量，重定向到第一页初始化
-                                window.location.href="/AdminLeaveMessage/LeaveMessageAmManagement?pt="+$('#pt').val();
+                                window.location.href="/AdminLeaveMessage/LeaveNotPassAmManagement?pt="+$('#pt').val();
                                 return;
                             }
                             $("#reply-cards").children().remove();

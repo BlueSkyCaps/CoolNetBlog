@@ -335,14 +335,14 @@ namespace CoolNetBlog.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> AdminReply(ReplyViewModel vm)
         {
-            return RedirectToAction("LeaveMessageAmManagement", "AdminLeaveMessage", new { pt = slvm.PassToken });
+            return RedirectToAction("LeaveNotPassAmManagement", "AdminLeaveMessage", new { pt = slvm.PassToken });
         }
 
         /// <summary>
         /// 留言管理页面入口 索引第一页 默认返回未审核的评论和回复列表
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> LeaveMessageAmManagement(string? pt)
+        public async Task<IActionResult> LeaveNotPassAmManagement(string? pt)
         {
             // 清空列表。 因为是静态模型数据 刷新会追加回复列表
             slvm.NotPassComments?.Clear();

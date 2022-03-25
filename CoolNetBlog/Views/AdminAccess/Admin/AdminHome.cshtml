@@ -47,7 +47,8 @@
   <div class="card-body">
     <h5 class="card-title">留言管理</h5>
     <p class="card-text">管理内容的评论、回复，审核它们以及回复留言者..</p>
-    <a  class="btn btn-primary" asp-route-pt="@Model.PassToken" asp-action="LeaveMessageAmManagement" asp-controller="AdminLeaveMessage">前往</a>
+    <a  class="btn btn-primary" asp-route-pt="@Model.PassToken" asp-action="LeaveNotPassAmManagement" asp-controller="AdminLeaveMessage">未审核的</a>
+    <a  class="btn btn-primary" asp-route-pt="@Model.PassToken" asp-action="LeavePublicAmManagement" asp-controller="AdminLeaveMessage">已公开的</a>
   </div>
 </div>
 <p class="placeholder-glow">
