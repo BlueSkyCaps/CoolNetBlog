@@ -89,7 +89,7 @@ namespace CoolNetBlog.Models
         public bool IsDraft { get;set;}
 
         /// <summary>
-        /// 是否是特殊文章，通常"关于""友链"等内容可以定义为特殊文章，特殊文章不能设为草稿和隐私且不会被列表显示和搜索到
+        /// 是否是特殊文章，通常"关于""友链"等内容可以定义为特殊文章，特殊文章不能设为隐私且不会被列表显示和搜索到
         /// </summary>
         public bool IsSpecial { get; set; }
 

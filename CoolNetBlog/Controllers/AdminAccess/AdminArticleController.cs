@@ -143,6 +143,15 @@ namespace CoolNetBlog.Controllers.Admin
 
                 return View(vm);
             }
+
+            if (editable.IsSpecial && editable.IsLock)
+            {
+                ModelState.AddModelError("", "发表失败:特殊文章不能设为隐私文章");
+                // 因为是提交表单数据，所以下拉框的值是空的，此处从事先的静态数据中取出赋值
+                vm.MenuSelectList = smvm.MenuSelectList;
+                vm = (ArticleViewModel)WrapMustNeedPassFields(vm);
+                return View(vm);
+            }
             if (string.IsNullOrWhiteSpace(editable.Content)|| string.IsNullOrWhiteSpace(editable.Abstract))
             {
                 ModelState.AddModelError("", "发表失败:文章得有内容和摘要呀！");

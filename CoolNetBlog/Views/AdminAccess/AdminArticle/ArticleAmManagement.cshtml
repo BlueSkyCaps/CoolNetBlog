@@ -29,12 +29,14 @@
          
         //点击链接编辑文章，传文章id
         <a asp-route-pt="@Model.PassToken" asp-route-id="@item.Id" asp-action="ArticleEdit" asp-controller="AdminArticle" class="list-group-item list-group-item-action">
-        <div class="d-flex w-100 justify-content-between">
-          <h5 class="mb-1">@item.Title</h5>
-          <small>@item.UpdateTime</small>
-        </div>
-        <p class="mb-1">@item.Abstract</p>
-        <small class="text text-info">@(item.IsDraft?"草稿":"") </small><small>菜单：@item.Ig_MenuName</small>
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">@item.Title</h5>
+              <small>@item.UpdateTime</small>
+            </div>
+            <p class="mb-1">@item.Abstract</p>
+            <small class="text text-info">@(item.IsDraft?"草稿":"") </small>
+            <small class="text text-danger">@(item.IsSpecial?"特殊文章":"") </small>
+            <small>菜单：@item.Ig_MenuName</small>
         </a>
         <p>
         <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
