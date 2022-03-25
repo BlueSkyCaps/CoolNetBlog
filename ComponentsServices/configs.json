@@ -1,8 +1,0 @@
-{
-  "DbConnStr": {
-    "Default": "123",
-    "MySql": "123",
-    "SqlServer": ""
-  },
-  "Redis": {}
-}
