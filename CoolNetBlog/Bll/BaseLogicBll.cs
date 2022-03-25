@@ -67,7 +67,7 @@ namespace CoolNetBlog.Bll
                .Take(onePageCount).ToListAsync();
                 // 返回此条件下的总数量 供之后处理分页逻辑使用
                 var mn = (await bdb._dbHandler.Queryable<Menu>().FirstAsync(m => m.Id == menuId)).Name;
-                c = await bdb._dbHandler.Queryable<HomeArticleViewModel>().Where(a => a.IsDraft == false && a.MenuId == menuId).CountAsync();
+                c = await bdb._dbHandler.Queryable<HomeArticleViewModel>().Where(a => a.IsDraft == false && a.IsSpecial == false && a.MenuId == menuId).CountAsync();
                 homeGlobalView.LocationTip = "菜单 " + mn;
                 homeGlobalView.Location = "menu";
             }
@@ -79,6 +79,7 @@ namespace CoolNetBlog.Bll
                 var queryHandler = bdb._dbHandler.Queryable<HomeArticleViewModel>()
                 .IgnoreColumns(a => a.Content)
                 .Where(a => a.IsDraft == false)
+                .Where(a => a.IsSpecial == false)
                 .Where(a =>
                         (a.Abstract != null && a.Abstract.Contains(keyword)) ||
                         (a.Title != null && a.Title.Contains(keyword)) ||
@@ -102,6 +103,7 @@ namespace CoolNetBlog.Bll
                 homeGlobalView.HomeArticleViewModels = await bdb._dbHandler.Queryable<HomeArticleViewModel>()
                 .IgnoreColumns(a => a.Content)
                 .Where(a => a.IsDraft == false)
+                .Where(a => a.IsSpecial == false)
                 .OrderBy(a => a.UpdateTime, SqlSugar.OrderByType.Desc)
                 .Skip((pageIndex - 1) * onePageCount)
                 .Take(onePageCount).ToListAsync();
