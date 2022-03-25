@@ -471,11 +471,11 @@ namespace CoolNetBlog.Controllers.Admin
             slvm.PublicReplies?.Clear();
             // 默认返回已公开的评论和回复列表
             slvm.PublicComments = await _commentVmReader.GetListBuilder().Where(c => c.IsAdmin == false && c.IsPassed == true)
-                .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Take(2).ToListAsync();
+                .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
 
 
             var pubRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsAdmin == false&&r.IsPassed == true)
-                .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Take(2).ToListAsync();
+                .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
             foreach (var cmv in slvm.PublicComments)
             {
                 // 获取评论所在文章
@@ -513,7 +513,7 @@ namespace CoolNetBlog.Controllers.Admin
             try
             {
                 var publicComments = await _commentVmReader.GetListBuilder().Where(c => c.IsAdmin == false&&c.IsPassed == true)
-                    .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 2).Take(2).ToListAsync();
+                    .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 20).Take(20).ToListAsync();
                 foreach (var cmv in publicComments)
                 {
                     // 获取评论所在文章
@@ -546,7 +546,7 @@ namespace CoolNetBlog.Controllers.Admin
             try
             {
                 var publicRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsAdmin == false&&r.IsPassed == true )
-                    .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 2).Take(2).ToListAsync();
+                    .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 20).Take(20).ToListAsync();
                 List<ReplyCarryViewModel> publicReplies = new List<ReplyCarryViewModel>();
                 foreach (var replyTmp in publicRepliesTmp)
                 {

@@ -5,7 +5,7 @@
 <div class="card">
   <div class="card-body">
     <h5 class="card-title">菜单设置</h5>
-    <p class="card-text">管理你的菜单，给菜单设置名称、顺序等..</p>
+    <p class="card-text">管理你的菜单，给菜单设置名称、顺序..</p>
 
     <a class="btn btn-primary" asp-route-pt="@Model.PassToken" asp-action="MenuAmManagement" asp-controller="AdminMenu">前往</a>
   </div>
@@ -14,7 +14,7 @@
 <div class="card">
   <div class="card-body">
     <h5 class="card-title">文章管理</h5>
-    <p class="card-text">发表文章、操作文章，定时添加和归类..</p>
+    <p class="card-text">发表文、操作文章，归类和加锁..</p>
     <a  class="btn btn-primary" asp-route-pt="@Model.PassToken" asp-action="ArticleAmManagement" asp-controller="AdminArticle">前往</a>
   </div>
 </div>
@@ -22,7 +22,7 @@
 <div class="card">
   <div class="card-body">
     <h5 class="card-title">文件图片</h5>
-    <p class="card-text">上传文件链接，或上传图片后可以插入文章、删除图片以及访问自定义链接..</p>
+    <p class="card-text">上传文件链接，或上传图片来插入文章、以及自定义链接..</p>
     <a  class="btn btn-primary" asp-route-pt="@Model.PassToken" asp-action="FileAmManagement" asp-controller="AdminFile">前往</a>
   </div>
 </div>
@@ -30,7 +30,7 @@
 <div class="card">
   <div class="card-body">
     <h5 class="card-title">链接显示</h5>
-    <p class="card-text">"看看这些"组件，添加显要的链接或者你满意的文章，让访客在侧边栏能够访问</p>
+    <p class="card-text">"看看这些"组件，添加显要的链接或者你满意的文章，让访客在侧边栏能够访问..</p>
     <a  class="btn btn-primary" asp-route-pt="@Model.PassToken" asp-action="LoveLookAmManagement" asp-controller="AdminLoveLook">前往</a>
   </div>
 </div>
@@ -38,7 +38,7 @@
 <div class="card">
   <div class="card-body">
     <h5 class="card-title">站点设置</h5>
-    <p class="card-text">基本的配置，包含站点的名称、个性签名以及网站尾部的显示内容..</p>
+    <p class="card-text">基本的配置，包含站点名称、签名以及尾部内容、个性化管控..</p>
     <a  class="btn btn-primary" asp-route-pt="@Model.PassToken" asp-action="EditSiteSetting" asp-controller="AdminSiteSetting">前往</a>
   </div>
 </div>
@@ -46,7 +46,7 @@
 <div class="card">
   <div class="card-body">
     <h5 class="card-title">留言管理</h5>
-    <p class="card-text">管理内容的评论、回复，审核它们以及回复留言者..</p>
+    <p class="card-text">管理内容的评论、回复，审核它们，回复留言者以及邮件通知..</p>
     <a  class="btn btn-primary" asp-route-pt="@Model.PassToken" asp-action="LeaveNotPassAmManagement" asp-controller="AdminLeaveMessage">未审核的</a>
     <a  class="btn btn-primary" asp-route-pt="@Model.PassToken" asp-action="LeavePublicAmManagement" asp-controller="AdminLeaveMessage">已公开的</a>
   </div>
