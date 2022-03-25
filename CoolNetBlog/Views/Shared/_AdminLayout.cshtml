@@ -24,23 +24,33 @@
 </head>
 <body>
     <div class="text-center">
-        <h7 class="display-7">后台管理员 ~喵咪呼啦！~</h7>
-        @if (!string.IsNullOrWhiteSpace(@Model?.PassToken))
-        {
-            // 登录页没有PassToken 成功登陆后才有 不显示"返回后台面板"
-            <a class="text text-primary" asp-route-pt="@Model?.PassToken" asp-action="AdminHome" asp-controller="Admin">返回后台面板</a>
-            <a class="text text-primary" target="_blank" asp-action="Index" asp-controller="Home">前往站点</a>
-            <a class="text text-primary" asp-route-pt="@Model?.PassToken" asp-action="LoginOut" asp-controller="Admin">登出</a>
-        }
+        <figure class="text-center">
+            <h4>后台管理员 ~喵咪呼啦！~</h4>
+          <figcaption class="blockquote-footer">
+              <cite title="CoolNetBlog">CoolNetBlog</cite>强力驱动，简洁、高效、洒脱。
+          </figcaption>
+        </figure>
         @{
             //若是在登陆界面，不具有PassToken，此样式不会显示。否则后台主页具有token，因为验证通过了
             if (!String.IsNullOrWhiteSpace(@Model?.PassToken))
             {
-                <h6 class="display-6">大侠你好, @Model?.AccountName</h6>
+                <div>
+                <h3 >大侠你好, <mark>@Model?.AccountName</mark></h3>
+                </div>
             }
+        }
+        @if (!string.IsNullOrWhiteSpace(@Model?.PassToken))
+        {
+            // 登录页没有PassToken 成功登陆后才有 不显示"返回后台面板"
+            <div class="btn-group" role="group" aria-label="Second group">
+                <a class="btn btn-outline-primary text text-secondary"  asp-route-pt="@Model?.PassToken" asp-action="AdminHome" asp-controller="Admin">面板</a>
+                <a class="btn btn-outline-primary text text-secondary" target="_blank" asp-action="Index" asp-controller="Home">站点</a>
+                <a class="btn btn-outline-primary text text-secondary" asp-route-pt="@Model?.PassToken" asp-action="LoginOut" asp-controller="Admin">登出</a>
+            </div>
         }
     </div>
 
+    <br>
 
     <div class="container">
         <main role="main" class="pb-3">

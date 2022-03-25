@@ -65,10 +65,12 @@ namespace CoolNetBlog.Controllers.Admin
                 tmpCIdList = commentDelHelper.GetListBuilder()
                     .Where(c => c.SourceId == id && c.SourceType == 1)
                     .Select(c => c.Id).ToList();
-                var tmpCIdString = string.Join(",", tmpCIdList);
-                await replyDelHelper._dbHandler.Ado.ExecuteCommandAsync(
-                    $"delete from Reply where CommentId in ({tmpCIdString})");
-                
+                if (tmpCIdList.Any())
+                {
+                    var tmpCIdString = string.Join(",", tmpCIdList);
+                    await replyDelHelper._dbHandler.Ado.ExecuteCommandAsync(
+                        $"delete from Reply where CommentId in ({tmpCIdString})");
+                }
                 // 删除此文章所有评论
                 await commentDelHelper.DeleteEntitiesAsync(c => c.SourceId == id && c.SourceType == 1);
                 _articleSet.TransCommit();
@@ -76,7 +78,7 @@ namespace CoolNetBlog.Controllers.Admin
                 // 删除文章实体
                 await _articleSet.DeleteAsync(delable);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 _articleSet.TransRoll();
                 ModelState.AddModelError("", "删除失败:刷新再试吧？。");
@@ -144,9 +146,9 @@ namespace CoolNetBlog.Controllers.Admin
                 return View(vm);
             }
 
-            if (editable.IsSpecial && editable.IsLock)
+            if (editable.IsSpecial && (editable.IsLock|| editable.IsDraft))
             {
-                ModelState.AddModelError("", "发表失败:特殊文章不能设为隐私文章");
+                ModelState.AddModelError("", "发表失败:特殊文章不能设为隐私文章或草稿");
                 // 因为是提交表单数据，所以下拉框的值是空的，此处从事先的静态数据中取出赋值
                 vm.MenuSelectList = smvm.MenuSelectList;
                 vm = (ArticleViewModel)WrapMustNeedPassFields(vm);

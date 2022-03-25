@@ -61,7 +61,7 @@ namespace CoolNetBlog.Bll
                 // 点击了某菜单 菜单分页
                 homeGlobalView.HomeArticleViewModels = await bdb._dbHandler.Queryable<HomeArticleViewModel>()
                .IgnoreColumns(a => a.Content)
-               .Where(a => a.IsDraft == false && a.MenuId == menuId)
+               .Where(a => a.IsDraft == false && a.IsSpecial == false && a.MenuId == menuId)
                .OrderBy(a => a.UpdateTime, SqlSugar.OrderByType.Desc)
                .Skip((pageIndex - 1) * onePageCount)
                .Take(onePageCount).ToListAsync();

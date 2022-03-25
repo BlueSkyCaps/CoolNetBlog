@@ -40,9 +40,8 @@ namespace CoolNetBlog.Bll
                 _homeGlobalView.DetailArticleData = await _articleVmSet.FindOneByIdAsync(articleId);
             }
 
-            // 没有此文章 或文章当前是草稿|特殊文章
-            if (_homeGlobalView.DetailArticleData is null || _homeGlobalView.DetailArticleData.IsDraft||
-                 _homeGlobalView.DetailArticleData.IsSpecial)
+            // 没有此文章 或文章当前是草稿
+            if (_homeGlobalView.DetailArticleData is null || _homeGlobalView.DetailArticleData.IsDraft)
             {
                 _homeGlobalView.NotTips = "找不到文章(帖子)！返回重试一下，或者关键字重新搜搜吧？！";
                 return;

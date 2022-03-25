@@ -52,7 +52,7 @@
     <div class="form-row align-items-center">
         <div class="col-auto my-1">
             <div class="custom-control custom-checkbox mr-sm-2">
-            <label class="custom-control-label"><small>存放的菜单</small></label>
+            <label class="custom-control-label">存放的菜单</label>
             </div>
         </div>
         <div class="col-auto my-1">
@@ -93,7 +93,7 @@
         <div class="col-sm-2">隐私文章</div>
         <div class="col-sm-10">
             <div class="form-check">
-            <input asp-for="IsLock"  class="form-check-input" type="checkbox">
+            <input asp-for="IsLock"  class="form-check-input" type="checkbox" onchange="LockChange()">
             <label asp-for="IsLock" class="form-check-label" ><small>(是否隐私文章，隐私文章需在页面解锁才显示主体内容)</small></label>
             </div>
         </div>
@@ -102,7 +102,7 @@
         <div class="col-sm-2">特殊文章</div>
         <div class="col-sm-10">
             <div class="form-check">
-            <input asp-for="IsSpecial" class="form-check-input" type="checkbox" onchange="LockChange()">
+            <input asp-for="IsSpecial" class="form-check-input" type="checkbox">
             <label asp-for="IsSpecial" class="form-check-label" ><small>(是否是特殊文章，通常"关于"、"友链"等内容可以定义为特殊文章。特殊文章不会在列表显示和搜索到，你可以复制特殊文章的链接嵌入到博客你想显示的地方，例如"看看这些"组件。若想显示独立网页，还可以去后台面板上传HTML文件)</small></label>
             </div>
         </div>
@@ -117,7 +117,7 @@
     <div class="form-row align-items-center">
         <div class="col-auto my-1">
             <div class="custom-control custom-checkbox mr-sm-2">
-            <label class="custom-control-label"><small>评论类型</small></label>
+            <label class="custom-control-label">评论类型</label>
             </div>
         </div>
         <div class="col-auto my-1">
