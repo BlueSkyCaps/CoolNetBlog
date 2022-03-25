@@ -115,6 +115,13 @@ namespace CoolNetBlog.Models
             /// Nullable:false
             /// </summary>      
             public bool IsOpenDetailThumb { get; set; }
+        
+            /// <summary>
+            /// Desc:ip一日内允许的留言次数(包括回复、评论)，0为无限制
+            /// Default:b'0'
+            /// Nullable:true
+            /// </summary>      
+            public int? LeaveLimitCount { get; set; }
 
     }
 }
