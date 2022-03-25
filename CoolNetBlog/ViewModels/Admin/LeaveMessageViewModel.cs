@@ -16,6 +16,15 @@ namespace CoolNetBlog.ViewModels.Admin
         /// </summary>
         public IList<ReplyCarryViewModel>? NotPassReplies { get; set; } = new List<ReplyCarryViewModel>();
 
+        /// <summary>
+        /// 当前已公开的评论
+        /// </summary>
+        public IList<CommentCarryViewModel>? PubComments { get; set; } = new List<CommentCarryViewModel>();
+        /// <summary>
+        /// 当前已公开的回复
+        /// </summary>
+        public IList<ReplyCarryViewModel>? PubReplies { get; set; } = new List<ReplyCarryViewModel>();
+
     }
 
     public class CommentCarryViewModel : Comment

@@ -14,7 +14,7 @@ namespace CoolNetBlog.Controllers.Admin
 {
 
     /// <summary>
-    /// 后台留言管理操作
+    /// 后台留言(评论回复)管理操作
     /// </summary>
 
     public class AdminLeaveMessageController : BaseAdminController
@@ -334,17 +334,17 @@ namespace CoolNetBlog.Controllers.Admin
         }
 
         /// <summary>
-        /// 管理员回复某评论
+        /// 管理员发布言论
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> AdminReply(ReplyViewModel vm)
+        public async Task<IActionResult> AdminMessage(ReplyViewModel vm)
         {
-            return RedirectToAction("LeaveNotPassAmManagement", "AdminLeaveMessage", new { pt = slvm.PassToken });
+            throw new NotImplementedException();
         }
 
         /// <summary>
-        /// 留言管理页面入口 索引第一页 默认返回未审核的评论和回复列表
+        /// 留言管理(未审核的)页面入口 索引第一页 默认返回未审核的评论和回复列表
         /// </summary>
         /// <returns></returns>
         public async Task<IActionResult> LeaveNotPassAmManagement(string? pt)
@@ -352,13 +352,15 @@ namespace CoolNetBlog.Controllers.Admin
             // 清空列表。 因为是静态模型数据 刷新会追加回复列表
             slvm.NotPassComments?.Clear();
             slvm.NotPassReplies?.Clear();
-            // 默认返回未审核的评论和回复列表 30条
+            slvm.PubComments?.Clear();
+            slvm.PubReplies?.Clear();
+            // 默认返回未审核的评论和回复列表
             slvm.NotPassComments = await _commentVmReader.GetListBuilder().Where(c=>c.IsPassed==false||c.IsPassed==null)
-                .OrderBy(c=>c.CommentTime, SqlSugar.OrderByType.Desc).Take(5).ToListAsync();
+                .OrderBy(c=>c.CommentTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
 
 
             var notPassRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == false || r.IsPassed == null)
-                .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Take(5).ToListAsync();
+                .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
             foreach (var cmv in slvm.NotPassComments)
             {
                 // 获取评论所在文章
@@ -386,6 +388,50 @@ namespace CoolNetBlog.Controllers.Admin
             return View(slvm);
         }
 
+        /// <summary>
+        /// 留言管理(已公开的)页面入口 索引第一页 默认返回已公开的评论和回复列表
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> LeavePublicAmManagement(string? pt)
+        {
+            // 清空列表。 因为是静态模型数据 刷新会追加回复列表
+            slvm.NotPassComments?.Clear();
+            slvm.NotPassReplies?.Clear();
+            slvm.PubComments?.Clear();
+            slvm.PubReplies?.Clear();
+            // 默认返回已公开的评论和回复列表
+            slvm.PubComments = await _commentVmReader.GetListBuilder().Where(c => c.IsPassed == true)
+                .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
+
+
+            var pubRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == true)
+                .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
+            foreach (var cmv in slvm.PubComments)
+            {
+                // 获取评论所在文章
+                if (cmv.SourceType == 1)
+                {
+                    cmv.RelatedArticle = await _articleReader.FindOneByIdAsync(cmv.SourceId);
+                    cmv.RelatedArticleUrl = "/Detail?articleId=" + cmv.SourceId;
+                }
+            }
+
+            foreach (var replyTmp in pubRepliesTmp)
+            {
+                // 获取当前此条回复对应的评论
+                replyTmp.RelatedComment = await _commentVmReader.FindOneByIdAsync(replyTmp.CommentId);
+                // 获取回复所在文章
+                if (replyTmp.RelatedComment.SourceType == 1)
+                {
+                    replyTmp.RelatedArticle = await _articleReader.FindOneByIdAsync(replyTmp.RelatedComment.SourceId);
+                    replyTmp.RelatedArticleUrl = "/Detail?articleId=" + replyTmp.RelatedComment.SourceId;
+                }
+                slvm.PubReplies?.Add(replyTmp);
+            }
+            // 自动封装已有的数据
+            slvm = (LeaveMessageViewModel)WrapMustNeedPassFields(slvm);
+            return View(slvm);
+        }
 
         /// <summary>
         /// 获取未审核的某页评论列表
@@ -397,7 +443,7 @@ namespace CoolNetBlog.Controllers.Admin
             try
             {
                 var notPassComments = await _commentVmReader.GetListBuilder().Where(c => c.IsPassed == false || c.IsPassed == null)
-                    .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Skip((index-1)*5).Take(5).ToListAsync();
+                    .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Skip((index-1) * 20).Take(20).ToListAsync();
                 foreach (var cmv in notPassComments)
                 {
                     // 获取评论所在文章
@@ -430,7 +476,7 @@ namespace CoolNetBlog.Controllers.Admin
             try
             {
                 var notPassRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == false || r.IsPassed == null)
-                    .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 5).Take(5).ToListAsync();
+                    .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 20).Take(20).ToListAsync();
                 List<ReplyCarryViewModel> notPassReplies = new List<ReplyCarryViewModel>();
                 foreach (var replyTmp in notPassRepliesTmp)
                 {
@@ -457,7 +503,76 @@ namespace CoolNetBlog.Controllers.Admin
         }
 
         /// <summary>
-        /// 根据关键词删除匹配的评论
+        /// 获取已公开的某页评论列表
+        /// </summary>
+        /// <returns></returns>
+        public async Task<JsonResult> GetPubComments(string? pt, int index)
+        {
+            ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
+            try
+            {
+                var pubComments = await _commentVmReader.GetListBuilder().Where(c => c.IsPassed == true)
+                    .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 20).Take(20).ToListAsync();
+                foreach (var cmv in pubComments)
+                {
+                    // 获取评论所在文章
+                    if (cmv.SourceType == 1)
+                    {
+                        cmv.RelatedArticle = await _articleReader.FindOneByIdAsync(cmv.SourceId);
+                        cmv.RelatedArticleUrl = "/Detail?articleId=" + cmv.SourceId;
+                    }
+                }
+                result.Code = ValueCodes.Success;
+                result.Data = new { PubComments = pubComments };
+
+            }
+            catch (Exception e)
+            {
+                result.Code = ValueCodes.Error;
+                result.HideMessage = "获取已公开的某页评论列表发生异常:" + e.Message;
+                result.TipMessage = "加载数据失败请重试";
+            }
+            return Json(result);
+        }
+
+        /// <summary>
+        /// 获取已公开的某页回复列表
+        /// </summary>
+        /// <returns></returns>
+        public async Task<JsonResult> GetPubReplies(string? pt, int index)
+        {
+            ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
+            try
+            {
+                var pubRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == false || r.IsPassed == null)
+                    .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 20).Take(20).ToListAsync();
+                List<ReplyCarryViewModel> pubReplies = new List<ReplyCarryViewModel>();
+                foreach (var replyTmp in pubRepliesTmp)
+                {
+                    // 获取当前此条回复所属的评论
+                    replyTmp.RelatedComment = await _commentVmReader.FindOneByIdAsync(replyTmp.CommentId);
+                    // 获取回复所在文章
+                    if (replyTmp.RelatedComment.SourceType == 1)
+                    {
+                        replyTmp.RelatedArticle = await _articleReader.FindOneByIdAsync(replyTmp.RelatedComment.SourceId);
+                        replyTmp.RelatedArticleUrl = "/Detail?articleId=" + replyTmp.RelatedComment.SourceId;
+                    }
+                    pubReplies.Add(replyTmp);
+                }
+                result.Code = ValueCodes.Success;
+                result.Data = new { PubReplies = pubReplies };
+            }
+            catch (Exception e)
+            {
+                result.Code = ValueCodes.Error;
+                result.HideMessage = "获取已公开某页评回复列表发生异常:" + e.Message;
+                result.TipMessage = "加载数据失败请重试";
+            }
+            return Json(result);
+        }
+
+        /// <summary>
+        /// 根据关键词删除
         /// </summary>
         /// <returns></returns>
         public async Task<IActionResult> UseWordDelete(string? pt,int type,  string? kw)
