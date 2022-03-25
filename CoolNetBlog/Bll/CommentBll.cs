@@ -88,15 +88,13 @@ namespace CoolNetBlog.Bll
                 _result.TipMessage = "评论失败了呢，可以重新试试。";
                 return _result;
             }
-            
-            if (!LeaveMessageLimitViaAsync(cip))
+
+            if (!await LeaveMessageLimitViaAsync(cip))
             {
-                _result.HideMessage = "新增评论,此ip超过当日限制次数";
-                _result.TipMessage = "你当日发言次数超过限制，第二天再来哦~";
                 return _result;
             }
 
-            
+
             Comment insertComment = new Comment
             {
                 CommentTime = DateTime.Now,
@@ -203,10 +201,8 @@ namespace CoolNetBlog.Bll
                 return _result;
             }
 
-            if (!LeaveMessageLimitViaAsync(cip))
+            if (!await LeaveMessageLimitViaAsync(cip))
             {
-                _result.HideMessage = "新增评论,此ip超过当日限制次数";
-                _result.TipMessage = "你当日发言次数超过限制，第二天再来哦~";
                 return _result;
             }
 
@@ -344,10 +340,21 @@ namespace CoolNetBlog.Bll
             int? lmt = (await sittSet.FirstOrDefaultAsync(s => 1 == 1))?.LeaveLimitCount;
             if (!(lmt == null || lmt <= 0))
             {
-                _commentSet.GetListBuilder().Where(c=>c.ClientIp==cip).Where(c=>c.CommentTime)
-                _result.HideMessage = "新增评论,此ip超过当日限制次数";
-                _result.TipMessage = "你当日发言次数超过限制，第二天再来哦~";
-                return false;
+                var currentBeginDay = DateTime.Now.Date;//当前日期的零点开头 1998-10-15 00:00:00
+                var currentNextDay = DateTime.Now.Date.AddDays(1);//当前日期的下一天零点开头 1998-10-16 00:00:00
+                // 当前ip此时日的回复+评论数是否超过限制数
+                var theCmtCount = await _commentSet.GetListBuilder().Where(c => c.ClientIp == cip)
+                    .Where(c => c.CommentTime >= currentBeginDay)
+                    .Where(c => c.CommentTime <= currentNextDay).CountAsync();
+                var theRpCount = await _replySet.GetListBuilder().Where(r => r.ClientIp == cip)
+                    .Where(r => r.ReplyTime >= currentBeginDay)
+                    .Where(r => r.ReplyTime <= currentNextDay).CountAsync();
+                if ((theCmtCount+ theRpCount) > lmt)
+                {
+                    _result.HideMessage = "新增评论,此ip超过当日限制次数";
+                    _result.TipMessage = "你当日发言次数超过限制，第二天再来哦~";
+                    return false;
+                }
             }
             return true;
         }
