@@ -311,7 +311,25 @@
         });  
         return comLinkStr;
     }
-                            
+     
+    // 调用审核某评论或回复的接口 但是处理公开言论已经不涉及审核操作 所以此接口添加了查询参数来判断 参考LeaveNotPassAmManagement视图的PassMsg()
+    function underPassMsg(targer, dtype, supplyReply, sendEmail){
+        var passToken = $('#pt').val();
+        var url = '/AdminLeaveMessage/PassOneMsg?pt='+passToken+'&isPub=true';
+        var id = $(targer).closest('.card').attr('itemCardId');
+        if(supplyReply){
+            // 需要回复，输入回复内容 是否抄送邮件直接根据按钮传递的sendEmail值 必须选择回复才能决定抄送邮件
+            UIkit.modal.prompt('输入回复内容:', '').then(function(msg) {
+                if(!Gb_IsWhiteSpaceOrNull(msg)){
+                    passOrDelMsgAjaxCall(url, id, dtype, true, sendEmail, msg.trimF());
+                    return;
+                }
+                Gb_NotifShow("请输入回复内容", "primary");
+            });
+            return;
+        }
+    }
+
     // ajax调用 通过|删除某评论或回复
     function passOrDelMsgAjaxCall(url, id, dtype, supplyReply=false, sendEmail=false, message=""){
         $.ajax (
@@ -352,7 +370,7 @@
         var url = '/AdminLeaveMessage/DeleteOneMsg?pt='+passToken;
         var id = $(targer).closest('.card').attr('itemCardId');
         if(sendEmail){
-            // 若删除某评论需要附带邮件提醒，输入提醒内容
+            // 若删除需要附带邮件提醒，输入提醒内容
             UIkit.modal.prompt('输入邮件提醒内容:', '').then(function(msg) {
                 if(!Gb_IsWhiteSpaceOrNull(msg)){
                     passOrDelMsgAjaxCall(url, id, dtype, false, sendEmail, msg.trimF());
@@ -362,7 +380,7 @@
             });
             return;
         }
-        // 删除某评论不需要发邮件
+        // 删除不需要发邮件
         passOrDelMsgAjaxCall(url,id,dtype,false,sendEmail,null);
         
     }

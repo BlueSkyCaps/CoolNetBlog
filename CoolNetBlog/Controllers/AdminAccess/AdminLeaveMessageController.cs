@@ -41,59 +41,54 @@ namespace CoolNetBlog.Controllers.Admin
         /// 根据Id审核通过评论或回复
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="isPub">是来自已公开的评论或回复，因此不需要审核操作，而是直接回复或发送邮件，此参数兼容判断已公开的言论管理员需要回复</param>
         /// <returns></returns>
+        [Route("{controller}/PassOneMsg")]
         [HttpPost]
-        public async Task<IActionResult> PassOneMsg(string? pt, [FromBody] PassOneMsgViewModel vm)
+        public async Task<IActionResult> DealOneNotPassOrPubMsg([FromBody] PassOneMsgViewModel vm, string? pt, bool isPub = false)
         {
             ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
             if (vm.Id < 1)
             {
-                result.HideMessage = "通过评论或回复失败：id无效";
-                result.TipMessage = "通过评论或回复失败，请刷新重试";
+                result.HideMessage = "DealOneNotPassOrPubMsg-操作评论或回复失败：id无效";
+                result.TipMessage = "失败，请刷新重试";
                 return Json(result);
             }
-            if (vm.SupplyReply && string.IsNullOrWhiteSpace(vm.Message))
-            {
-                result.HideMessage = "通过评论或回复时附带回复信息，但信息内容未填";
-                result.TipMessage = "附带回复请填写回复的内容";
-                return Json(result);
-            }
+  
             SiteSetting siteSett = await _siteSettingReader.FirstOrDefaultAsync(s=>1==1);
             AdminUser adminUser = await _adminUserReader.FirstOrDefaultAsync(a=>a.AccountName==slvm.AccountName);
-           
-            
             
             if (vm.SupplyReply)
             {
                 if (string.IsNullOrWhiteSpace(vm.Message))
                 {
-                    result.HideMessage = "通过评论或回复时附带回复信息，回复信息未填";
+                    result.HideMessage = "DealOneNotPassOrPubMsg-操作评论或回复时附带回复信息，回复信息未填";
                     result.TipMessage = "附带回复请填写回复信息";
                     return Json(result);
                 }
                 if (siteSett == null)
                 {
                     result.Code = ValueCodes.Error;
-                    result.HideMessage = "通过评论或回复时附带回复信息，SiteSetting表找不到";
+                    result.HideMessage = "DealOneNotPassOrPubMsg操作评论或回复时附带回复信息，SiteSetting表找不到";
                     result.TipMessage = "引发错误，请重新登录试试";
                     return Json(result);
                 }
                 if (string.IsNullOrWhiteSpace(siteSett.Domain))
                 {
-                    result.HideMessage = "通过评论或回复时附带回复信息，SiteSetting中域名没有填写需补充";
+                    result.HideMessage = "DealOneNotPassOrPubMsg-操作评论或回复时附带回复信息，SiteSetting中域名没有填写需补充";
                     result.TipMessage = "请先去基本管理面板填写你的网站域名";
                     return Json(result);
                 }
                 if (adminUser == null)
                 {
                     result.Code = ValueCodes.Error;
-                    result.HideMessage = "通过评论或回复时附带回复信息，AdminUser表找不到当前管理员数据";
+                    result.HideMessage = "DealOneNotPassOrPubMsg-操作评论或回复时附带回复信息，AdminUser表找不到当前管理员数据";
                     result.TipMessage = "引发错误，请重新登录试试";
                     return Json(result);
                 }
                 if (string.IsNullOrWhiteSpace(adminUser.Email))
                 {
-                    result.HideMessage = "通过评论或回复时附带回复信息，当前管理员没有设置邮箱";
+                    result.HideMessage = "DealOneNotPassOrPubMsg-操作评论或回复时附带回复信息，当前管理员没有设置邮箱";
                     result.TipMessage = "邮箱信息填写不全，请去邮箱设置面板进行设置。";
                     return Json(result);
                 }
@@ -103,7 +98,7 @@ namespace CoolNetBlog.Controllers.Admin
                     // 判断EmailPassword是不是空足矣，因为邮箱设置必须全部填写完整才会更新数据表
                     if (string.IsNullOrWhiteSpace(adminUser.EmailPassword))
                     {
-                        result.HideMessage = "通过评论或回复时抄送邮件，当前管理员没有设置邮箱";
+                        result.HideMessage = "DealOneNotPassOrPubMsg-操作评论或回复时抄送邮件，当前管理员没有设置邮箱";
                         result.TipMessage = "邮箱信息填写不全，请去邮箱设置面板进行设置。";
                         return Json(result);
                     }
@@ -122,6 +117,7 @@ namespace CoolNetBlog.Controllers.Admin
                 if (vm.DType == 1)
                 {
                     var cPassable = await _baseSugar._dbHandler.Queryable<Comment>().SingleAsync(c => c.Id == vm.Id);
+                    // 不必判断isPub，无论是未审核的还是已公开的，全部更新IsPassed 不违背业务逻辑 减少多余代码判断
                     cPassable.IsPassed=true;
                     await _baseSugar._dbHandler.Updateable<Comment>(cPassable).ExecuteCommandAsync();
                     tmpMessagerName = cPassable.Name;
@@ -135,6 +131,7 @@ namespace CoolNetBlog.Controllers.Admin
                 else
                 {
                     var rPassable = await _baseSugar._dbHandler.Queryable<Reply>().SingleAsync(c => c.Id == vm.Id);
+                    // 不必判断isPub，无论是未审核的还是已公开的，全部更新IsPassed 不违背业务逻辑 减少多余代码判断
                     rPassable.IsPassed = true;
                     await _baseSugar._dbHandler.Updateable<Reply>(rPassable).ExecuteCommandAsync();
                     tmpMessagerName = rPassable.Name;
@@ -167,7 +164,7 @@ namespace CoolNetBlog.Controllers.Admin
                     supReply.Content = vm.DType == 1 ? vm.Message : $"@{tmpMessagerName}：{vm.Message}";
                     tmpAdmToMessagerContent = supReply.Content;
                     await _baseSugar._dbHandler.Insertable<Reply>(supReply).ExecuteCommandAsync();
-                    result.TipMessage = "已公开此条言论，会在评论区显示。且显示了你的回复。";
+                    result.TipMessage = "已公开此条言论，会在评论区显示。且附带了你的回复。";
                 }
                 _baseSugar._dbHandler.CommitTran();
             }
@@ -175,8 +172,8 @@ namespace CoolNetBlog.Controllers.Admin
             {
                 _baseSugar._dbHandler.RollbackTran();
                 result.Code = ValueCodes.Error;
-                result.HideMessage = $"通过某{(vm.DType == 1 ? "评论" : "回复")}失败:" + e.Message;
-                result.TipMessage = "通过失败请刷新重试";
+                result.HideMessage = $"DealOneNotPassOrPubMsg-操作某{(vm.DType == 1 ? "评论" : "回复")}失败:" + e.Message;
+                result.TipMessage = !isPub ?"通过失败请刷新重试": "给这条公开言论回复失败，请刷新重试";
                 return Json(result);
             }
             result.Code = ValueCodes.Success;
@@ -192,20 +189,23 @@ namespace CoolNetBlog.Controllers.Admin
                     mailSend.InputFriendEmail(tmpMessagerName, tmpMessagerEmail);
                     var t = tmpMessagerRelatedArt.IsShowTitle ? tmpMessagerRelatedArt.Title : "无题链接";
                     var n = !string.IsNullOrWhiteSpace(siteSett.SiteName) ? "-"+siteSett.SiteName : "";
-                    tmpAdmToMessagerContent = $"您在内容为<a href='/Detail/articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言，" +
-                        $"经过审核此条发言已被<i>公开</i>，并且特意向您抄送这封邮件已表达我对此的兴趣。我的回复内容如下：" +
+                    var distinctionText = !isPub ? "，经过审核此条发言已被<i>公开</i>" : "，我对此进行了回复";
+                    tmpAdmToMessagerContent = $"您在内容为<a href='{siteSett.Domain.TrimEnd('/')}/Detail/articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言" +
+                        $"{distinctionText}，并且特意向您抄送这封邮件已表达我对此的兴趣。我的回复内容如下：" +
                         $"<br><p><mark>{tmpAdmToMessagerContent}</mark></p><br>您的发言原内容：<br><small>{tmpMessagerOrgContent}</small>" +
                         $"<br><br>--该邮件为系统自动发送请勿回复--<br>--若您没有上述操作请忽略此邮件--";
-                    mailSend.InputContent("发言收到了博主回应"+n, tmpAdmToMessagerContent,true);
+                    mailSend.InputContent("发言收到了博主回应" + n, tmpAdmToMessagerContent, true);
                     mailSend.SendByAuthenticate(adminUser.Email, adminUser.EmailPassword);
                     result.TipMessage = result.TipMessage+"且邮件已发送给此网友。";
                 }
                 catch (Exception e)
                 {
                     result.HideMessage = $"通过某{(vm.DType == 1 ? "评论" : "回复")}成功，尝试发送邮件异常:" + e.Message;
-                    result.TipMessage = result.TipMessage + "已将其公开，但邮件发送失败。";
+                    result.TipMessage = !isPub ? result.TipMessage + "已将其公开，但邮件发送失败。" : "已回复，但邮件发送失败。";
                 }
             }
+            result.TipMessage = !isPub ? result.TipMessage: "已回复，且邮件已发送给此网友。";
+
             return Json(result);
         }
 
@@ -315,8 +315,8 @@ namespace CoolNetBlog.Controllers.Admin
                     mailSend.InputFriendEmail(tmpMessagerName, tmpMessagerEmail);
                     var t = tmpMessagerRelatedArt.IsShowTitle ? tmpMessagerRelatedArt.Title : "无题链接";
                     var n = !string.IsNullOrWhiteSpace(siteSett.SiteName) ? "-" + siteSett.SiteName : "";
-                    tmpAdmToMessagerContent = $"您在内容为<a href='/Detail/articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言，" +
-                        $"经过查阅此条发言已被<i>删除</i>，并且特意向您抄送这封邮件提示，您可以再次以合理的方式发表言论。删除原因如下：" +
+                    tmpAdmToMessagerContent = $"您在内容为<a href='{siteSett.Domain.TrimEnd('/')}/Detail/articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言，" +
+                        $"经过决定此条发言已被<i>删除</i>，并且特意向您抄送这封邮件提示。删除原因如下：" +
                         $"<br><p><mark>{vm.Message}</mark></p><br>您被删除的发言原内容：<br><small>{tmpMessagerOrgContent}</small>" +
                         $"<br><br>--该邮件为系统自动发送请勿回复--<br>--若您没有上述操作请忽略此邮件--";
                     mailSend.InputContent("发言被删除"+n, tmpAdmToMessagerContent, true);
