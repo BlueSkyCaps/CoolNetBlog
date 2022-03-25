@@ -388,50 +388,6 @@ namespace CoolNetBlog.Controllers.Admin
             return View(slvm);
         }
 
-        /// <summary>
-        /// 留言管理(已公开的)页面入口 索引第一页 默认返回已公开的评论和回复列表
-        /// </summary>
-        /// <returns></returns>
-        public async Task<IActionResult> LeavePublicAmManagement(string? pt)
-        {
-            // 清空列表。 因为是静态模型数据 刷新会追加回复列表
-            slvm.NotPassComments?.Clear();
-            slvm.NotPassReplies?.Clear();
-            slvm.PublicComments?.Clear();
-            slvm.PublicReplies?.Clear();
-            // 默认返回已公开的评论和回复列表
-            slvm.PublicComments = await _commentVmReader.GetListBuilder().Where(c => c.IsPassed == true)
-                .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
-
-
-            var pubRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == true)
-                .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
-            foreach (var cmv in slvm.PublicComments)
-            {
-                // 获取评论所在文章
-                if (cmv.SourceType == 1)
-                {
-                    cmv.RelatedArticle = await _articleReader.FindOneByIdAsync(cmv.SourceId);
-                    cmv.RelatedArticleUrl = "/Detail?articleId=" + cmv.SourceId;
-                }
-            }
-
-            foreach (var replyTmp in pubRepliesTmp)
-            {
-                // 获取当前此条回复对应的评论
-                replyTmp.RelatedComment = await _commentVmReader.FindOneByIdAsync(replyTmp.CommentId);
-                // 获取回复所在文章
-                if (replyTmp.RelatedComment.SourceType == 1)
-                {
-                    replyTmp.RelatedArticle = await _articleReader.FindOneByIdAsync(replyTmp.RelatedComment.SourceId);
-                    replyTmp.RelatedArticleUrl = "/Detail?articleId=" + replyTmp.RelatedComment.SourceId;
-                }
-                slvm.PublicReplies?.Add(replyTmp);
-            }
-            // 自动封装已有的数据
-            slvm = (LeaveMessageViewModel)WrapMustNeedPassFields(slvm);
-            return View(slvm);
-        }
 
         /// <summary>
         /// 获取未审核的某页评论列表
@@ -503,6 +459,51 @@ namespace CoolNetBlog.Controllers.Admin
         }
 
         /// <summary>
+        /// 留言管理(已公开的)页面入口 索引第一页 默认返回已公开的评论和回复列表
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> LeavePublicAmManagement(string? pt)
+        {
+            // 清空列表。 因为是静态模型数据 刷新会追加回复列表
+            slvm.NotPassComments?.Clear();
+            slvm.NotPassReplies?.Clear();
+            slvm.PublicComments?.Clear();
+            slvm.PublicReplies?.Clear();
+            // 默认返回已公开的评论和回复列表
+            slvm.PublicComments = await _commentVmReader.GetListBuilder().Where(c => c.IsPassed == true)
+                .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Take(2).ToListAsync();
+
+
+            var pubRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == true)
+                .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Take(2).ToListAsync();
+            foreach (var cmv in slvm.PublicComments)
+            {
+                // 获取评论所在文章
+                if (cmv.SourceType == 1)
+                {
+                    cmv.RelatedArticle = await _articleReader.FindOneByIdAsync(cmv.SourceId);
+                    cmv.RelatedArticleUrl = "/Detail?articleId=" + cmv.SourceId;
+                }
+            }
+
+            foreach (var replyTmp in pubRepliesTmp)
+            {
+                // 获取当前此条回复对应的评论
+                replyTmp.RelatedComment = await _commentVmReader.FindOneByIdAsync(replyTmp.CommentId);
+                // 获取回复所在文章
+                if (replyTmp.RelatedComment.SourceType == 1)
+                {
+                    replyTmp.RelatedArticle = await _articleReader.FindOneByIdAsync(replyTmp.RelatedComment.SourceId);
+                    replyTmp.RelatedArticleUrl = "/Detail?articleId=" + replyTmp.RelatedComment.SourceId;
+                }
+                slvm.PublicReplies?.Add(replyTmp);
+            }
+            // 自动封装已有的数据
+            slvm = (LeaveMessageViewModel)WrapMustNeedPassFields(slvm);
+            return View(slvm);
+        }
+
+        /// <summary>
         /// 获取已公开的某页评论列表
         /// </summary>
         /// <returns></returns>
@@ -512,7 +513,7 @@ namespace CoolNetBlog.Controllers.Admin
             try
             {
                 var publicComments = await _commentVmReader.GetListBuilder().Where(c => c.IsPassed == true)
-                    .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 20).Take(20).ToListAsync();
+                    .OrderBy(c => c.CommentTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 2).Take(2).ToListAsync();
                 foreach (var cmv in publicComments)
                 {
                     // 获取评论所在文章
@@ -545,7 +546,7 @@ namespace CoolNetBlog.Controllers.Admin
             try
             {
                 var publicRepliesTmp = await _replyVmReader.GetListBuilder().Where(r => r.IsPassed == false || r.IsPassed == null)
-                    .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 20).Take(20).ToListAsync();
+                    .OrderBy(r => r.ReplyTime, SqlSugar.OrderByType.Desc).Skip((index - 1) * 2).Take(2).ToListAsync();
                 List<ReplyCarryViewModel> publicReplies = new List<ReplyCarryViewModel>();
                 foreach (var replyTmp in publicRepliesTmp)
                 {

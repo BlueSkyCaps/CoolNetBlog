@@ -35,6 +35,8 @@
                         <p class="card-text">
                             <button type="button" onclick="delMsg(this,1,false)" class="btn btn-danger btn-sm">删除</button>
                             <button type="button" onclick="delMsg(this,1,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button>
+                            <button type="button" onclick="underPassMsg(this,1,true,false)" class="btn btn-primary btn-sm">回复</button>
+                            <button type="button" onclick="underPassMsg(this,1,true,true)" class="btn btn-primary btn-sm">回复且抄送邮件</button>
                         </p>
                         </div>
                     </div>
@@ -53,7 +55,7 @@
                   </nav>
             }else
             {
-                <div class="alert alert-primary" role="alert">没有任何被公开的评论</div>
+                <div class="alert alert-primary" role="alert">没有任何已公开的评论</div>
             }
         }
       </div>
@@ -115,6 +117,8 @@
                         <p class="card-text">
                             <button type="button" onclick="delMsg(this,2,false)" class="btn btn-danger btn-sm">删除</button>
                             <button type="button" onclick="delMsg(this,2,true)" class="btn btn-danger btn-sm ">删除且发送邮件提醒</button>
+                            <button type="button" onclick="underPassMsg(this,2,true,false)" class="btn btn-primary btn-sm">回复</button>
+                            <button type="button" onclick="underPassMsg(this,2,true,true)" class="btn btn-primary btn-sm">回复且抄送邮件</button>
                         </p>
                         </div>
                     </div>
@@ -133,7 +137,7 @@
                   </nav>
             }else
             {
-                <div class="alert alert-primary" role="alert">没有任何被公开的回复</div>
+                <div class="alert alert-primary" role="alert">没有任何已公开的回复</div>
             }
         }
       </div>
@@ -257,11 +261,15 @@
             articleTitle+'</a></span></p><p class="card-text text-info bg-dark">'+
             cmtItem.content+'</p><p class="card-text">'+
             '<button type="button" onclick="delMsg(this,1,false)" class="btn btn-danger btn-sm">删除</button>'+
-            '<button type="button" onclick="delMsg(this,1,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div><br>';
+            '<button type="button" onclick="delMsg(this,1,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button>'+
+            '<button type="button" onclick="underPassMsg(this,1,true,false)" class="btn btn-primary btn-sm">回复</button>'+
+            '<button type="button" onclick="underPassMsg(this,1,true,true)" class="btn btn-primary btn-sm">回复且抄送邮件</button>'+
+            '</p></div></div><br>';
         });  
         return comLinkStr;
     }
-
+    
+                            
     // 拼接回复列表为一系列卡片元素
     function linkReplyComStr(theRepliesData){
         var comLinkStr = "";
@@ -296,11 +304,14 @@
             rpItem.relatedComment?.content+'</p></div></div></div></div></div></div>'+
             '</p><p class="card-text">'+
             '<button type="button" onclick="delMsg(this,2,false)" class="btn btn-danger btn-sm">删除</button>'+
-            '<button type="button" onclick="delMsg(this,2,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button></p></div></div><br>';
+            '<button type="button" onclick="delMsg(this,2,true)" class="btn btn-danger btn-sm">删除且发送邮件提醒</button>'+
+            '<button type="button" onclick="underPassMsg(this,2,true,false)" class="btn btn-primary btn-sm">回复</button>'+
+            '<button type="button" onclick="underPassMsg(this,2,true,true)" class="btn btn-primary btn-sm">回复且抄送邮件</button>'+
+            '</p></div></div><br>';
         });  
         return comLinkStr;
     }
-
+                            
     // ajax调用 通过|删除某评论或回复
     function passOrDelMsgAjaxCall(url, id, dtype, supplyReply=false, sendEmail=false, message=""){
         $.ajax (
