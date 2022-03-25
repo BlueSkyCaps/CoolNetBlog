@@ -1,0 +1,55 @@
+﻿@model LoginViewModel
+<div asp-validation-summary="All" class="text-danger">
+</div>
+<form method="post">
+    <div class="form-group">
+        <label asp-for="AccountName"></label>
+        <input asp-for="AccountName" type="text" class="form-control">
+        <span asp-validation-for="AccountName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Password"></label>
+        <input asp-for="Password" type="password" class="form-control">
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <button  asp-action="Login" asp-controller="Admin" type="submit" class="btn btn-primary">登录</button>
+    </div>
+    <p>
+    <a class="btn btn-dark" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+    修改密码
+    </a>
+    </p>
+</form>
+<!--collapseExample 隐藏元素-->
+<div class="collapse" id="collapseExample">
+    <div class="card card-body">
+        <form method="post">
+        <div class="form-group">
+        <label name="OrgAccountName">原管理员昵称</label>
+        <input name="OrgAccountName" type="text" class="form-control" value="">
+        </div>
+        <div class="form-group">
+        <label name="OrgPassword">原密码</label>
+        <input name="OrgPassword" type="password" class="form-control" value="">
+        </div>
+        <div class="form-group">
+        <label name="NewAccountName">新管理员昵称</label>
+        <input name="NewAccountName" type="text" class="form-control" value="">
+        </div>
+        <div class="form-group">
+        <label name="NewPassword">新密码</label>
+        <input name="NewPassword" type="password" class="form-control" value="">
+        </div>
+        <div class="form-group">
+        <label name="NewPasswordRep">再次输入新密码</label>
+        <input name="NewPasswordRep" type="password" class="form-control" value="">
+        </div>
+        <div class="form-group">
+        <label name="Email">邮箱</label>
+        <input name="Email" type="email" class="form-control" value="">
+        </div>
+        <button type="submit" class="btn btn-dark" asp-action="Reset" asp-controller="Admin">确认修改</button>
+        </form>
+    </div>
+</div>
