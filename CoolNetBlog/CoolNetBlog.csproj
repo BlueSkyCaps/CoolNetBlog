@@ -20,7 +20,6 @@
   <ItemGroup>
     <Folder Include="wwwroot\articleImgs\" />
     <Folder Include="wwwroot\js\view\Home\" />
-    <Folder Include="wwwroot\js\view\Shared\" />
     <Folder Include="wwwroot\js\view\WarningPage\" />
   </ItemGroup>
 
