@@ -184,7 +184,8 @@ namespace CoolNetBlog.Controllers.Admin
                     mailSend.InputSmtpServerHost(adminUser.SmtpHost, (int)adminUser.SmtpPort, (bool)adminUser.SmtpIsUseSsl);
                     mailSend.InputYourEmail(adminUser.AccountName, adminUser.Email);
                     mailSend.InputFriendEmail(tmpMessagerName, tmpMessagerEmail);
-                    var t = tmpMessagerRelatedArt.IsShowTitle ? tmpMessagerRelatedArt.Title : "无题链接";
+                    var t = tmpMessagerRelatedArt.IsShowTitle ?
+                        !String.IsNullOrWhiteSpace(tmpMessagerRelatedArt.Title) ? tmpMessagerRelatedArt.Title : "无题链接" : "无题链接";
                     var n = !string.IsNullOrWhiteSpace(siteSett.SiteName) ? "-"+siteSett.SiteName : "";
                     var distinctionText = !isPub ? "，经过审核此条发言已被<i>公开</i>" : "，我对此进行了回复";
                     tmpAdmToMessagerContent = $"您在内容为<a href='{siteSett.Domain.TrimEnd('/')}/Detail?articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言" +
@@ -311,7 +312,8 @@ namespace CoolNetBlog.Controllers.Admin
                     mailSend.InputSmtpServerHost(adminUser.SmtpHost, (int)adminUser.SmtpPort, (bool)adminUser.SmtpIsUseSsl);
                     mailSend.InputYourEmail(adminUser.AccountName, adminUser.Email);
                     mailSend.InputFriendEmail(tmpMessagerName, tmpMessagerEmail);
-                    var t = tmpMessagerRelatedArt.IsShowTitle ? tmpMessagerRelatedArt.Title : "无题链接";
+                    var t = tmpMessagerRelatedArt.IsShowTitle ? 
+                        !String.IsNullOrWhiteSpace(tmpMessagerRelatedArt.Title)?tmpMessagerRelatedArt.Title : "无题链接" : "无题链接";
                     var n = !string.IsNullOrWhiteSpace(siteSett.SiteName) ? "-" + siteSett.SiteName : "";
                     tmpAdmToMessagerContent = $"您在内容为<a href='{siteSett.Domain.TrimEnd('/')}/Detail?articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言，" +
                         $"经过决定此条发言已被<i>删除</i>，并且特意向您抄送这封邮件提示。删除原因如下：" +
