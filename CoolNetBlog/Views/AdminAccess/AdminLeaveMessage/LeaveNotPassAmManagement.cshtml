@@ -1,11 +1,4 @@
 ﻿@model LeaveMessageViewModel
-<div >
-<form method="get">
-<input name="kw" class="form-control me-2" type="search" placeholder="" aria-label="Search">
-<input hidden id="pt" name="pt" value="@Model.PassToken">
-<button class="btn btn-dark" type="submit" asp-action="ArticleAmManagement" asp-controller="AdminArticle">搜索</button>
-</form>
-</div>
 <div class="accordion accordion-flush" id="accordionFlushExample">
   <div class="accordion-item">
     <h2 class="accordion-header" id="flush-headingOne">
@@ -330,7 +323,9 @@
                     if(data['code']==1){
                         Gb_NotifShow(data['tipMessage']);
                         // 成功删除或通过，刷新当前页
-                        currentIndexUrlToCall(dtype);
+                        setTimeout(function () {
+                            currentIndexUrlToCall(dtype);
+                        }, 3000);
                     }else{
                         Gb_NotifShow(data['tipMessage'], 'primary');
                     }

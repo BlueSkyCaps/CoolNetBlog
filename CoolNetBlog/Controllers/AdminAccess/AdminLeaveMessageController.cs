@@ -4,11 +4,8 @@ using ComponentsServices.Base;
 using ComponentsServices.Mail.MailKit;
 using CoolNetBlog.Base;
 using CoolNetBlog.Models;
-using CoolNetBlog.ViewModels;
 using CoolNetBlog.ViewModels.Admin;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using System.Net.Mail;
 
 namespace CoolNetBlog.Controllers.Admin
 {
@@ -579,7 +576,7 @@ namespace CoolNetBlog.Controllers.Admin
                     c.Content != null && c.Content.Contains(kw)).CountAsync();
             }
             result.Code = ValueCodes.Success;
-            result.Data = matchedCount;
+            result.Data = new { MatchedCount = matchedCount };
             return Json(result);
         }
 
@@ -587,7 +584,7 @@ namespace CoolNetBlog.Controllers.Admin
         /// 根据关键词删除
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> UseWordDelete(string? pt, string? kw)
+        public async Task<IActionResult> UseWordDelete([FromForm]string? pt, [FromForm] string? kw)
         {
             ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
             var matchedCount = 0;

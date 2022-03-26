@@ -115,6 +115,6 @@ function Gb_NotifShow(message = "", status = "success", pos = 'top-center') {
         message: message,
         status: status,
         pos: pos,
-        timeout: 4000
+        timeout: 3000
     });
 }
