@@ -574,6 +574,8 @@ namespace CoolNetBlog.Controllers.Admin
             {
                 matchedCount = await _commentVmReader.GetListBuilder().Where(c =>
                     c.Content != null && c.Content.Contains(kw)).CountAsync();
+                matchedCount += await _replyVmReader.GetListBuilder().Where(r =>
+                    r.Content != null && r.Content.Contains(kw)).CountAsync();
             }
             result.Code = ValueCodes.Success;
             result.Data = new { MatchedCount = matchedCount };
@@ -584,15 +586,18 @@ namespace CoolNetBlog.Controllers.Admin
         /// 根据关键词删除
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> UseWordDelete([FromForm]string? pt, [FromForm] string? kw)
+        [HttpPost]
+        public async Task<IActionResult> UseWordDelete(string? pt, string? kw)
         {
             ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
             var matchedCount = 0;
             kw = kw?.Trim();
             if (!string.IsNullOrWhiteSpace(kw))
             {
-                matchedCount = await _commentVmReader.GetListBuilder().Where(c =>
+                matchedCount += await _commentVmReader.GetListBuilder().Where(c =>
                     c.Content != null && c.Content.Contains(kw)).CountAsync();
+                matchedCount += await _replyVmReader.GetListBuilder().Where(r =>
+                    r.Content != null && r.Content.Contains(kw)).CountAsync();
             }
             if (matchedCount<=0)
             {

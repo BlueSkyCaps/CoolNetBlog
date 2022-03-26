@@ -342,9 +342,7 @@
                     if(data['code']==1){
                         Gb_NotifShow(data['tipMessage']);
                         // 成功删除或通过，刷新当前页
-                        setTimeout(function () {
-                            currentIndexUrlToCall(dtype);
-                        }, 3000);
+                        currentIndexUrlToCall(dtype);
                     }else{
                         Gb_NotifShow(data['tipMessage'], 'primary');
                     }

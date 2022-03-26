@@ -64,7 +64,7 @@
             <div >
             <input hidden id="pt" name="pt" value="@Model.PassToken">
             <input id="kwInput" name="kw" class="form-control me-2" type="search" placeholder="" aria-label="Search">
-            <button class="btn btn-dark" type="button" id="kwDelBtn" onclick="kwDelBtnClick()">执行关键字匹配操作</button>
+            <button class="btn btn-dark" type="button" id="kwDelBtn" onclick="kwDelBtnClick()">关键字匹配查询</button>
             </div>
         </main>
     </div>
@@ -86,7 +86,7 @@ function kwDelBtnClick(){
         return;
     }
     // ajax调用查询匹配的言论条数
-    var url = "/AdminLeaveMessageController/QueryUseWordCount?pt="+pt+"&kw="+kw;
+    var url = "/AdminLeaveMessage/QueryUseWordCount?pt="+pt+"&kw="+kw;
     $.ajax (
         {
             url: url,
@@ -98,11 +98,11 @@ function kwDelBtnClick(){
                         Gb_NotifShow("关键字没有匹配到任何言论。");
                         return;
                     }
-                    var dMsg = '匹配到'+data['data']['matchedCount']+'条数据(评论+回复)，输入"确认删除"来删除匹配的数据：';
-                    UIkit.modal.prompt(dMsg, '').then(function(msg) {
-                        if(dMsg=="确认删除"){
+                    var dMsg = '匹配到'+data['data']['matchedCount']+'条数据(评论+回复)，输入"确认删除"来删除匹配的数据(匹配的评论下面的所有"无辜"回复也会一并删除哦)：';
+                    UIkit.modal.prompt(dMsg, '').then(function(cf) {
+                        if(cf=="确认删除"){
                             // 回调结果输入正确，ajax调用删除匹配的言论数据
-                            var dUrl = "/AdminLeaveMessageController/UseWordDelete?pt="+pt+"&kw="+kw;
+                            var dUrl = "/AdminLeaveMessage/UseWordDelete?pt="+pt+"&kw="+kw;
                             delMatchedMsgAjaxCall(dUrl);
                             return;
                         }
@@ -129,7 +129,7 @@ function delMatchedMsgAjaxCall(url){
             dataType: "json",
             success: function(data, status){
                 if(data['code']==1){
-                    Gb_NotifShow("这些匹配的言论已被删除");
+                    Gb_NotifShow("匹配的言论已被删除");
                     // 成功删除，刷新重载第一页数据
                     setTimeout(function () {
                         window.location.reload();

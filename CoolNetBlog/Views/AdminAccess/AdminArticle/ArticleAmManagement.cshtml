@@ -7,11 +7,18 @@
         // 若没有一个菜单 封锁住新增文章按钮
         if (Model.HasAnyOneMenu)
         {
+            <div >
             <a class="btn btn-dark" asp-route-pt="@Model.PassToken" asp-action="ArticleEdit" asp-controller="AdminArticle">发表文章</a>
+            </div>
+            <br>
+
         }else
         {
+            <div>
             <label class="text-warning">请先添加至少一个菜单</label>
             <button class="btn btn-dark" disabled>发表文章</button>
+            </div>
+            <br>
         }
     }
     
@@ -23,6 +30,7 @@
 <button class="btn btn-dark" type="submit" asp-action="ArticleAmManagement" asp-controller="AdminArticle">搜索</button>
 </form>
 </div>
+<br>
 <input hidden id="urlHidInput"/>
 <div class="list-group">
     @foreach (var item in @Model.ArticlesOrg)
@@ -62,7 +70,8 @@
                     <form method="post">
                     <input hidden name="pt" value="@Model.PassToken">
                     <input hidden name="id" value="@item.Id">
-                    <button class="btn btn-danger" type="submit"  asp-action="Delete" asp-controller="AdminArticle">确认删除</button>
+                    <button class="btn btn-danger delArticleBtn" type="button">删除</button>
+                    <button hidden class="btn btn-warning confirmDelArticleBtn" type="submit"  asp-action="Delete" asp-controller="AdminArticle">确认删除</button>
                     </form>
                 </div>
             </div>
@@ -70,6 +79,7 @@
     }
 </div>
 <script>
+    // 点击了某个文章的复制链接按钮
     $(".linkCopyBtn").click(function(){
         
         $('#urlHidInput').val($(event.target).attr("alink"));
@@ -80,5 +90,10 @@
             document.execCommand('copy');
             $('#urlHidInput').attr('hidden', 'hidden');
         }
+    });
+
+    // 点击了某个文章的删除按钮 显示对应的确认删除按钮
+    $(".delArticleBtn").click(function(){
+        $(event.target).next().removeAttr('hidden');
     });
 </script>
