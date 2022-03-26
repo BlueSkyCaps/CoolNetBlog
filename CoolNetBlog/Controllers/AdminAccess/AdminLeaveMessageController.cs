@@ -187,7 +187,7 @@ namespace CoolNetBlog.Controllers.Admin
                     var t = tmpMessagerRelatedArt.IsShowTitle ? tmpMessagerRelatedArt.Title : "无题链接";
                     var n = !string.IsNullOrWhiteSpace(siteSett.SiteName) ? "-"+siteSett.SiteName : "";
                     var distinctionText = !isPub ? "，经过审核此条发言已被<i>公开</i>" : "，我对此进行了回复";
-                    tmpAdmToMessagerContent = $"您在内容为<a href='{siteSett.Domain.TrimEnd('/')}/Detail/articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言" +
+                    tmpAdmToMessagerContent = $"您在内容为<a href='{siteSett.Domain.TrimEnd('/')}/Detail?articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言" +
                         $"{distinctionText}，并且特意向您抄送这封邮件已表达我对此的兴趣。我的回复内容如下：" +
                         $"<br><p><mark>{tmpAdmToMessagerContent}</mark></p><br>您的发言原内容：<br><small>{tmpMessagerOrgContent}</small>" +
                         $"<br><br>--该邮件为系统自动发送请勿回复--<br>--若您没有上述操作请忽略此邮件--";
@@ -312,7 +312,7 @@ namespace CoolNetBlog.Controllers.Admin
                     mailSend.InputFriendEmail(tmpMessagerName, tmpMessagerEmail);
                     var t = tmpMessagerRelatedArt.IsShowTitle ? tmpMessagerRelatedArt.Title : "无题链接";
                     var n = !string.IsNullOrWhiteSpace(siteSett.SiteName) ? "-" + siteSett.SiteName : "";
-                    tmpAdmToMessagerContent = $"您在内容为<a href='{siteSett.Domain.TrimEnd('/')}/Detail/articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言，" +
+                    tmpAdmToMessagerContent = $"您在内容为<a href='{siteSett.Domain.TrimEnd('/')}/Detail?articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言，" +
                         $"经过决定此条发言已被<i>删除</i>，并且特意向您抄送这封邮件提示。删除原因如下：" +
                         $"<br><p><mark>{vm.Message}</mark></p><br>您被删除的发言原内容：<br><small>{tmpMessagerOrgContent}</small>" +
                         $"<br><br>--该邮件为系统自动发送请勿回复--<br>--若您没有上述操作请忽略此邮件--";
