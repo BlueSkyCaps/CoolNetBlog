@@ -121,9 +121,6 @@ namespace CoolNetBlog.Bll
         /// <param name="onePageCount"></param>
         public void ComputePage(HomeViewModel homeGlobalView, int c, int pageIndex, int onePageCount)
         {
-            //// 别忘了忽略条件再获取总数
-            //var c = (await bdb._dbHandler.Queryable<HomeArticleViewModel>().Where(a => a.IsDraft == false).CountAsync());
-
 
             if (c > (pageIndex) * onePageCount)
             {
@@ -159,9 +156,10 @@ namespace CoolNetBlog.Bll
                 homeGlobalView.PageCompute.NextIndex = 1;
                 homeGlobalView.PageCompute.PageIndex = pageIndex;
             }
-            
-            homeGlobalView.PageCompute.PagesChangeMax = (int)((c / (onePageCount))<=0 || c== ( onePageCount) ? 1 : 
-                Math.Ceiling(Convert.ToDecimal(c) / ( onePageCount)));
+
+            // 计算当前总数可以总共有几页
+            homeGlobalView.PageCompute.PagesChangeMax = (int)((c / onePageCount)<=0 || c== onePageCount ? 1 : 
+                Math.Ceiling(Convert.ToDecimal(c) / onePageCount));
         }
     }
 }
