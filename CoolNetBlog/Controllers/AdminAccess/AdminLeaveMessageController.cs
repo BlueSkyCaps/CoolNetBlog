@@ -333,15 +333,6 @@ namespace CoolNetBlog.Controllers.Admin
             return Json(result);
         }
 
-        /// <summary>
-        /// 管理员发布言论
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<IActionResult> AdminMessage(ReplyViewModel vm)
-        {
-            throw new NotImplementedException();
-        }
 
         /// <summary>
         /// 留言管理(未审核的)页面入口 索引第一页 默认返回未审核的评论和回复列表
@@ -573,12 +564,79 @@ namespace CoolNetBlog.Controllers.Admin
         }
 
         /// <summary>
+        /// 根据关键词删除时查询匹配到的评论和回复总数
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> QueryUseWordCount(string? pt, string? kw)
+        {
+
+            ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
+            var matchedCount = 0;
+            kw = kw?.Trim();
+            if (!string.IsNullOrWhiteSpace(kw))
+            {
+                matchedCount = await _commentVmReader.GetListBuilder().Where(c =>
+                    c.Content != null && c.Content.Contains(kw)).CountAsync();
+            }
+            result.Code = ValueCodes.Success;
+            result.Data = matchedCount;
+            return Json(result);
+        }
+
+        /// <summary>
         /// 根据关键词删除
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> UseWordDelete(string? pt,int type,  string? kw)
+        public async Task<IActionResult> UseWordDelete(string? pt, string? kw)
         {
-            throw new NotImplementedException();
+            ValueResult result = new ValueResult { Code = ValueCodes.UnKnow };
+            var matchedCount = 0;
+            kw = kw?.Trim();
+            if (!string.IsNullOrWhiteSpace(kw))
+            {
+                matchedCount = await _commentVmReader.GetListBuilder().Where(c =>
+                    c.Content != null && c.Content.Contains(kw)).CountAsync();
+            }
+            if (matchedCount<=0)
+            {
+                result.TipMessage = "删除关键字匹配不到任何数据";
+                return Json(result);
+            }
+            _baseSugar._dbHandler.BeginTran();
+            try
+            {
+                //---1先删除匹配的评论,然后评论下面的无辜回复也一并删除 2再删除匹配的所有回复
+                var tmpCIdList = new List<int>();
+                tmpCIdList = _commentVmReader.GetListBuilder()
+                    .Where(c => c.Content != null && c.Content.Contains(kw))
+                    .Select(c => c.Id).ToList();
+                if (tmpCIdList.Any())
+                {
+                    var tmpCIdString = string.Join(",", tmpCIdList);
+                    // 删除匹配的所有评论
+                    await _baseSugar._dbHandler.Ado.ExecuteCommandAsync(
+                            $"delete from Comment where Id in ({tmpCIdString})");
+                    // 删除匹配的所有评论下的所有回复
+                    await _baseSugar._dbHandler.Ado.ExecuteCommandAsync(
+                        $"delete from Reply where CommentId in ({tmpCIdString})");
+                }
+
+                // 最后 删除匹配的所有回复
+                SugarDataBaseStorage<Reply, int> rReplySet = new SugarDataBaseStorage<Reply, int>(_baseSugar._dbHandler);
+                await rReplySet.DeleteEntitiesAsync(r=>r.Content != null && r.Content.Contains(kw));
+                _baseSugar._dbHandler.CommitTran();
+            }
+            catch (Exception e)
+            {
+                _baseSugar._dbHandler.RollbackTran();
+                result.Code = ValueCodes.Error;
+                result.HideMessage = "匹配删除失败,"+e.Message;
+                result.TipMessage = "匹配删除失败，未作任何更改，请重新再试。";
+                return Json(result);
+            }
+
+            result.Code = ValueCodes.Success; 
+            return Json(result);
         }
     }
 }
