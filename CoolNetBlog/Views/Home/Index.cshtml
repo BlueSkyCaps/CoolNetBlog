@@ -33,20 +33,37 @@
 <div class="row">
 <nav aria-label="...">
 <ul class="pagination">
-
+<li class="page-item">
+    <button class="page-link" role="button" id="pageChangeMaxLinkBtn">◐页选择</button>
+</li>
 <li class="page-item @(Model.PageCompute.ShowPreIndex?"":"disabled")">
     @{
         //获取上下文查询参数 直接传递当前from参数的值 且获取menuId和kw关键字的值，因为当前是菜单分页的话，kw就是null，反之亦然，控制器逻辑已经判断
     }
     <a class="page-link" asp-route-from="@Context.Request.Query["from"].FirstOrDefault()" asp-route-menuId="@Context.Request.Query["menuId"].FirstOrDefault()" asp-route-kw="@Context.Request.Query["kw"].FirstOrDefault()" asp-action="Index" asp-controller="Home" asp-route-PageIndex="@Model.PageCompute.PreIndex">上翻</a>
 </li>
-
 <li class="page-item"><a class="page-link text-black-50">@Model.PageCompute.PageIndex</a></li>
-
 <li class="page-item @(Model.PageCompute.ShowNextIndex?"":"disabled")">
     <a class="page-link" asp-route-from="@Context.Request.Query["from"].FirstOrDefault()" asp-route-menuId="@Context.Request.Query["menuId"].FirstOrDefault()" asp-route-kw="@Context.Request.Query["kw"].FirstOrDefault()" asp-action="Index" asp-controller="Home" asp-route-PageIndex="@Model.PageCompute.NextIndex">下翻</a>
-
 </li>
 </ul>
 </nav>
 </div>
+<!--页选择模态-->
+<div class="modal fade" id="pagesChangeMaxModel"  aria-labelledby="pagesChangeMaxModel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">当前结果下跳转页</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        @for (var i = 1; i <= Model.PageCompute.PagesChangeMax; i++)
+        {
+            <a class="list-group-item text text-primary" asp-route-from="@Context.Request.Query["from"].FirstOrDefault()" asp-route-menuId="@Context.Request.Query["menuId"].FirstOrDefault()" asp-route-kw="@Context.Request.Query["kw"].FirstOrDefault()" asp-action="Index" asp-controller="Home" asp-route-PageIndex="@i">第@(i)页</a>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+<script src="~/js/view/Home/Index.js"></script>
