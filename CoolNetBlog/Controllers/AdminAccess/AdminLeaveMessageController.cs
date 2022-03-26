@@ -190,7 +190,7 @@ namespace CoolNetBlog.Controllers.Admin
                     tmpAdmToMessagerContent = $"您在内容为<a href='{siteSett.Domain.TrimEnd('/')}/Detail?articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言" +
                         $"{distinctionText}，并且特意向您抄送这封邮件已表达我对此的兴趣。我的回复内容如下：" +
                         $"<br><p><mark>{tmpAdmToMessagerContent}</mark></p><br>您的发言原内容：<br><small>{tmpMessagerOrgContent}</small>" +
-                        $"<br>您使用的昵称为：<br><small>{tmpMessagerName}</small>" +
+                        $"<br>您使用的昵称为：<small>{tmpMessagerName}</small>" +
                         $"<br><br>--该邮件为系统自动发送请勿回复--<br>--若您没有上述操作请忽略此邮件--";
                     mailSend.InputContent("发言收到了博主回应" + n, tmpAdmToMessagerContent, true);
                     mailSend.SendByAuthenticate(adminUser.Email, adminUser.EmailPassword);
@@ -316,7 +316,7 @@ namespace CoolNetBlog.Controllers.Admin
                     tmpAdmToMessagerContent = $"您在内容为<a href='{siteSett.Domain.TrimEnd('/')}/Detail?articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言，" +
                         $"经过决定此条发言已被<i>删除</i>，并且特意向您抄送这封邮件提示。删除原因如下：" +
                         $"<br><p><mark>{vm.Message}</mark></p><br>您被删除的发言原内容：<br><small>{tmpMessagerOrgContent}</small>" +
-                        $"<br>您使用的昵称为：<br><small>{tmpMessagerName}</small>" + 
+                        $"<br>您使用的昵称为：<small>{tmpMessagerName}</small>" + 
                         $"<br><br>--该邮件为系统自动发送请勿回复--<br>--若您没有上述操作请忽略此邮件--";
                     mailSend.InputContent("发言被删除"+n, tmpAdmToMessagerContent, true);
                     mailSend.SendByAuthenticate(adminUser.Email, adminUser.EmailPassword);
