@@ -408,8 +408,11 @@
                         if(dtype==1){
                             if(data['data']['publicComments'].length<=0)
                             {
-                                // 当前页没有更多评论数据 意味着当前页的获取量可能超过了总量，重定向到第一页初始化
-                                window.location.href="/AdminLeaveMessage/LeavePublicAmManagement?pt="+$('#pt').val();
+                                Gb_NotifShow("---当前页没有更多评论数据，3秒后将自动刷新，请勿操作---", "primary");
+                                setTimeout(function () {
+                                    // 当前页没有更多评论数据 意味着当前页的获取量可能超过了总量，重定向到第一页初始化
+                                    window.location.href="/AdminLeaveMessage/LeavePublicAmManagement?pt="+$('#pt').val();
+                                }, 3000);
                                 return;
                             }
                             $("#comment-cards").children().remove();
@@ -418,8 +421,11 @@
                         }else{
                             if(data['data']['publicReplies'].length<=0)
                             {
-                                // 当前页没有更多回复数据 意味着当前页的获取量可能超过了总量，重定向到第一页初始化
-                                window.location.href="/AdminLeaveMessage/LeavePublicAmManagement?pt="+$('#pt').val();
+                                Gb_NotifShow("---当前页没有更多回复数据，3秒后将自动刷新，请勿操作---", "primary");
+                                setTimeout(function () {
+                                    // 当前页没有更多回复数据 意味着当前页的获取量可能超过了总量，重定向到第一页初始化
+                                    window.location.href="/AdminLeaveMessage/LeavePublicAmManagement?pt="+$('#pt').val();
+                                }, 3000);
                                 return;
                             }
                             $("#reply-cards").children().remove();
