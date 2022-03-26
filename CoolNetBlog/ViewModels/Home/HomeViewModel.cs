@@ -63,5 +63,6 @@ namespace CoolNetBlog.ViewModels.Home
         public int PreIndex { get; set; } = 1;
         public bool ShowPreIndex { get; set; } = false;
         public bool ShowNextIndex { get; set; } = false;
+        public int PagesChangeMax { get; set; } = 1;
     }
 }

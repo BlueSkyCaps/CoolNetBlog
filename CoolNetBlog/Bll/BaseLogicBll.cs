@@ -159,6 +159,9 @@ namespace CoolNetBlog.Bll
                 homeGlobalView.PageCompute.NextIndex = 1;
                 homeGlobalView.PageCompute.PageIndex = pageIndex;
             }
+            
+            homeGlobalView.PageCompute.PagesChangeMax = (int)((c / (onePageCount))<=0 || c== ( onePageCount) ? 1 : 
+                Math.Ceiling(Convert.ToDecimal(c) / ( onePageCount)));
         }
     }
 }
