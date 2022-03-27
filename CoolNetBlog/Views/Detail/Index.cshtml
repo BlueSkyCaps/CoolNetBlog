@@ -60,7 +60,13 @@
   
         <div>
         <small>
-        <span class="badge rounded-pill bg-success">来自：@Model?.DetailArticleData.Ig_MenuName</span>
+        @if (!Model.DetailArticleData.IsSpecial)
+        {
+            <span class="badge rounded-pill bg-success">来自：@Model?.DetailArticleData.Ig_MenuName</span>
+        }else
+        {
+            <span class="badge rounded-pill bg-success">特殊内容</span>
+        }
         <br/>
         <span class="badge rounded-pill bg-info text-dark">更新于@(Model?.DetailArticleData.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss"))</span>
         <span class="badge rounded-pill bg-info text-dark">发表于@(Model?.DetailArticleData.CreatedTime.ToString("yyyy-MM-dd HH:mm:ss"))</span>

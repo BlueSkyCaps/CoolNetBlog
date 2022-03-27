@@ -39,7 +39,7 @@ namespace CoolNetBlog.Controllers.Home
             // 根据文章MenuId获取每篇文章所属菜单名
             foreach (var item in _homeGlobalView.HomeArticleViewModels)
             {
-                item.Ig_MenuName = (await bdb._dbHandler.Queryable<Menu>().FirstAsync(m => m.Id == item.MenuId))?.Name ?? "未命名的菜单";
+                item.Ig_MenuName = (await bdb._dbHandler.Queryable<Menu>().FirstAsync(m => m.Id == item.MenuId))?.Name ?? "未知菜单";
             }
             ComputePage(c, pageIndex, onePageCount);
 

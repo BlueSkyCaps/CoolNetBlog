@@ -110,31 +110,35 @@ namespace CoolNetBlog.Controllers.Admin
             editable.IsShowTitle = vm.IsShowTitle;
             editable.CommentType = vm.CommentType;
             editable.Content = vm.Content;
-            editable.MenuId = vm.MenuId;
+            editable.MenuId = vm.IsSpecial?-1:vm.MenuId; //若是特殊文章 MenuId是-1，它在Menu表中一定不存在，不会关联Menu。
             editable.Labels = vm.Labels;
             editable.CommentType = vm.CommentType;
-            var belongMenu = await _menuSet.FindOneByIdAsync(editable.MenuId);
-            if (belongMenu.IsHome)
+            if (!vm.IsSpecial)
             {
-                ModelState.AddModelError("", "发表失败:选择的菜单是主页菜单，主页菜单不能拥有文章。\r\n" +
-                    "主页菜单的作用：重定向到站点首页，显示全部菜单中非草稿的文章，通常是第一次进站点时的第一页");
-                // 因为是提交表单数据，所以下拉框的值是空的，此处从事先的静态数据中取出赋值
-                vm.MenuSelectList = smvm.MenuSelectList;
-                vm = (ArticleViewModel)WrapMustNeedPassFields(vm);
+                var belongMenu = await _menuSet.FindOneByIdAsync(editable.MenuId);
+                if (belongMenu.IsHome)
+                {
+                    ModelState.AddModelError("", "发表失败:选择的菜单是主页菜单，主页菜单不能拥有文章。\r\n" +
+                        "主页菜单的作用：重定向到站点首页，显示全部菜单中非草稿的文章，通常是第一次进站点时的第一页");
+                    // 因为是提交表单数据，所以下拉框的值是空的，此处从事先的静态数据中取出赋值
+                    vm.MenuSelectList = smvm.MenuSelectList;
+                    vm = (ArticleViewModel)WrapMustNeedPassFields(vm);
 
-                return View(vm);
-            }
-            var belongMenuHasSubMenu = (await _menuSet.GetListByExpAsync(m=>m.PId== belongMenu.Id)).Any();
+                    return View(vm);
+                }
+                var belongMenuHasSubMenu = (await _menuSet.GetListByExpAsync(m=>m.PId== belongMenu.Id)).Any();
 
-            if (belongMenuHasSubMenu)
-            {
-                ModelState.AddModelError("", "发表失败:选择的菜单不是最下级菜单，它还有子菜单。\r\n" +
-                    "您应该把文章的所属菜单设置为最下级的菜单，否则是没有意义的。");
-                // 因为是提交表单数据，所以下拉框的值是空的，此处从事先的静态数据中取出赋值
-                vm.MenuSelectList = smvm.MenuSelectList;
-                vm = (ArticleViewModel)WrapMustNeedPassFields(vm);
+                if (belongMenuHasSubMenu)
+                {
+                    ModelState.AddModelError("", "发表失败:选择的菜单不是最下级菜单，它还有子菜单。\r\n" +
+                        "您应该把文章的所属菜单设置为最下级的菜单，否则是没有意义的。");
+                    // 因为是提交表单数据，所以下拉框的值是空的，此处从事先的静态数据中取出赋值
+                    vm.MenuSelectList = smvm.MenuSelectList;
+                    vm = (ArticleViewModel)WrapMustNeedPassFields(vm);
 
-                return View(vm);
+                    return View(vm);
+                }
+
             }
             if (editable.IsLock&& String.IsNullOrWhiteSpace(editable.LockPassword))
             {
