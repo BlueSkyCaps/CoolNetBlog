@@ -1,4 +1,5 @@
-﻿using ComponentsServices.Base;
+﻿using CommonObject.Methods;
+using ComponentsServices.Base;
 using CoolNetBlog.Models;
 using CoolNetBlog.ViewModels.Admin;
 using CoolNetBlog.ViewModels.Home;
@@ -75,6 +76,8 @@ namespace CoolNetBlog.Bll
             {
                 // 关键字搜索分页
                 var keyword = kw?.ToString()?.Trim() ?? "";
+                // 关键字搜索 去除非法字符
+                keyword = ValueCompute.NewSaveString(keyword);
                 // 先在查询过滤的句柄停留，获取过滤条件后的总数
                 var queryHandler = bdb._dbHandler.Queryable<HomeArticleViewModel>()
                 .IgnoreColumns(a => a.Content)

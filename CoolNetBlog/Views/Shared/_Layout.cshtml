@@ -98,7 +98,7 @@
                     </ul>
                     <!--搜索栏组件-->
                     <form method="get" class="d-flex">
-                    <input name="kw" onkeydown="searchInputEnterDown(this)" class="form-control me-2 toSearchInput" type="search" placeholder="可输入关键字.." aria-label="Search">
+                    <input name="kw" maxlength="10" onkeydown="searchInputEnterDown(this)" class="form-control me-2 toSearchInput" type="search" placeholder="可输入关键字.." aria-label="Search">
                     <input hidden name="from" value="keyword">
                     <button id="searchMenuCom" class="btn btn-outline-primary toSearchBtn" type="button">搜</button>
                     </form>
@@ -189,7 +189,7 @@
                 // 侧边搜索框
                 <div class="row">
                 <form method="get" class="d-flex">
-                <input name="kw" onkeydown="searchInputEnterDown(this)" class="form-control me-2 toSearchInput" type="search" placeholder="可输入关键字.." aria-label="Search">
+                <input name="kw" maxlength="10" onkeydown="searchInputEnterDown(this)" class="form-control me-2 toSearchInput" type="search" placeholder="可输入关键字.." aria-label="Search">
                 <input hidden name="from" value="keyword">
                 <button id="searchRightCom" class="btn btn-outline-primary toSearchBtn" type="button">搜</button>
                 </form>

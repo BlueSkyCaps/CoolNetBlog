@@ -30,6 +30,19 @@ namespace CommonObject.Methods
 
         }
 
+        public static string NewSaveString(string input)
+        {
+            return input.Replace("<", "").Replace(">", "")
+                .Replace("javascript:", "javascript：", true, null)
+                .Replace("delete", "delete", true, null)
+                .Replace("update", "", true, null)
+                .Replace("insert", "", true, null)
+                .Replace("show", "", true, null)
+                .Replace("select", "", true, null)
+                .Replace("drop", "", true, null)
+                .Replace("alter", "", true, null);
+        }
+
         public static bool CheckNotNullAndWhiteValue(object newO)
         {
             if (newO is null)
@@ -105,6 +118,11 @@ namespace CommonObject.Methods
             return b;
         }
 
+        /// <summary>
+        /// 改成.Replace("<", "《").Replace(">", "》")效果一样
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static string ReplaceHtmlLabelContains(string? input)
         {
             if (string.IsNullOrWhiteSpace(input))
