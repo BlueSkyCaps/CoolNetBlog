@@ -34,13 +34,13 @@ namespace CommonObject.Methods
         {
             return input.Replace("<", "").Replace(">", "")
                 .Replace("javascript:", "javascript：", true, null)
-                .Replace("delete", "", true, null)
-                .Replace("update", "", true, null)
-                .Replace("insert", "", true, null)
-                .Replace("show", "", true, null)
-                .Replace("select", "", true, null)
-                .Replace("drop", "", true, null)
-                .Replace("alter", "", true, null);
+                .Replace("delete", "删除", true, null)
+                .Replace("update", "更新", true, null)
+                .Replace("insert", "插入", true, null)
+                .Replace("show", "显示", true, null)
+                .Replace("select", "查询", true, null)
+                .Replace("drop", "删除", true, null)
+                .Replace("alter", "修改", true, null);
         }
 
         public static bool CheckNotNullAndWhiteValue(object newO)
