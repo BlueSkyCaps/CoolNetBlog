@@ -110,9 +110,25 @@ namespace CoolNetBlog.Controllers.Admin
             editable.IsShowTitle = vm.IsShowTitle;
             editable.CommentType = vm.CommentType;
             editable.Content = vm.Content;
-            editable.MenuId = vm.IsSpecial?-1:vm.MenuId; //若是特殊文章 MenuId是-1，它在Menu表中一定不存在，不会关联Menu。
             editable.Labels = vm.Labels;
             editable.CommentType = vm.CommentType;
+            if (vm.IsSpecial&&vm.MenuId!=-1)
+            {
+                ModelState.AddModelError("", "发表失败:特殊文章请选择'-特殊文章归档-'");
+                vm.MenuSelectList = smvm.MenuSelectList;
+                vm = (ArticleViewModel)WrapMustNeedPassFields(vm);
+                return View(vm);
+            }
+            if (!vm.IsSpecial && vm.MenuId == -1)
+            {
+                ModelState.AddModelError("", "发表失败:只有特殊文章才能选择'-特殊文章归档-'");
+                vm.MenuSelectList = smvm.MenuSelectList;
+                vm = (ArticleViewModel)WrapMustNeedPassFields(vm);
+                return View(vm);
+            }
+
+            editable.MenuId = vm.IsSpecial?-1:vm.MenuId; //若是特殊文章 MenuId是-1，它在Menu表中一定不存在，不会关联Menu。
+
             if (!vm.IsSpecial)
             {
                 var belongMenu = await _menuSet.FindOneByIdAsync(editable.MenuId);
@@ -289,7 +305,15 @@ namespace CoolNetBlog.Controllers.Admin
             }
             foreach (var item in articles)
             {
-                item.Ig_MenuName = _menuSet.FindOneById(item.MenuId)?.Name??"未命名的菜单";
+                // 若是特殊文章 MenuId是-1，它在Menu表中一定不存在，后台不会关联Menu。
+                if (item.IsSpecial)
+                {
+                    item.Ig_MenuName = "-特殊文章归档-";
+                }
+                else
+                {
+                    item.Ig_MenuName = _menuSet.FindOneById(item.MenuId)?.Name??"未知菜单";
+                }
             }
             smvm = new ArticleViewModel { ArticlesOrg = articles };
             smvm.MenuSelectList = (await _menuSet.GetAllListAsync())
