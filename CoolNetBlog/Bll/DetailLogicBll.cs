@@ -46,8 +46,13 @@ namespace CoolNetBlog.Bll
                 _homeGlobalView.NotTips = "找不到文章(帖子)！返回重试一下，或者关键字重新搜搜吧？！";
                 return;
             }
-
-            _homeGlobalView.DetailArticleData.Ig_MenuName = (await _menuSet.FindOneByIdAsync(_homeGlobalView.DetailArticleData.MenuId)).Name;
+            if(!_homeGlobalView.DetailArticleData.IsSpecial)
+            {
+                _homeGlobalView.DetailArticleData.Ig_MenuName = (await _menuSet.FindOneByIdAsync(_homeGlobalView.DetailArticleData.MenuId)).Name;
+            }else
+            {
+                _homeGlobalView.DetailArticleData.Ig_MenuName = "特殊内容";
+            }
             _homeGlobalView.Location = "Detail";
             _homeGlobalView.LocationTip = "文章(帖子)";
             // 将标签组成字符串列表

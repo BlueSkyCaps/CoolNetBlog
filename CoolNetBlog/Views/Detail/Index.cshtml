@@ -63,9 +63,10 @@
         @if (!Model.DetailArticleData.IsSpecial)
         {
             <span class="badge rounded-pill bg-success">来自：@Model?.DetailArticleData.Ig_MenuName</span>
+            
         }else
         {
-            <span class="badge rounded-pill bg-success">特殊内容</span>
+            <span class="badge rounded-pill bg-dark">特殊内容</span>
         }
         <br/>
         <span class="badge rounded-pill bg-info text-dark">更新于@(Model?.DetailArticleData.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss"))</span>
@@ -115,7 +116,7 @@
                 <div class="row">
                     <span style="width:10%"></span>
                     <input style="width:20%" id="cNameInput" maxlength="12" type="text" class="form-control" placeholder="昵称">
-                    <input style="width:60%" id="cSiteInput" maxlength="63" type="text" class="form-control" placeholder="网址http|https(选填)">
+                    <input style="width:60%" id="cSiteInput" maxlength="63" type="text" class="form-control" placeholder="网址(https或http开头,选填)">
                     <span style="width:10%"></span>
                 </div>
                 <div class="row">
@@ -177,7 +178,7 @@
             <div class="row">
                 <span style="width:10%"></span>
                 <input style="width:20%" id="rNameInput" maxlength="12" type="text" class="form-control" placeholder="昵称">
-                <input style="width:60%" id="rSiteInput" maxlength="63" type="text" class="form-control" placeholder="网址http|https(选填)">
+                <input style="width:60%" id="rSiteInput" maxlength="63" type="text" class="form-control" placeholder="网址(https或http开头,选填)">
                 <span style="width:10%"></span>
             </div>
             <div class="row">
