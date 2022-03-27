@@ -79,6 +79,7 @@ $("#toCommentBtn").click(
                     if (data['code'] == 1) {
                         Gb_PopoverShow("toCommentBtn", data['tipMessage']);
                         $('#cEmailInput').val("");
+                        $('#cSiteInput').val("");
                         $('#cNameInput').val("");
                         $('#cContentInput').val("");
                     } else {
