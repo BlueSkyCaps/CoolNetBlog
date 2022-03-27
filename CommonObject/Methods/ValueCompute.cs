@@ -34,7 +34,7 @@ namespace CommonObject.Methods
         {
             return input.Replace("<", "").Replace(">", "")
                 .Replace("javascript:", "javascript：", true, null)
-                .Replace("delete", "delete", true, null)
+                .Replace("delete", "", true, null)
                 .Replace("update", "", true, null)
                 .Replace("insert", "", true, null)
                 .Replace("show", "", true, null)
