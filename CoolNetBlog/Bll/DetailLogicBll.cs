@@ -9,15 +9,17 @@ namespace CoolNetBlog.Bll
     /// </summary>
     public class DetailLogicBll
     {
+        private BaseSugar _baseSugar;
         private SugarDataBaseStorage<DetailArticleViewModel, int> _articleVmSet;
         private SugarDataBaseStorage<Menu, int> _menuSet;
         private SugarDataBaseStorage<ArticleThumbUp, int> _thumbUpSet;
 
         public DetailLogicBll()
         {
-            _articleVmSet = new SugarDataBaseStorage<DetailArticleViewModel, int>();
-            _menuSet = new SugarDataBaseStorage<Menu, int>();
-            _thumbUpSet = new SugarDataBaseStorage<ArticleThumbUp, int>();
+            _baseSugar = new BaseSugar();
+            _articleVmSet = new SugarDataBaseStorage<DetailArticleViewModel, int>(_baseSugar._dbHandler);
+            _menuSet = new SugarDataBaseStorage<Menu, int>(_baseSugar._dbHandler);
+            _thumbUpSet = new SugarDataBaseStorage<ArticleThumbUp, int>(_baseSugar._dbHandler);
         }
 
         /// <summary>
@@ -98,8 +100,8 @@ namespace CoolNetBlog.Bll
             {
                 data.Code = 0;
                 data.Content = "";
-                SugarDataBaseStorage<Article, int> articleSet = new SugarDataBaseStorage<Article, int>();
-                var article = articleSet.FindOneById(data.ArticleId);
+                //SugarDataBaseStorage<Article, int> articleSet = new SugarDataBaseStorage<Article, int>();
+                var article = _articleVmSet.FindOneById(data.ArticleId);
                 if (article is null)
                 {
                     return data;

@@ -14,10 +14,11 @@ namespace CoolNetBlog.ViewModels.Detail
         /// </summary>
         [SugarColumn(IsIgnore = true)]
         public List<string> LabelsList { get; set; } = new List<string>();
-      
+
         /// <summary>
         /// 文章表态类型数量，文章点赞数ThumbUpStart；文章"有被笑到"数ThumbUpFun；文章"不敢苟同"数ThumbUpSilence
         /// </summary>
+        //[SugarColumn(IsIgnore = true)]
         public Dictionary<string,int> ThumbUpNumbers = new Dictionary<string, int>();
     }
 }
