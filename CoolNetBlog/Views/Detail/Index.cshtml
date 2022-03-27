@@ -10,6 +10,7 @@
     else
     {
         <input hidden type="number" class="form-control" id="inputArticleId" value="@Model.DetailArticleData.Id">
+        <input hidden type="checkbox" class="form-control" id="inputIsShowLeaveHeadImg" asp-for="@Model.HomeSiteSettingData.IsShowLeaveHeadImg">
         if (@Model.DetailArticleData.IsShowTitle)
         {
             <h4>@Model?.DetailArticleData.Title</h4>

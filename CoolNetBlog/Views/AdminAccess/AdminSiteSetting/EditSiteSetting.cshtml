@@ -81,6 +81,15 @@
             </div>
         </div>
         <div class="form-group row">
+            <div class="col-sm-2">是否在评论区展示留言者的头像，采用Cravatar源</div>
+            <div class="col-sm-10">
+                <div class="form-check">
+                <input asp-for="IsShowLeaveHeadImg"  class="form-check-input" type="checkbox">
+                <label asp-for="IsShowLeaveHeadImg" class="form-check-label">头像获取的顺序为：Cravatar上的>Gravatar上的>QQ头像。若留言者的邮箱没有匹配到头像，将会随机显示一个系统头像。</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
             <div class="col-sm-2">是否侧边栏也显示搜索框组件</div>
             <div class="col-sm-10">
                 <div class="form-check">
@@ -137,7 +146,7 @@
         <div class="form-group row">
             <label asp-for="LoginUriValue" class="col-sm-2 col-form-label">设置后台登录界面Value参数的值</label>
             <p>
-                设置后台登录界面Value参数的值，保证默认后台界面不会被暴露。若设置了值，您必须以特定网址访问，如(忽略单引号)：'你的网址/admin/login?v=你此处设置的值'。此项设置不是必须的，若你设置，确保不遗忘设置的值。
+                保证默认后台界面不会被暴露。若设置了值，您必须以特定网址访问，如(忽略单引号)：'你的网址/admin/login?v=你此处设置的值'。此项设置不是必须的，若你设置，确保不遗忘设置的值。
             </p>
             <div class="col-sm-10">
                 <input asp-for="LoginUriValue" type="text" class="form-control" placeholder="设置参数的密钥值，建议大于6位数">

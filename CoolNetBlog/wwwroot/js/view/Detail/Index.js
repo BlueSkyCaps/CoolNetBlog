@@ -37,6 +37,7 @@ $("#toUnlockBtn").click(
 );
 
 var commentShowIndex = 0;
+var isShowLeaveHeadImg = false;
 
 // 发表评论
 $("#toCommentBtn").click(
@@ -129,7 +130,7 @@ $("#loadCommentBtn").on("click",
                                     var adminBadgeStr = rItem.isAdmin ? '<span class="badge bg-info text-dark">博主</span> ' : '';
                                     var siteUrlStr = !(Gb_IsWhiteSpaceOrNull(rItem.siteUrl)) ? ' <a target="_blank" href="' + rItem.siteUrl + '" class="text-dark">🌐</a>' : '';
                                     var headSrcV = 'https://cravatar.cn/avatar/' + md5(rItem.email) + '?s=40&d=monsterid';
-                                    var headPStr = '<img src="' + headSrcV +'" style="max-width:40px;max-height:40px;" class="rounded float-start" alt="">';
+                                    var headPStr = isShowLeaveHeadImg ? '<img src="' + headSrcV +'" style="max-width:40px;max-height:40px;" class="border border-2 border-info rounded-circle float-start" alt="">':'';
                                     var replyContent = rItem.content;
                                     var replyInfoStr = '<small>' + replyTimeStr + siteUrlStr + ' <a href="javascript:;" onClick="toReplyDialog(this,1)" comment-id="{3}" to-name="{4}">回复TA</a></small>';
                                     var tmpRpNodeStr = '<div class="accordion" id="accordion{0}"><div class="accordion-item"><h2 class="accordion-header" id="heading{0}">' +
@@ -157,7 +158,7 @@ $("#loadCommentBtn").on("click",
                             var adminBadgeStr = cItem.isAdmin ? '<span class="badge bg-info text-dark">博主</span> ' : '';
                             var siteUrlStr = !(Gb_IsWhiteSpaceOrNull(cItem.siteUrl)) ? ' <a target="_blank" href="' + cItem.siteUrl + '" class="text-dark">🌐</a>' : '';
                             var headSrcV = 'https://cravatar.cn/avatar/' + md5(cItem.email) + '?s=40&d=monsterid';
-                            var headPStr = '<img src="' + headSrcV + '" style="max-width:40px;max-height:40px;" class="rounded float-start" alt="">';;
+                            var headPStr = isShowLeaveHeadImg ? '<img src="' + headSrcV + '" style="max-width:40px;max-height:40px;" class="border border-2 border-info rounded-circle float-start" alt="">':'';
                             var cmNodeStr = '<div class="card card-body commentItem"><p class="text-start card-title">' +
                                 adminBadgeStr +
                                 '<small class="text text-info">' +
@@ -239,7 +240,7 @@ $(document).on("click", ".loadReplyBtn",
                             var adminBadgeStr = rItem.isAdmin ? '<span class="badge bg-info text-dark">博主</span> ' : '';
                             var siteUrlStr = !(Gb_IsWhiteSpaceOrNull(rItem.siteUrl)) ? ' <a target="_blank" href="' + rItem.siteUrl + '" class="text-dark">🌐</a>' : '';
                             var headSrcV = 'https://cravatar.cn/avatar/' + md5(rItem.email) + '?s=40&d=monsterid';
-                            var headPStr = '<img src="' + headSrcV + '" style="max-width:40px;max-height:40px;" class="rounded float-start" alt="">';;
+                            var headPStr = isShowLeaveHeadImg ? '<img src="' + headSrcV + '" style="max-width:40px;max-height:40px;" class="border border-2 border-info rounded-circle float-start" alt="">':'';
                             var replyContent = rItem.content;
                             var replyInfoStr = '<small>' + replyTimeStr + siteUrlStr + ' <a href="javascript:;" onClick="toReplyDialog(this,1)" comment-id="{3}" to-name="{4}">回复TA</a></small>';
                             var tmpRpNodeStr = '<div class="accordion" id="accordion{0}"><div class="accordion-item"><h2 class="accordion-header" id="heading{0}">' +
@@ -433,5 +434,7 @@ function CloseReplyModal() {
 
 // 当页面加载完毕时，自动触发"网友评论"按钮
 window.onload = function () {
+    // 获取隐藏的checkbox值 是否需要显示评论区留言者头像
+    isShowLeaveHeadImg = $('#inputIsShowLeaveHeadImg').prop("checked");
     commentToggleBtnClick(1);
 };
