@@ -7,12 +7,14 @@ namespace CoolNetBlog.Bll
 {
     public class ThumbsUpBll
     {
+        private readonly BaseSugar _baseSugar;
         private readonly SugarDataBaseStorage<Article, int> _articleSet;
         private readonly SugarDataBaseStorage<ArticleThumbUp, int> _thumbUpSet;
         public ThumbsUpBll()
         {
-            _articleSet = new SugarDataBaseStorage<Article,int>();
-            _thumbUpSet = new SugarDataBaseStorage<ArticleThumbUp, int>();
+            _baseSugar = new BaseSugar();
+            _articleSet = new SugarDataBaseStorage<Article,int>(_baseSugar._dbHandler);
+            _thumbUpSet = new SugarDataBaseStorage<ArticleThumbUp, int>(_baseSugar._dbHandler);
         }
 
         public async Task<ValueResult> DealThumbsUpArticleAsync(int articleId, int type, HttpContext httpContext) 

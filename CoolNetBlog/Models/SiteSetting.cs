@@ -123,5 +123,12 @@ namespace CoolNetBlog.Models
             /// </summary>      
             public int? LeaveLimitCount { get; set; }
 
+            /// <summary>
+            /// Desc:是否在评论区展示留言者的头像，采用Cravatar源：https://cravatar.cn
+            /// Default:b'0'
+            /// Nullable:false
+            /// </summary>      
+            public bool IsShowLeaveHeadImg { get; set; }
+
     }
 }

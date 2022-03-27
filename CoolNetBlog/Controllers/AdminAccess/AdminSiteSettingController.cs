@@ -69,6 +69,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 WishPictureName = vm.WishPictureName,
                 IsOpenDetailThumb = vm.IsOpenDetailThumb,
                 LeaveLimitCount = vm.LeaveLimitCount,
+                IsShowLeaveHeadImg = vm.IsShowLeaveHeadImg,
             };
 
             _siteSettingSet.TransBegin();
@@ -117,6 +118,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 WishPictureName = eny.WishPictureName,
                 IsOpenDetailThumb = eny.IsOpenDetailThumb,
                 LeaveLimitCount = eny.LeaveLimitCount,
+                IsShowLeaveHeadImg = eny.IsShowLeaveHeadImg,
             };
             // 自动封装已有的数据
             org = (SiteSettingViewModel)WrapMustNeedPassFields(org);

@@ -20,5 +20,6 @@
         public string? WishPictureRelPath { get; set; }
         public bool IsOpenDetailThumb { get; set; }
         public int? LeaveLimitCount { get; set; }
+        public bool IsShowLeaveHeadImg { get; set; }
     }
 }
