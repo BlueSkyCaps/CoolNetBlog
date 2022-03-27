@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.RegularExpressions;
 
 namespace CommonObject.Methods
 {
@@ -87,6 +88,44 @@ namespace CommonObject.Methods
             catch (Exception)
             {
             }
+        }
+
+        public static bool CheckHtmlLabelContains(string? input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return false;
+            }
+            Regex regex = new Regex(@"<\w+>", RegexOptions.IgnoreCase);
+            var b = regex.IsMatch(input);
+            if (b == false)
+            {
+                b = input.ToLower().Contains("javascript:");
+            }
+            return b;
+        }
+
+        public static string ReplaceHtmlLabelContains(string? input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return input;
+            }
+            //改为中文冒号，避免"javascript:"字符
+            input = input.Replace(':', '：');
+            //匹配以<开头以>结尾，中间是任意字符包含空白的标签元素，且?让它尽可能少匹配，这样不会只匹配最外层的一个
+            Regex regex = new Regex(@"<(.|\s)*?>", RegexOptions.IgnoreCase);
+            var matcheds = regex.Matches(input);
+            if (matcheds.Count>0)
+            {
+                foreach (Match mh in matcheds)
+                {
+                    var mhv = mh.Value;
+                    string? filterInput = input.Replace(mhv, $"《{mhv.Trim('<').Trim('>')}》");
+                    input = filterInput;
+                }
+            }
+            return input;
         }
     }
 }

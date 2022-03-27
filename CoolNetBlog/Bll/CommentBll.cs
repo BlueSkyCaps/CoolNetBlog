@@ -49,7 +49,7 @@ namespace CoolNetBlog.Bll
                     return _result;
                 }
 
-                if (data.Name.Length>12 || data.Email.Length>25 ||  data.Content.Length>150)
+                if (data.Name.Length>12 || data.Email.Length>25 ||  data.Content.Length>150 || data.SiteUrl?.Length > 60)
                 {
                     _result.HideMessage = "长度超出";
                     _result.TipMessage = "字数超出了规定长度..";
@@ -93,19 +93,25 @@ namespace CoolNetBlog.Bll
             {
                 return _result;
             }
-
+           
 
             Comment insertComment = new Comment
             {
                 CommentTime = DateTime.Now,
-                Email = data.Email.Trim(),
-                Name = data.Name.Trim(),
-                SiteUrl = data.SiteUrl?.Trim(),
-                Content = data.Content.Trim(),
+                Email = data.Email.Trim().Replace("\n", "").Replace("\r", ""),
+                Name = data.Name.Trim().Replace("\n", "").Replace("\r", ""),
+                SiteUrl = data.SiteUrl?.Trim().Replace("\n", "").Replace("\r", ""),
+                Content = data.Content.Trim().Replace("\n", "").Replace("\r", ""),
                 SourceId = data.SourceId,
                 SourceType = data.SourceType,
                 ClientIp = cip,
             };
+
+            // 避免html注入
+            insertComment.Email = ValueCompute.ReplaceHtmlLabelContains(insertComment.Email);
+            insertComment.Name = ValueCompute.ReplaceHtmlLabelContains(insertComment.Name);
+            insertComment.SiteUrl = ValueCompute.ReplaceHtmlLabelContains(insertComment.SiteUrl);
+            insertComment.Content = ValueCompute.ReplaceHtmlLabelContains(insertComment.Content);
 
             if (await _baseSugar._dbHandler.Queryable<AdminUser>().AnyAsync(a => a.AccountName.ToLower() == insertComment.Name.ToLower()))
             {
@@ -160,7 +166,7 @@ namespace CoolNetBlog.Bll
                 return _result;
             }
 
-            if (data.Name.Length > 12 || data.Email.Length > 25 || data.Content.Length > 150)
+            if (data.Name.Length > 12 || data.Email.Length > 25 || data.Content.Length > 150 || data.SiteUrl?.Length > 60)
             {
                 _result.HideMessage = "长度超出";
                 _result.TipMessage = "字数超出了规定长度..";
@@ -209,19 +215,26 @@ namespace CoolNetBlog.Bll
             Reply insertReply = new Reply
             {
                 ReplyTime = DateTime.Now,
-                Email = data.Email,
-                Name = data.Name,
-                SiteUrl = data.SiteUrl?.Trim(),
-                Content = data.Content,
+                Email = data.Email.Trim().Replace("\n", "").Replace("\r", ""),
+                Name = data.Name.Trim().Replace("\n", "").Replace("\r", ""),
+                SiteUrl = data.SiteUrl?.Trim().Replace("\n", "").Replace("\r", ""),
+                Content = data.Content.Trim().Replace("\n", "").Replace("\r", ""),
                 CommentId = data.CommentId,
                 ClientIp = cip,
                 
             };
+
+            // 避免html注入
+            insertReply.Email = ValueCompute.ReplaceHtmlLabelContains(insertReply.Email);
+            insertReply.Name = ValueCompute.ReplaceHtmlLabelContains(insertReply.Name);
+            insertReply.SiteUrl = ValueCompute.ReplaceHtmlLabelContains(insertReply.SiteUrl);
+            insertReply.Content = ValueCompute.ReplaceHtmlLabelContains(insertReply.Content);
+
             if (await _baseSugar._dbHandler.Queryable<AdminUser>().AnyAsync(a => a.AccountName.ToLower() == insertReply.Name.ToLower()))
             {
                 _result.Code = ValueCodes.UnKnow;
                 _result.HideMessage = "昵称是管理员使用昵称";
-                _result.TipMessage = "哈,该昵称被创造者'霸占'了哦~";
+                _result.TipMessage = "哈,该昵称被创造者霸占了哦~";
                 return _result;
             }
 
