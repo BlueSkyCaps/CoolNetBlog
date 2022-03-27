@@ -128,16 +128,18 @@ $("#loadCommentBtn").on("click",
                                     var replyTimeStr = Gb_GetFlowTimeStr(rItem.replyTime);
                                     var adminBadgeStr = rItem.isAdmin ? '<span class="badge bg-info text-dark">博主</span> ' : '';
                                     var siteUrlStr = !(Gb_IsWhiteSpaceOrNull(rItem.siteUrl)) ? ' <a target="_blank" href="' + rItem.siteUrl + '" class="text-dark">🌐</a>' : '';
+                                    var headSrcV = 'https://cravatar.cn/avatar/' + md5(rItem.email) + '?s=40&d=monsterid';
+                                    var headPStr = '<img src="'+headSrcV+'" style="max-width:100%;max-height:100%;" class="img-fluid" alt="">';
                                     var replyContent = rItem.content;
                                     var replyInfoStr = '<small>' + replyTimeStr + siteUrlStr + ' <a href="javascript:;" onClick="toReplyDialog(this,1)" comment-id="{3}" to-name="{4}">回复TA</a></small>';
                                     var tmpRpNodeStr = '<div class="accordion" id="accordion{0}"><div class="accordion-item"><h2 class="accordion-header" id="heading{0}">' +
                                         '<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{0}" aria-expanded="false" aria-controls="collapse{0}">' +
-                                        '<p>{5}<small class="text text-info">{4}</small><br/>{1}</p>' +
+                                        '<p>{5}<small class="text text-info">{4}</small><br/>{6}{1}</p>' +
                                         '</button></h2><div id="collapse{0}" class="accordion-collapse collapse" aria-labelledby="heading{0}" data-bs-parent="#accordion{0}"><div class="accordion-body text-end">' +
                                         '{2}' + '</div></div></div></div>';
                                     // 格式化占位符 第0个是元素的id 第1个是回复内容 第2个是回复时间|按钮组成的元素 
-                                    // 第3个是关联的评论id 第4个是昵称 第5个是站主徽标元素 
-                                    rpNodeStr += tmpRpNodeStr.format(idStr, replyContent, replyInfoStr, cItem.id, rItem.name, adminBadgeStr);
+                                    // 第3个是关联的评论id 第4个是昵称 第5个是站主徽标元素 第6个是cravatar-api得到的头像元素
+                                    rpNodeStr += tmpRpNodeStr.format(idStr, replyContent, replyInfoStr, cItem.id, rItem.name, adminBadgeStr, headPStr);
                                 });
                             }
                             // 格式化评论时间
@@ -154,6 +156,8 @@ $("#loadCommentBtn").on("click",
 
                             var adminBadgeStr = cItem.isAdmin ? '<span class="badge bg-info text-dark">博主</span> ' : '';
                             var siteUrlStr = !(Gb_IsWhiteSpaceOrNull(cItem.siteUrl)) ? ' <a target="_blank" href="' + cItem.siteUrl + '" class="text-dark">🌐</a>' : '';
+                            var headSrcV = 'https://cravatar.cn/avatar/' + md5(cItem.email) + '?s=40&d=monsterid';
+                            var headPStr = '<img src="' + headSrcV + '" style="max-width:100%;max-height:100%;" class="img-fluid" alt="">';;
                             var cmNodeStr = '<div class="card card-body commentItem"><p class="text-start card-title">' +
                                 adminBadgeStr +
                                 '<small class="text text-info">' +
@@ -164,6 +168,7 @@ $("#loadCommentBtn").on("click",
                                 cItem.id + '" to-name="' +
                                 cItem.name +
                                 '">回复TA</a></small></p><p class="text-start card-text">' +
+                                headPStr +
                                 cItem.content +
                                 '</p></div><div class="card-footer">' +
                                 rpNodeStr + rpInNextStr
@@ -233,17 +238,19 @@ $(document).on("click", ".loadReplyBtn",
                             var replyTimeStr = Gb_GetFlowTimeStr(rItem.replyTime);
                             var adminBadgeStr = rItem.isAdmin ? '<span class="badge bg-info text-dark">博主</span> ' : '';
                             var siteUrlStr = !(Gb_IsWhiteSpaceOrNull(rItem.siteUrl)) ? ' <a target="_blank" href="' + rItem.siteUrl + '" class="text-dark">🌐</a>' : '';
+                            var headSrcV = 'https://cravatar.cn/avatar/' + md5(rItem.email) + '?s=40&d=monsterid';
+                            var headPStr = '<img src="' + headSrcV + '" style="max-width:100%;max-height:100%;" class="img-fluid" alt="">';;
                             var replyContent = rItem.content;
                             var replyInfoStr = '<small>' + replyTimeStr + siteUrlStr + ' <a href="javascript:;" onClick="toReplyDialog(this,1)" comment-id="{3}" to-name="{4}">回复TA</a></small>';
                             var tmpRpNodeStr = '<div class="accordion" id="accordion{0}"><div class="accordion-item"><h2 class="accordion-header" id="heading{0}">' +
                                 '<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{0}" aria-expanded="false" aria-controls="collapse{0}">' +
-                                '<p>{5}<small class="text text-info">{4}</small><br/>{1}</p>' +
+                                '<p>{5}<small class="text text-info">{4}</small><br/>{6}{1}</p>' +
                                 '</button></h2><div id="collapse{0}" class="accordion-collapse collapse" aria-labelledby="heading{0}" data-bs-parent="#accordion{0}"><div class="accordion-body text-end">' +
                                 '{2}' + '</div></div></div></div>';
 
                             // 格式化占位符 第0个是元素的id 第1个是回复内容 第2个是回复时间|按钮组成的元素 
-                            // 第3个是关联的评论id 第4个是昵称 第5个是站主徽标元素
-                            rpNodeStr += tmpRpNodeStr.format(idStr, replyContent, replyInfoStr, rItem.id, rItem.name, adminBadgeStr);
+                            // 第3个是关联的评论id 第4个是昵称 第5个是站主徽标元素 第6个是cravatar-api得到的头像元素
+                            rpNodeStr += tmpRpNodeStr.format(idStr, replyContent, replyInfoStr, rItem.id, rItem.name, adminBadgeStr, headPStr);
 
                             // 追加到当前"加载回复"按钮的前面，此按钮被一层div包裹
                             targerRpLoadBtn.parent().before(rpNodeStr);
