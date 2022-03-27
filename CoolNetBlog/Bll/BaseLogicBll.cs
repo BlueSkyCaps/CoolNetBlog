@@ -111,7 +111,7 @@ namespace CoolNetBlog.Bll
                 .Skip((pageIndex - 1) * onePageCount)
                 .Take(onePageCount).ToListAsync();
                 // 返回此条件下的总数量 供之后处理分页逻辑使用
-                c = await bdb._dbHandler.Queryable<HomeArticleViewModel>().Where(a => a.IsDraft == false).CountAsync();
+                c = await bdb._dbHandler.Queryable<HomeArticleViewModel>().Where(a => a.IsDraft == false && a.IsSpecial == false).CountAsync();
             }
             return c;
         }
