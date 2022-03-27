@@ -130,7 +130,7 @@ namespace CommonObject.Methods
                 return input;
             }
             //改为中文冒号，避免"javascript:"字符
-            input = input.Replace(':', '：');
+            input = input.Replace("javascript:", "javascript：", true, null);
             //匹配以<开头以>结尾，中间是任意字符包含空白的标签元素，且?让它尽可能少匹配，这样不会只匹配最外层的一个
             Regex regex = new Regex(@"<(.|\s)*?>", RegexOptions.IgnoreCase);
             var matcheds = regex.Matches(input);
