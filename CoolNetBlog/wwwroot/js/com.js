@@ -118,3 +118,7 @@ function Gb_NotifShow(message = "", status = "success", pos = 'top-center') {
         timeout: 3000
     });
 }
+
+function isEmail(input) {
+    return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,10})+$/.test(input));
+}

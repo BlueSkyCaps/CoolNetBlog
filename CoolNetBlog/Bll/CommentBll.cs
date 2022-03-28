@@ -49,12 +49,26 @@ namespace CoolNetBlog.Bll
                     return _result;
                 }
 
+                if (data.Name.Length < 2  || data.Content.Length < 6)
+                {
+                    _result.HideMessage = "内容过小";
+                    _result.TipMessage = "内容多打几个字吧，昵称起码也得两个字嘛..";
+                    return _result;
+                }
+                if (!ValueCompute.IsEmail(data.Email))
+                {
+                    _result.HideMessage = "不是有效的邮箱";
+                    _result.TipMessage = "不是有效的邮箱!~";
+                    return _result;
+                }
+
                 if (data.Name.Length>12 || data.Email.Length>25 ||  data.Content.Length>150 || data.SiteUrl?.Length > 60)
                 {
                     _result.HideMessage = "长度超出";
                     _result.TipMessage = "字数超出了规定长度..";
                     return _result;
                 }
+
                 if (!string.IsNullOrWhiteSpace(data.SiteUrl))
                 {
                     bool passUri = PathProvider.TryCreateUrl(data.SiteUrl);
@@ -117,7 +131,7 @@ namespace CoolNetBlog.Bll
             {
                 _result.Code = ValueCodes.UnKnow;
                 _result.HideMessage = "昵称是管理员使用昵称";
-                _result.TipMessage = "哈,该昵称被创造者'霸占'了哦~";
+                _result.TipMessage = "哈,该昵称被创造者霸占了哦~";
                 return _result;
             }
 
@@ -169,6 +183,19 @@ namespace CoolNetBlog.Bll
             {
                 _result.HideMessage = "没有填写完整";
                 _result.TipMessage = "请输入必要内容哦..";
+                return _result;
+            }
+
+            if (data.Name.Length < 2 || data.Content.Length < 6)
+            {
+                _result.HideMessage = "内容过小";
+                _result.TipMessage = "内容多打几个字吧，昵称起码也得两个字嘛..";
+                return _result;
+            }
+            if (!ValueCompute.IsEmail(data.Email))
+            {
+                _result.HideMessage = "不是有效的邮箱";
+                _result.TipMessage = "不是有效的邮箱!~";
                 return _result;
             }
 

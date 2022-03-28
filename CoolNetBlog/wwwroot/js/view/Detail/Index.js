@@ -55,7 +55,7 @@ $("#toCommentBtn").click(
             Gb_PopoverShow("toCommentBtn", "评论内容太少啦!~");
             return;
         }
-        if (!!!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,10})+$/.test(email))) {
+        if (!!!isEmail(email)) {
             Gb_PopoverShow("toCommentBtn", "不是有效的邮箱!~");
             return;
         }
@@ -82,6 +82,12 @@ $("#toCommentBtn").click(
                         $('#cSiteInput').val("");
                         $('#cNameInput').val("");
                         $('#cContentInput').val("");
+                        // 评论成功且是公开的直接刷新 有可能当前获取的值不是最新的类型 不允许评论已被处理 无碍
+                        if (parseInt($('#inputArticleLeavePublic').val()) == 1) {
+                            setTimeout(function () {
+                                location.reload();
+                            }, 2000);
+                        }
                     } else {
                         Gb_PopoverShow("toCommentBtn", data['tipMessage']);
                     }
@@ -359,7 +365,7 @@ function toReply() {
         Gb_PopoverShow("ReplyModalOk", "回复内容太少啦!~");
         return;
     }
-    if (!!!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,10})+$/.test(email))) {
+    if (!!!isEmail(email)) {
         Gb_PopoverShow("ReplyModalOk", "不是有效的邮箱!~");
         return;
     }
@@ -395,6 +401,10 @@ function toReply() {
                         $('#ReplyModal').modal('hide');
                         $('#ReplyModalOk').removeAttr("disabled");
                         $('#ReplyModalOk').text("回复");
+                        // 回复成功且是公开的直接刷新 有可能当前获取的值不是最新的类型 不允许评论已被处理 无碍
+                        if (parseInt($('#inputArticleLeavePublic').val()) == 1) {
+                            location.reload();
+                        }
                     }, 2000);
 
                 } else {

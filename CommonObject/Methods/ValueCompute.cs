@@ -145,5 +145,15 @@ namespace CommonObject.Methods
             }
             return input;
         }
+
+        /// <summary>
+        /// 字符串是否是邮箱形式
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsEmail(string inpu)
+        {
+            Regex regex = new Regex(@"^[\w-]+([\.-]?\w+)*@[\w-]+([\.-]?\w+)*(\.\w{2,10})+$");
+            return regex.IsMatch(inpu);
+        }
     }
 }
