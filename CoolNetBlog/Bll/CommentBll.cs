@@ -137,8 +137,14 @@ namespace CoolNetBlog.Bll
             {
                 _commentSet.TransRoll();
                 _result.Code = ValueCodes.Error;
-                _result.HideMessage = "插入评论数据时引发异常:"+e.Message+" "+e.StackTrace;
+                _result.HideMessage = "插入评论数据时引发异常:"+e.Message;
                 _result.TipMessage = "评论发表失败了，你可以再试一下?!";
+                // mysql utf8mb3 不支持真正utf8四个字节长度
+                if (e.Message.Contains("incorrect string", StringComparison.OrdinalIgnoreCase))
+                {
+                    _result.TipMessage = "内容包含偏僻字和Emoji表情,后续将支持。";
+                }
+                return _result;
             }
             _result.Code = ValueCodes.Success;
             _result.TipMessage = commentAte?.CommentType == 2? "经过审核后将会显示评论,感谢您的畅所欲言~" : "感谢您的畅所欲言~";
@@ -255,6 +261,12 @@ namespace CoolNetBlog.Bll
                 _result.Code = ValueCodes.Error;
                 _result.HideMessage = "插入回复数据时引发异常:" + e.Message + " " + e.StackTrace;
                 _result.TipMessage = "回复失败了，可以再试一下?!";
+                // mysql utf8mb3 不支持真正utf8四个字节长度
+                if (e.Message.Contains("incorrect string", StringComparison.OrdinalIgnoreCase))
+                {
+                    _result.TipMessage = "内容包含偏僻字和Emoji表情,后续将支持。";
+                }
+                return _result;
             }
             _result.Code = ValueCodes.Success;
             _result.TipMessage = commentAte?.CommentType == 2 ? "审核后将显示,感谢发言~" : "感谢畅所欲言~";
