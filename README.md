@@ -7,8 +7,6 @@
 [![Uikit](https://img.shields.io/badge/Uikit-v3.10.1-blue)](https://getuikit.com)
 [![jQuery](https://img.shields.io/badge/jQuery-v3.5.1-blue)](https://jquery.com/)
 
-### 使用介绍视频：
-[点击：观看基本使用介绍视频](https://www.bilibili.com/video/BV19S4y1F7zA?share_source=copy_web "好玩：独自开发的极简博客框架~全手写部署Linux|windows")
 
 ### 目前功能：
 1. 支持移动端和pc端样式。可以设置菜单，关键词搜索，自定义站点尾巴和标题。
