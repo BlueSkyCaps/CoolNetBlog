@@ -22,8 +22,6 @@
 10. 集成Cravatar头像服务，允许在评论区显示或关闭留言者的头像
 ......
 
-
-
 ### 运行|开发项目：
 #### 环境配置：.net core 6 sdk and asp.net core 6，visual studio 2022
 本项目默认使用mysql8.0进行开发完成，但采用Sqlsugar ORM框架，只需更改configs.json的连接字符串以使用sqlServer等，但非mysql数据库需要自行验证开发。
