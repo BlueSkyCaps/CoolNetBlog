@@ -32,7 +32,7 @@ function navFixedHandler(scrollPos) {
 }
 
 // 当页面滚动时 触发事件
-window.addEventListener('scroll', function (e) {
+window.addEventListener('scroll', function () {
     scrollPos = window.scrollY;
     navFixedHandler(scrollPos);
 });
