@@ -2,13 +2,22 @@
 
 ## A lightweight, concise, and fast blogging framework using asp.net core 6.
 
+[![ASP.NET Core 6](https://shields.io/badge/-Asp_Net_Core_6-blue)](https://asp.net/)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-v5.1-blue)](https://getbootstrap.com/)
+[![Uikit](https://img.shields.io/badge/Uikit-v3.10.1-blue)](https://getuikit.com)
+[![jQuery](https://img.shields.io/badge/jQuery-v3.5.1-blue)](https://jquery.com/)
+
 ### Basic features：
-Powerd By asp.net core 6 mvc，default use mysql8
-Support mobile and pc style, you can set menus, keyword search, customize site tail and title.
-Article management: Drafts, menu categorization, article locking, article text style, labeling and searching, article images (large, original, thumbnail).
-Upload images and files: Insert images into articles; extend custom file links and html pages.
-Configuration widgets: external links sidebar, wish-possible images, custom link lists.
-Turn on or disable article likes.
+1. Support mobile and pc style. Menus can be set, keyword search, custom site tail and title can be customized.
+2. Article management: There are standard articles, draft articles, privacy articles (password lock) and special articles.
+3. admin can set the comment type of the article: 1 Public 2 Moderation 3 Do not allow comments
+5. The background can review the message, can directly reply to the messager, and choose to send an email to the messager.
+6. Upload images and files: Insert images into articles; extend custom file links and html pages.
+7. Configure widgets: "Personality Picture", Custom Link List, "Small Text".
+8. Turn on or off article likes.
+9. Limit the number of messages a visitor can leave in a single day
+10. Integrated Cravatar avatar service, allowing the avatar of the commenter to be displayed or turned off in the comment area
+......
 
 
 ### Run|development project ：

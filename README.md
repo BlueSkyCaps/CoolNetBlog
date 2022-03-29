@@ -1,10 +1,11 @@
 # CoolNetBlog
 
 ## 使用 asp.net core 6 的轻量级、简约、快速的博客框架。
-[![Asp.Net Core 6](https://shields.io/badge/-Asp.Net_Core_6-blue)](https://www.nuget.org/packages/SuperSocket)
-[![Bootstrap](https://img.shields.io/badge/Bootstrap-v5.1-blue)](https://www.nuget.org/packages/SuperSocket)
-[![Uikit](https://img.shields.io/badge/Uikit-v3.10.1-blue)](https://www.nuget.org/packages/SuperSocket)
-[![jQuery](https://img.shields.io/badge/jQuery-v3.5.1-blue)](https://www.nuget.org/packages/SuperSocket)
+
+[![ASP.NET Core 6](https://shields.io/badge/-Asp_Net_Core_6-blue)](https://asp.net/)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-v5.1-blue)](https://getbootstrap.com/)
+[![Uikit](https://img.shields.io/badge/Uikit-v3.10.1-blue)](https://getuikit.com)
+[![jQuery](https://img.shields.io/badge/jQuery-v3.5.1-blue)](https://jquery.com/)
 
 ### 使用介绍视频：
 [点击：观看基本使用介绍视频](https://www.bilibili.com/video/BV19S4y1F7zA?share_source=copy_web "好玩：独自开发的极简博客框架~全手写部署Linux|windows")
@@ -12,9 +13,8 @@
 ### 目前功能：
 1. 支持移动端和pc端样式。可以设置菜单，关键词搜索，自定义站点尾巴和标题。
 2. 文章管理：有标准文章、草稿文章、隐私文章(密码加锁)和特殊文章(如"友链"等)，文章文字样式(包含图片插入)、设置标签。
-3. 设置文章评论类型为“公开”、“经管理员审核”、“不允许评论”。
-4. 后台可以设置文章的评论类型：1公开2审核3不允许评论
-5. 后台可以审核留言，通过与不通过，也可以直接回复留言者，并且选择抄送邮件给留言者。
+4. 可以设置文章的评论类型：1公开2审核3不允许评论
+5. 可以审核留言，通过与不通过，也可以直接回复留言者，并且选择抄送邮件给留言者。
 6. 上传图片和文件：插入图片到文章；扩展自定义文件链接和html页面。
 7. 配置小组件：心愿图片、自定义链接列表、“闲言碎语”。
 8. 开启或取消文章点赞功能。
