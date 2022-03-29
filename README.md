@@ -1,7 +1,10 @@
 # CoolNetBlog
 
 ## 使用 asp.net core 6 的轻量级、简约、快速的博客框架。
-Asp.Net Core 6，Bootstrap5.1，uikit3.10.1，jQuery
+[![Asp.Net Core 6](https://shields.io/badge/-Asp.Net_Core_6-blue)](https://www.nuget.org/packages/SuperSocket)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-v5.1-blue)](https://www.nuget.org/packages/SuperSocket)
+[![Uikit](https://img.shields.io/badge/Uikit-v3.10.1-blue)](https://www.nuget.org/packages/SuperSocket)
+[![jQuery](https://img.shields.io/badge/jQuery-v3.5.1-blue)](https://www.nuget.org/packages/SuperSocket)
 
 ### 使用介绍视频：
 [点击：观看基本使用介绍视频](https://www.bilibili.com/video/BV19S4y1F7zA?share_source=copy_web "好玩：独自开发的极简博客框架~全手写部署Linux|windows")
