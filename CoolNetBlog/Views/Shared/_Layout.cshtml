@@ -47,6 +47,10 @@
         //<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
         //<!-- jquery 3.5.1 cdn-->
         //<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+        //<!-- UIkit 3.10.1 cdn-->
+        //<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/css/uikit.min.css" />
+        //<script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit.min.js"></script>
+        //<script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit-icons.min.js"></script>
     }
     
     <!-- bootstrap 5.1.0 local-->
@@ -54,7 +58,11 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <!-- jquery 3.5.1 local-->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    
+    <!-- UIkit 3.10.1 local-->
+    <link rel="stylesheet" href="~/lib/uikit/css/uikit.min.css" />
+    <script src="~/lib/uikit/js/uikit.min.js"></script>
+    <script src="~/lib/uikit/js/uikit-icons.min.js"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 
     <style>
@@ -64,6 +72,10 @@
         .wishPicture{
             width:150px;
             height:150px;
+            object-fit:contain;
+        }
+        .gossipImg{
+            height:200px;
             object-fit:contain;
         }
     </style>
@@ -234,6 +246,56 @@
                 </div> 
                 <br/>
             }
+            @if(true){
+                <div id="gossipScroll" style="height:300px;overflow-y:auto;" class="" >
+                    <div class="card">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                            <img class="gossipImg img-fluid rounded-start"  src="https://scpic.chinaz.net/files/pic/pic9/202007/apic26488.jpg">
+                            </div>
+                            <div class="col-md-8">
+                            <div class="card-body">
+                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="row g-0">
+                            <div class="col-md-12">
+                            <div class="card-body">
+                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                            <img class="gossipImg img-fluid rounded-start" src="https://www.keaidian.com/uploads/allimg/190424/24110307_8.jpg" >
+                            </div>
+                            <div class="col-md-8">
+                            <div class="card-body">
+                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="row g-0">
+                            <div class="col-md-12">
+                            <div class="card-body">
+                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
             @if (Model.HomeSiteSettingData.IsShowWishPicture){
                 // 心愿图片
                 <div class="card ">
@@ -263,4 +325,4 @@
     </footer>
 </body>
 </html>
-<script src="~/js/view/Shared/_Layout.js?v=1"></script>
+<script src="~/js/view/Shared/_Layout.js?v=2"></script>

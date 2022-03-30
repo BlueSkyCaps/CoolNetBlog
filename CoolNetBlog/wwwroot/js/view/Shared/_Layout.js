@@ -24,7 +24,7 @@ let ticking = false;
 
 // 固定顶部导航栏在顶部位置 当页面滚动时
 function navFixedHandler(scrollPos) {
-    if (scrollPos > 100) {
+    if (scrollPos > 1) {
         $('#topNav').addClass('fixed-top');
     } else {
         $('#topNav').removeClass('fixed-top');
@@ -36,3 +36,4 @@ window.addEventListener('scroll', function () {
     scrollPos = window.scrollY;
     navFixedHandler(scrollPos);
 });
+
