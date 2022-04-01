@@ -291,8 +291,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
             {
                 fileImgPaths = await _fileSet.GetListBuilder().Where(a => a.Type.ToLower() == "img")
                     .Where(a =>
-                    (a.HelpName != null && a.HelpName.Contains(kw)) ||
-                    (a.FileRelPath != null && a.FileRelPath.Contains(kw)))
+                    (a.HelpName != null && a.HelpName.Contains(kw)))
                     .OrderBy(a => a.UploadTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
             }
             else
