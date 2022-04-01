@@ -84,15 +84,21 @@ namespace CoolNetBlog.Controllers.AdminAccess
                         TempData["Tips"] = "上传失败 图片大小大于200kb！通常，图片资源过大对于博客网站是很大的开销，建议压缩优化图片。";
                         return RedirectToAction("FileAmManagement", "AdminFile", new { pt = sfvm.PassToken });
                     }
-                    if (!Directory.Exists(Path.Combine(_environment.WebRootPath, "articleImgs")))
+                    if (!Directory.Exists(Path.Combine(_environment.WebRootPath, "img")))
                     {
-                        // 不存在articleImgs图片目录则创建
-                        Directory.CreateDirectory(Path.Combine(_environment.WebRootPath, "articleImgs"));
+                        // 不存在img图片目录则创建
+                        Directory.CreateDirectory(Path.Combine(_environment.WebRootPath, "img"));
+                    }
+                    string nowDayDir = DateTime.Now.ToString("yyyyMMdd");
+                    if (!Directory.Exists(Path.Combine(_environment.WebRootPath, "img",  nowDayDir)))
+                    {
+                        // img/下不存在当日的目录则创建
+                        Directory.CreateDirectory(Path.Combine(_environment.WebRootPath, "img", nowDayDir));
                     }
                     // 实际保存物理路径
-                    fileRoot = Path.Combine(_environment.WebRootPath, "articleImgs", helpName+'.'+format);
-                    // 保存到数据库中的对应相对物理文件路径的名称
-                    saveDbfileRelPath = helpName + '.' + format;
+                    fileRoot = Path.Combine(_environment.WebRootPath, "img",  nowDayDir, helpName + '.'+format);
+                    // 保存到数据库中的对应相对物理文件路径的名称 "当日目录/{图片助记名称}.xxx"
+                    saveDbfileRelPath = Path.Combine(nowDayDir, helpName + '.' + format);
                 }
                 else
                 {
@@ -182,7 +188,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
             string? root;
             if (type.ToLower()=="img")
             {
-                root = Path.Combine(_environment.WebRootPath, "articleImgs", fileRelPath);
+                root = Path.Combine(_environment.WebRootPath, "img", fileRelPath);
             }
             else
             {
@@ -253,7 +259,14 @@ namespace CoolNetBlog.Controllers.AdminAccess
             }
             try
             {
-                await _bdb._dbHandler.Ado.ExecuteCommandAsync($"update SiteSetting set WishPictureRelPath='{fileRelPath}'");
+                //var sr = fileRelPath.Split(new char[] { Path.DirectorySeparatorChar });
+                //fileRelPath = Path.Combine(sr[0], sr[1]);
+                //await _bdb._dbHandler.Ado.ExecuteCommandAsync($"update SiteSetting set WishPictureRelPath='{fileRelPath}'");
+                orgSiteSetting.WishPictureRelPath = fileRelPath;
+                await _bdb._dbHandler.Updateable<SiteSetting>(orgSiteSetting)
+                    .UpdateColumns(s => s.WishPictureRelPath)
+                    .Where(s=>1==1)
+                    .ExecuteCommandAsync();
                 return RedirectToAction("FileAmManagement", "AdminFile", new { pt = sfvm.PassToken });
             }
             catch (Exception e)
