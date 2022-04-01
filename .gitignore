@@ -362,6 +362,7 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /CoolNetBlog/wwwroot/articleImgs
+/CoolNetBlog/wwwroot/img
 /CoolNetBlog/wwwroot/epLinks
 /CoolNetBlog/wwwroot/transOldlib
 /CoolNetBlog/configs.json
