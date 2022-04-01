@@ -3,7 +3,8 @@
 namespace CoolNetBlog.Models
 {
     /// <summary>
-    /// 文章点赞表
+    /// 文章专门点赞表
+    /// (文章点赞使用此表 而"闲言碎语"组件等是用统一的点赞表CommonThumbUp)
     /// </summary>
     [SugarTable("ArticleThumbUp")]
     public class ArticleThumbUp

@@ -15,7 +15,8 @@ namespace CoolNetBlog.Models
         [SugarColumn(IsPrimaryKey = true)]
         public int SourceId { get; set; }
         /// <summary>
-        /// Default:源Id所属类型：1"闲言碎语"组件表，2.. (文章点赞不使用此表而是专门的文章点赞表ArticleThumbUp)
+        /// Default:源Id所属类型：1"闲言碎语"组件表，2.. 
+        /// (文章点赞不使用此表而是专门的文章点赞表ArticleThumbUp)
         /// Nullable:False
         /// </summary>           
         [SugarColumn(IsPrimaryKey = true)]
