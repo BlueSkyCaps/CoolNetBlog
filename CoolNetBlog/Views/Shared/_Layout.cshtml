@@ -132,14 +132,14 @@
             @if (@Model != null)
             {
                  <figure class="text-center">
-                    <blockquote class="blockquote">
+                    <div class="blockquote">
                     @if (@Model.HomeSiteSettingData.IsShowSiteName)
                     {
                         <a class="text-black" asp-action="Index" asp-controller="Home">
                         <p class="h2"><small><span class="badge rounded-pill bg-secondary">╹▽╹</span></small>@Model.HomeSiteSettingData.SiteName</p>
                         </a>
                     }
-                    </blockquote>
+                    </div>
                     <figcaption class="blockquote-footer">
                     @if (@Model.HomeSiteSettingData.IsShowQutoes)
                     {
@@ -246,32 +246,27 @@
                 </div> 
                 <br/>
             }
-            @if(false){
-                <div id="gossipScroll" style="height:300px;overflow-y:auto;" class="" >
-                    <div class="card">
-                        <div class="row">
-                            <div class="col-4 d-flex align-items-center ">
-                            <img class="gossipImg img-fluid"  src="https://scpic.chinaz.net/files/pic/pic9/202007/apic26488.jpg">
-                            </div>
-                            <div class="col-8">
-                            <div class="card-body">
-                            <p class="card-text">真是醉了乙</p>
-                            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                            </div>
-                            </div>
+            @if(true){
+                <div id="gossipScroll" style="width:100%; overflow-y:auto;" class="" >
+                    <div class="row">
+                        <div class="col-4 d-flex align-items-center ">
+                        <img class="gossipImg img-fluid"  src="https://scpic.chinaz.net/files/pic/pic9/202007/apic26488.jpg">
+                        </div>
+                        <div class="col-8 d-flex align-items-center ">
+                        <div class="card-body">
+                        <p class="card-text text-secondary">真是醉了乙<br><small class="text-muted">Last updated 3 mins ago</small></p>
+                        </div>
                         </div>
                     </div>
-                    <div class="card">
-                        <div class="row">
-                            <div class="col-12">
-                            <div class="card-body">
-                            <p class="card-text">This is a wider caThis .</p>
-                            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                            </div>
-                            </div>
+                    <div class="row">
+                        <div class="col-12 d-flex align-items-center ">
+                        <div class="card-body">
+                        <p class="card-text text-secondary">This is a wider caThis .<br><small class="text-muted">Last updated 3 mins ago</small></p>
+                        </div>
                         </div>
                     </div>
                 </div>
+                <br>
             }
             @if (Model.HomeSiteSettingData.IsShowWishPicture){
                 // 心愿图片
