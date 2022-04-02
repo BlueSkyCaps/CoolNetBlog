@@ -58,24 +58,7 @@ function setGossipScrollStyle() {
 }
 
 
-// 事件：当"闲言碎语"滚动区域滚动时 判断是否滚动到了底部
-document.getElementById("gossipScroll").onscroll = () => {
-    var allContentHeight = $('#gossipScroll').scrollHeight;
-    var scrollTopPos = $('#gossipScroll').scrollTop;
-    var gossipScrollHeight = $('#gossipScroll').clientHeight;
-    console.log(allContentHeight)
-    console.log(scrollTopPos)
-    console.log(gossipScrollHeight)
-    console.log()
 
-    if ((gossipScrollHeight + scrollTopPos) >= allContentHeight) {
-        alert("已经到达底部");
-        gossipDataCall();
-    }
-    if (scrollTopPos == 0) {
-        alert("已经到达顶部");
-    }
-}
 
 var _gossipCallRes;
 
@@ -86,9 +69,20 @@ $('#gossipDiv').ready(function () {
         return;
     }
     setGossipScrollStyle();
-
     // 首次，直接调用接口获取首次的数据
     gossipDataCall();
+});
+
+// 事件：当"闲言碎语"滚动区域滚动时 判断是否滚动到了底部
+$('#gossipScroll').scroll(function () {
+    var div = $(this);
+    var scrollDivH = div.height(); //滚动区域的固定高度
+    var scrollTopCurrnetH = div.scrollTop(); //当前在滚动区域滚动位置的高度
+    var scrollAllDeepH = div[0].scrollHeight; //滚动区域内部能达到的整个高度(固定高度+未显示的高度)
+    if (scrollDivH + scrollTopCurrnetH >= scrollAllDeepH) 
+    {
+        gossipDataCall();
+    }
 });
 
 let _currentGossipIndex = 0;
