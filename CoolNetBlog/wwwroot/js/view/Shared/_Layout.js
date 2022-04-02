@@ -44,15 +44,32 @@ $('#gossipDiv').ready(function () {
     if (!isShow) {
         return;
     }
-    gossipDataCall();
+    var domStr = gossipDataCall();
+    if (domStr=="") {
+        return;
+    }
+
     $('#gossipDiv').removeAttr("hidden");
 });
 
 let currentGossipIndex = 1;
+
+// '闲言碎语'带有图片的dom元素字符串
+var gosspRowImgTextDomStr = '<div class="row">< div class="col-4 d-flex align-items-center">' +
+    '<img class="gossipImg img-fluid" src="{2}"></div><div class="col-8 d-flex align-items-center ">' +
+    '<div class="card-body"><p class="card-text text-secondary">{0}<br><small class="text-muted">{1}</small></p>' +
+    '</div></div></div>';
+
+// '闲言碎语'不带有图片的dom元素字符串
+var gosspRowTextDomStr = '<div class="row">< div class="col-12 d-flex align-items-center">' +
+    '<div class="card-body"><p class="card-text text-secondary">{0}<br><small class="text-muted">{1}</small></p>' +
+    '</div></div></div>';
+
 // 获取'闲言碎语'数据
 function gossipDataCall() {
     currentGossipIndex++;
     var url = "/Gossip/GetGossips?index=" + currentGossipIndex;
+    var domStr = "";
     $.ajax(
         {
             url: url,
@@ -68,9 +85,14 @@ function gossipDataCall() {
                     // 追加当前获取的数据到组件滚动区域底部
                     $.each(data['data'], function (i, gItem) {
                         // 格式化时间
-                        var addTimeStr = Gb_GetFmtDateStr(gItem.addTime);
-
-                        $('#gossipScholl').append(cmNodeStr);
+                        var addTimeStr = Gb_GetFmtDateStr(gItem['addTime']);
+                        // type==1 文字，2带图片。格式化元素字符串，第一个是内容 第二个是时间 第三个若有是图片的地址
+                        if (gItem['type']==1) {
+                            domStr += gosspRowTextDomStr.format(gItem['content'], addTimeStr);
+                        } else {
+                            domStr += gosspRowTextDomStr.format(gItem['content'], addTimeStr, gItem['ImgUrl']);
+                        }
+                        return domStr;
                     });
                 } else {
                     currentGossipIndex--;
