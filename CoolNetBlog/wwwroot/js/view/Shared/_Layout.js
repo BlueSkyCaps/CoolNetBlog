@@ -40,5 +40,11 @@ window.addEventListener('scroll', function () {
 
 // 当此DOM加载完毕 执行此回调代码 处理"闲言碎语"组件的数据加载与显示
 $('#gossipDiv').ready(function () {
+    var isShow = $('#gossipShowInput').prop("checked")
+    if (!isShow) {
+        return;
+    }
+    // 显示"闲言碎语"
 
+    $('#gossipDiv').removeAttr("hidden");
 });

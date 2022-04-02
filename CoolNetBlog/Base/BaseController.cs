@@ -51,7 +51,6 @@ namespace CoolNetBlog.Base
                 && !_homeGlobalView.HomeSiteSettingData.IsShowLoveLook 
                 && !_homeGlobalView.HomeSiteSettingData.IsShowWishPicture
                 && !_homeGlobalView.HomeSiteSettingData.IsShowGossip;
-
         }
 
         /// <summary>
