@@ -153,8 +153,10 @@ function gossipDataCall() {
                     if (!_gossipCallRes.allowLoad) {
                         _gossipAllowLoad = false;
                     }
-                    // 没有数据字符串获取到，统一在组件底部显示文字
-                    $('#gossipScroll').append('<p class="text-secondary text-center"><small>' + _gossipCallRes.robj + '</small></p>');
+                    if (_gossipAllowLoad) {
+                        // 没有数据字符串获取到，统一在组件底部显示文字
+                        $('#gossipScroll').append('<p class="text-secondary text-center"><small>' + _gossipCallRes.robj + '</small></p>');
+                    }
                     return;
                 }
                 // 追加重绘到组件区域 
