@@ -73,7 +73,7 @@ $('#gossipDiv').ready(function () {
 
 // 事件：当"闲言碎语"滚动区域滚动时 判断是否滚动到了底部
 $('#gossipScroll').scroll(function () {
-    debounce();
+    gossipScrollDebounce();
 });
  
 // 防抖函数
@@ -92,7 +92,7 @@ function debounceBase(func, wait, immediate) {
     };
 };
 // 防抖 "闲言碎语"滚动区 控制当滑动停下来时执行最后的判断 而不是频繁执行滑动事件
-var debounce = debounceBase(function () {
+var gossipScrollDebounce = debounceBase(function () {
     var div = $('#gossipScroll');
     var scrollDivH = div.height(); //滚动区域的固定高度
     var scrollTopCurrnetH = div.scrollTop(); //当前在滚动区域滚动位置的高度
