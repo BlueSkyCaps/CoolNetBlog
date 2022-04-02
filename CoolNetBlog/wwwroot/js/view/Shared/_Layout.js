@@ -23,7 +23,7 @@ let _scrollPos= 0;
 
 // 固定顶部导航栏在顶部位置 当页面滚动时
 function navFixedHandler(_scrollPos) {
-    if (_scrollPos > 1) {
+    if (_scrollPos > 100) {
         $('#topNav').addClass('fixed-top');
     } else {
         $('#topNav').removeClass('fixed-top');
@@ -57,9 +57,6 @@ function setGossipScrollStyle() {
     });
 }
 
-
-
-
 var _gossipCallRes;
 var _gossipAllowLoad = true;
 
@@ -76,19 +73,34 @@ $('#gossipDiv').ready(function () {
 
 // 事件：当"闲言碎语"滚动区域滚动时 判断是否滚动到了底部
 $('#gossipScroll').scroll(function () {
-    if (!_gossipAllowLoad) {
-        // 已经获取不到数据了 到底了 标志为false 不再加载
-        return;
-    }
-    var div = $(this);
+    debounce();
+});
+ 
+// 防抖函数
+function debounceBase(func, wait, immediate) {
+    var timeout;
+    return function () {
+        var context = this, args = arguments;
+        var later = function () {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
+};
+// 防抖 "闲言碎语"滚动区 控制当滑动停下来时执行最后的判断 而不是频繁执行滑动事件
+var debounce = debounceBase(function () {
+    var div = $('#gossipScroll');
     var scrollDivH = div.height(); //滚动区域的固定高度
     var scrollTopCurrnetH = div.scrollTop(); //当前在滚动区域滚动位置的高度
     var scrollAllDeepH = div[0].scrollHeight; //滚动区域内部能达到的整个高度(固定高度+未显示的高度)
-    if (scrollDivH + scrollTopCurrnetH >= scrollAllDeepH) 
-    {
+    if (scrollDivH + scrollTopCurrnetH >= scrollAllDeepH) {
         gossipDataCall();
     }
-});
+}, 250);
 
 let _currentGossipIndex = 0;
 
@@ -108,6 +120,10 @@ var gosspRowTextDomStr = '<div class="row"><div class="col-12 d-flex align-items
  * return status: bool, robj: string
  * */
 function gossipDataCall() {
+    if (!_gossipAllowLoad) {
+        _gossipAllowLoad = false;
+        return;
+    }
     _currentGossipIndex++;
     var url = "/Gossip/GetGossips?index=" + _currentGossipIndex;
     var domStr = "";
@@ -149,19 +165,20 @@ function gossipDataCall() {
             complete: function () {
                 // 处理当前gossipDataCall ajax最终处理完的结果
                 if (!_gossipCallRes.status) {
-                    // 若已经获取不到数据了 设置拒绝加载标志
+                    // 若已经获取不到数据了 设置允许加载标志为false
                     if (!_gossipCallRes.allowLoad) {
-                        _gossipAllowLoad = false;
-                    }
-                    if (_gossipAllowLoad) {
-                        // 没有数据字符串获取到，统一在组件底部显示文字
                         $('#gossipScroll').append('<p class="text-secondary text-center"><small>' + _gossipCallRes.robj + '</small></p>');
+                        _gossipAllowLoad = false;
+                        _isScrolling = true;
+                        return;
                     }
+                    _isScrolling = false;
                     return;
                 }
                 // 追加重绘到组件区域 
                 $('#gossipScroll').append(_gossipCallRes.robj);
                 $('#gossipDiv').removeAttr("hidden");
+                _isScrolling = false;
             }
         }
     );

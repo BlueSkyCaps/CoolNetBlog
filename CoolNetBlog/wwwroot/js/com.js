@@ -119,6 +119,25 @@ function Gb_NotifShow(message = "", status = "success", pos = 'top-center') {
     });
 }
 
-function isEmail(input) {
+function Gb_isEmail(input) {
     return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,10})+$/.test(input));
+}
+
+function gb_debounceBase(func, immediate, wait) {
+    var timeout;
+    return function () {
+        var context = this, args = arguments;
+        var later = function () {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
+};
+
+function Gb_Debounce(func, immediate, wait = 250) {
+    (gb_debounceBase(func, immediate, wait))();
 }

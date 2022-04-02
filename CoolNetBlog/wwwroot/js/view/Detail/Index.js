@@ -55,7 +55,7 @@ $("#toCommentBtn").click(
             Gb_PopoverShow("toCommentBtn", "评论内容太少啦!~");
             return;
         }
-        if (!!!isEmail(email)) {
+        if (!!!Gb_isEmail(email)) {
             Gb_PopoverShow("toCommentBtn", "不是有效的邮箱!~");
             return;
         }
@@ -365,7 +365,7 @@ function toReply() {
         Gb_PopoverShow("ReplyModalOk", "回复内容太少啦!~");
         return;
     }
-    if (!!!isEmail(email)) {
+    if (!!!Gb_isEmail(email)) {
         Gb_PopoverShow("ReplyModalOk", "不是有效的邮箱!~");
         return;
     }
