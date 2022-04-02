@@ -62,12 +62,19 @@ namespace CoolNetBlog.Models
             /// </summary>     
             public bool IsShowLoveLook { get;set;}
 
-           /// <summary>
-           /// Desc:是否显示个性签名
-           /// Default:b'1'
-           /// Nullable:false
-           /// </summary>           
-           public bool IsShowQutoes {get;set;}
+            /// <summary>
+            /// Desc:是否显示侧边栏 "闲言碎语"组件
+            /// Default:b'0'
+            /// Nullable:false
+            /// </summary>     
+            public bool IsShowGossip { get; set; }
+
+        /// <summary>
+        /// Desc:是否显示个性签名
+        /// Default:b'1'
+        /// Nullable:false
+        /// </summary>           
+        public bool IsShowQutoes {get;set;}
 
            /// <summary>
            /// Desc:备案号

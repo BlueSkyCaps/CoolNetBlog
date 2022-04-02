@@ -443,9 +443,9 @@ function CloseReplyModal() {
     $('#ReplyModal').modal('hide');
 }
 
-// 当页面加载完毕时，自动触发"网友评论"按钮
-window.onload = function () {
+// 当DOM加载完毕时，自动触发"网友评论"按钮
+$('#commentShowDiv').ready(function () {
     // 获取隐藏的checkbox值 是否需要显示评论区留言者头像
     isShowLeaveHeadImg = $('#inputIsShowLeaveHeadImg').prop("checked");
     commentToggleBtnClick(1);
-};
+});

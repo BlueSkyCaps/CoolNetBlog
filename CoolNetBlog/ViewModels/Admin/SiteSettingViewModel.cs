@@ -21,5 +21,6 @@
         public bool IsOpenDetailThumb { get; set; }
         public int? LeaveLimitCount { get; set; }
         public bool IsShowLeaveHeadImg { get; set; }
+        public bool IsShowGossip { get;  set; }
     }
 }

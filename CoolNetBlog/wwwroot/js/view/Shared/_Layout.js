@@ -38,7 +38,7 @@ window.addEventListener('scroll', function () {
 });
 
 
-// 当页面加载完毕 执行此回调代码 主要处理"闲言碎语"组件的数据加载与显示
+// 当此DOM加载完毕 执行此回调代码 处理"闲言碎语"组件的数据加载与显示
 $('#gossipDiv').ready(function () {
-    alert("gossipDiv");
+
 });
