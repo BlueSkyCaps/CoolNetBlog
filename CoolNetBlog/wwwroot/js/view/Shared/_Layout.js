@@ -148,18 +148,18 @@ function gossipDataCall() {
             },
             complete: function () {
                 // 处理当前gossipDataCall ajax最终处理完的结果
-                $('#gossipDiv').removeAttr("hidden");
                 if (!_gossipCallRes.status) {
-                    // 没有数据字符串获取到，统一在组件底部显示文字
-                    $('#gossipScroll').append('<p class="text-secondary text-center"><small>' + _gossipCallRes.robj + '</small></p>');
                     // 若已经获取不到数据了 设置拒绝加载标志
                     if (!_gossipCallRes.allowLoad) {
                         _gossipAllowLoad = false;
                     }
+                    // 没有数据字符串获取到，统一在组件底部显示文字
+                    $('#gossipScroll').append('<p class="text-secondary text-center"><small>' + _gossipCallRes.robj + '</small></p>');
                     return;
                 }
                 // 追加重绘到组件区域 
                 $('#gossipScroll').append(_gossipCallRes.robj);
+                $('#gossipDiv').removeAttr("hidden");
             }
         }
     );
