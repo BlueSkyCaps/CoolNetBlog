@@ -61,6 +61,7 @@ function setGossipScrollStyle() {
 
 
 var _gossipCallRes;
+var _gossipAllowLoad = true;
 
 // 当此DOM加载完毕 执行此回调代码 处理"闲言碎语"组件的数据加载与显示
 $('#gossipDiv').ready(function () {
@@ -75,6 +76,10 @@ $('#gossipDiv').ready(function () {
 
 // 事件：当"闲言碎语"滚动区域滚动时 判断是否滚动到了底部
 $('#gossipScroll').scroll(function () {
+    if (!_gossipAllowLoad) {
+        // 已经获取不到数据了 到底了 标志为false 不再加载
+        return;
+    }
     var div = $(this);
     var scrollDivH = div.height(); //滚动区域的固定高度
     var scrollTopCurrnetH = div.scrollTop(); //当前在滚动区域滚动位置的高度
@@ -116,7 +121,7 @@ function gossipDataCall() {
                     if (data['data'].length <= 0) {
                         // 没有更多数据 滚动条底部显示文字
                         _currentGossipIndex--;
-                        _gossipCallRes = { "status": false, "robj": "(已被你翻得底朝天啦)" };
+                        _gossipCallRes = { "status": false, "robj": "(已被你翻得底朝天啦)", "allowLoad":false };
                         return;
                     }
                     // 追加当前获取的数据到组件滚动区域底部
@@ -130,15 +135,15 @@ function gossipDataCall() {
                             domStr += gosspRowImgTextDomStr.format(gItem['content'], addTimeStr, gItem['imgUrl']);
                         }
                     });
-                    _gossipCallRes =  { "status": true, "robj": domStr};
+                    _gossipCallRes = { "status": true, "robj": domStr, "allowLoad": true};
                 } else {
                     _currentGossipIndex--;
-                    _gossipCallRes = { "status": false, "robj": data['tipMessage'] };
+                    _gossipCallRes = { "status": false, "robj": data['tipMessage'], "allowLoad": true };
                 }
             },
             error: function (err) {
                 _currentGossipIndex--;
-                _gossipCallRes = { "status": false, "robj": "加载失败err,重试一下?!"};
+                _gossipCallRes = { "status": false, "robj": "加载失败err,重试一下?!", "allowLoad": true};
                 console.log(err)
             },
             complete: function () {
@@ -147,6 +152,10 @@ function gossipDataCall() {
                 if (!_gossipCallRes.status) {
                     // 没有数据字符串获取到，统一在组件底部显示文字
                     $('#gossipScroll').append('<p class="text-secondary text-center"><small>' + _gossipCallRes.robj + '</small></p>');
+                    // 若已经获取不到数据了 设置拒绝加载标志
+                    if (!_gossipCallRes.allowLoad) {
+                        _gossipAllowLoad = false;
+                    }
                     return;
                 }
                 // 追加重绘到组件区域 
