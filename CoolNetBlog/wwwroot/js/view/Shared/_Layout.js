@@ -44,7 +44,46 @@ $('#gossipDiv').ready(function () {
     if (!isShow) {
         return;
     }
-    // 显示"闲言碎语"
-
+    gossipDataCall();
     $('#gossipDiv').removeAttr("hidden");
 });
+
+let currentGossipIndex = 1;
+// 获取'闲言碎语'数据
+function gossipDataCall() {
+    currentGossipIndex++;
+    var url = "/Gossip/GetGossips?index=" + currentGossipIndex;
+    $.ajax(
+        {
+            url: url,
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            success: function (data, status) {
+                if (data['code'] == 1) {
+                    if (data['data'].length <= 0) {
+                        // 没有更多数据 滚动条底部显示文字
+                        currentGossipIndex--;
+                        return;
+                    }
+                    // 追加当前获取的数据到组件滚动区域底部
+                    $.each(data['data'], function (i, gItem) {
+                        // 格式化时间
+                        var addTimeStr = Gb_GetFmtDateStr(gItem.addTime);
+
+                        $('#gossipScholl').append(cmNodeStr);
+                    });
+                } else {
+                    currentGossipIndex--;
+                    Gb_PopoverShow("commentShowBtn", data['tipMessage']);
+                }
+            },
+            error: function (err) {
+                currentGossipIndex--;
+                Gb_PopoverShow("commentShowBtn", "加载失败err,重试一下?!");
+                console.log(err)
+            },
+            complete: function () {
+            }
+        }
+    );
+}

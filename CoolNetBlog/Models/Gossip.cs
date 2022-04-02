@@ -22,7 +22,18 @@ namespace CoolNetBlog.Models
         /// </summary>           
         [SugarColumn(IsPrimaryKey=true,IsIdentity=true)]
         public int Id {get;set;}
+        
+        /// <summary>
+        /// Desc:内容类型。1纯文字2带图片的文字
+        /// Default:1
+        /// Nullable:False
+        /// </summary>   
+        public int Type { get;set;}
 
+        /// <summary>
+        /// 2带图片的文字，图片url
+        /// </summary>
+        public string? ImgUrl { get;set;}
         /// <summary>
         /// Desc:内容
         /// Default:
