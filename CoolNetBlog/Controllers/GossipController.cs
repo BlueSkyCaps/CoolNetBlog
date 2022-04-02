@@ -22,7 +22,7 @@ namespace CoolNetBlog.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetArticleComments(int index=1, int pageCount = 10)
+        public async Task<IActionResult> GetGossips(int index=1, int pageCount = 10)
         {
             var res = await _gossipBll.GetGossipsAsync(index, pageCount);
             return new JsonResult(res);
