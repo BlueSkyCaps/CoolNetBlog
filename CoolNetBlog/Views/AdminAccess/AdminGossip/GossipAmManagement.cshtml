@@ -22,7 +22,7 @@
 <form method="get">
     <div class="row">
         <div class="col-auto">
-            <input asp-for="Keyword" class="form-control me-2" type="search" placeholder="关键字.." aria-label="Search">
+            <input name="kw" class="form-control me-2" type="search" placeholder="关键字.." aria-label="Search">
         </div>
         <div class="col-auto">
             <a class="page-link" asp-route-kw="@Model?.Keyword" asp-route-pt="@Model?.PassToken" asp-action="GossipAmManagement" asp-controller="AdminGossip">搜索</a>
