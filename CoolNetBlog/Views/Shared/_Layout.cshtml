@@ -35,10 +35,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     @{
-        <title>@Html.Raw(Model?.CurrentTitle)</title>
+        <title>@Model?.CurrentTitle</title>
         if (!string.IsNullOrWhiteSpace(Model?.DetailArticleData?.Abstract))
         {
-            <meta name="description" content="@Html.Raw(Model?.DetailArticleData?.Abstract)">
+            <meta name="description" content="@Model?.DetailArticleData?.Abstract">
         }
     }
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
