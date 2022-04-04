@@ -80,7 +80,7 @@ namespace CoolNetBlog.Controllers.Admin
         {
             RemoveSomeValid();
             ModelState.Clear();
-            // 新增，将原先的列表数据赋值 避免返回视图后丢失
+            // 新增，赋值最后(当前)的列表数据 避免新增错误时返回视图后丢失 
             vm.GossipesOrg = sgvm.GossipesOrg;
             if (vm.Type<=0)
             {
@@ -119,12 +119,13 @@ namespace CoolNetBlog.Controllers.Admin
                 vm = (GossipViewModel)WrapMustNeedPassFields(vm);
                 return View("GossipAmManagement", vm);
             }
+            // 新增成功，直接重定向到第一页数据
             return RedirectToAction("GossipAmManagement", "AdminGossip", new { pt= sgvm.PassToken });
         }
 
 
         /// <summary>
-        /// 管理页面入口
+        /// 列表页面入口
         /// </summary>
         /// <returns></returns>
         public async Task<IActionResult> GossipAmManagement(string? pt, string? kw, int index=1, int pageCount = 2)
