@@ -1,4 +1,4 @@
-﻿@model Gossip
+﻿@model GossipViewModel
 <div asp-validation-summary="All" class="text-danger">
 </div>
 <div  class="btn-group" role="group" aria-label="Basic example">
@@ -25,50 +25,7 @@
 <br>
 <input hidden id="urlHidInput"/>
 <div class="list-group">
-    @foreach (var item in @Model.ArticlesOrg)
-    {
-         
-        //点击链接编辑文章，传文章id
-        <a asp-route-pt="@Model.PassToken" asp-route-id="@item.Id" asp-action="ArticleEdit" asp-controller="AdminArticle" class="list-group-item list-group-item-action">
-            <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1">@(string.IsNullOrWhiteSpace(item.Title)?"-无题-":item.Title)</h5>
-              <small>@item.UpdateTime</small>
-            </div>
-            <p class="mb-1">@item.Abstract</p>
-            <small class="text text-info">@(item.IsDraft?"草稿":"") </small>
-            <small class="text text-primary">@(item.IsLock?"隐私内容":"") </small>
-            <small class="text text-danger">@(item.IsSpecial?"特殊内容":"") </small>
-            <small>菜单：@item.Ig_MenuName</small>
-        </a>
-        <p>
-        <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidth@(item.Id)" aria-expanded="false" aria-controls="collapseWidth@(item.Id)">
-        更多操作
-        </button>
-        </p>
-        <div class="collapse collapse-horizontal" id="collapseWidth@(item.Id)">
-            @{
-                var scheme = Context.Request.Scheme+"://";
-                var currentHost = Context.Request.Host.Host;
-                var port = Context.Request.Host.Port;
-                var hostV = scheme+currentHost + (port == null ? "" : ":"+port);
-                hostV = hostV.TrimEnd('/');
-                var alink = hostV+"/Detail?articleId="+item.Id;
-            }
-            <div class="row">
-                <div class="col-auto">
-                    <button class="btn btn-primary linkCopyBtn" alink="@alink">复制链接</button>
-                </div>
-                <div class="col-auto">
-                    <form method="post">
-                    <input hidden name="pt" value="@Model.PassToken">
-                    <input hidden name="id" value="@item.Id">
-                    <button class="btn btn-danger delArticleBtn" type="button">删除</button>
-                    <button hidden class="btn btn-warning confirmDelArticleBtn" type="submit"  asp-action="Delete" asp-controller="AdminArticle">确认删除</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    }
+    
 </div>
 <script>
 </script>

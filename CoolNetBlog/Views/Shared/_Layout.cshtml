@@ -35,7 +35,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     @{
-        <title>@Model?.CurrentTitle</title>
+        <title>@Html.Raw(Model?.CurrentTitle)</title>
+        if (!string.IsNullOrWhiteSpace(Model?.DetailArticleData?.Abstract))
+        {
+            <meta name="description" content="@Html.Raw(Model?.DetailArticleData?.Abstract)">
+        }
     }
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @*<link rel="stylesheet" href="~/CoolNetBlog.styles.css" asp-append-version="true" />*@
