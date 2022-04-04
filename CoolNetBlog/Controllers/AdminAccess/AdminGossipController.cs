@@ -93,8 +93,13 @@ namespace CoolNetBlog.Controllers.Admin
             }
             if (vm.Type==2&&string.IsNullOrWhiteSpace(vm.ImgUrl))
             {
-                ModelState.AddModelError("", "发表失败:带图片的内容请选定图片url地址");
-                return View("GossipAmManagement", sgvm);
+                // 内部图片下拉框没有 从第三方输入框的值去找
+                vm.ImgUrl = HttpContext.Request.Form["UnofficialImg"];
+                if (string.IsNullOrWhiteSpace(vm.ImgUrl))
+                {
+                    ModelState.AddModelError("", "发表失败:带图片的内容请选定图片url地址");
+                    return View("GossipAmManagement", sgvm);
+                }
             }
             if (vm.Type == 1)
             {
