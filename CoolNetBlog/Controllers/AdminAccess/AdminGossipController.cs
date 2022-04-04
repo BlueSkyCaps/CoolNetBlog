@@ -126,7 +126,7 @@ namespace CoolNetBlog.Controllers.Admin
         /// 列表页面入口
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> GossipAmManagement(string? pt, string? kw, int index=1, int pageCount = 2)
+        public async Task<IActionResult> GossipAmManagement(string? pt, string? kw, int index=1, int pageCount = 30)
         {
             // 获取'闲言碎语'列表
             sgvm.GossipesOrg.Clear();
