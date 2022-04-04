@@ -139,13 +139,14 @@ namespace CoolNetBlog.Controllers.Admin
                     .Take(pageCount).ToListAsync();
             }
 
+            sgvm = new GossipViewModel { GossipesOrg = gossipes };
             // 处理分页按钮
             sgvm.Keyword = kw;
             if (!sgvm.GossipesOrg.Any())
             {
                 // 当前页没有任何数据了 不改动分页索引值
                 sgvm.NextIndex = index;
-                sgvm.PreIndex = index-1;
+                sgvm.PreIndex = (index-1) <= 0? 1: index - 1;
             }
             else
             {
@@ -160,7 +161,6 @@ namespace CoolNetBlog.Controllers.Admin
                     sgvm.PreIndex = index - 1;
                 }
             }
-            sgvm = new GossipViewModel { GossipesOrg = gossipes };
             // 自动封装已有的数据
             sgvm = (GossipViewModel)WrapMustNeedPassFields(sgvm);
             return View(sgvm);

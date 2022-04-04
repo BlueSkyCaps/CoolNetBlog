@@ -22,8 +22,8 @@
 <form method="get">
     <div class="row">
         <div class="col-auto">
+            <input hidden name="pt" value="@Model?.PassToken" class="form-control me-2" type="search" placeholder="关键字.." aria-label="Search">
             <input name="kw" value="@Model?.Keyword" class="form-control me-2" type="search" placeholder="关键字.." aria-label="Search">
-            <input name="pt" value="@Model?.PassToken" class="form-control me-2" type="search" placeholder="关键字.." aria-label="Search">
         </div>
         <div class="col-auto">
             <button type="submit" class="page-link"  asp-action="GossipAmManagement" asp-controller="AdminGossip">搜索</button>
