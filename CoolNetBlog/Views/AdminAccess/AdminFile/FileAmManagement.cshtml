@@ -30,7 +30,7 @@
    @foreach (var item in Model.FileImgPathsOrg)
    {
       <div class="card">
-        <img src="/img/@(item.FileRelPath)" class="card-img-top" alt="@Model.HelpName">
+        <img src="@(item.FileRelPath)" class="card-img-top" alt="@Model.HelpName">
         <div class="card-body">
           <h5 class="card-title">@item.HelpName</h5>
           <p class="card-text">实际文件名：@item.FileRelPath</p>

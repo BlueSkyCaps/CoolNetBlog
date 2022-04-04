@@ -1,18 +1,33 @@
 ﻿@model GossipViewModel
 <div asp-validation-summary="All" class="text-danger">
 </div>
+<input hidden id="pt" value="@Model?.PassToken">
+
 <div  class="btn-group" role="group" aria-label="Basic example">
     <form method="post">
         <input hidden name="pt" value="@Model?.PassToken" class="form-control me-2" type="search" placeholder="关键字.." aria-label="Search">
         <div class="mb-3">
-        <label for="exampleInputEmail1" class="form-label">发一条"闲言碎语"</label>
-        <input type="text" class="form-control" id="gossipPost" maxlength="60" asp-for="Content">
-        <div id="textHelp" class="form-text">闲言碎语:简单的小文字，类似心情和朋友圈小吐槽，字数5~60字。</div>
+            <label for="exampleInputEmail1" class="form-label">发一条"闲言碎语"</label>
+            <input type="text" class="form-control" id="gossipPost" maxlength="60" asp-for="Content">
+            <div id="textHelp" class="form-text">闲言碎语:简单的小文字，类似心情和朋友圈小吐槽，字数5~60字。</div>
         </div>
-        <select class="form-select" multiple asp-for="Type">
-        <option value="1">纯文字</option>
-        <option value="2">带图片的文字</option>
+        <select class="form-select form-select-sm" asp-for="Type" onchange="gossipTypeChanged()" id="gossipTypeSelect">
+            <option value="1">纯文字</option>
+            <option value="2">带图片的文字</option>
         </select>
+        <div hidden class="input-group mb-3 richPutModalDiv" id="richPutModalImgDiv">
+            <input style="width:70%" type="text" class="form-control input-group-sm" id="toSearchImgKey" placeholder="输入想插入的图片关键字词">
+            <button style="width:30%" class="btn btn-outline-primary" type="button" id="toSearchImgBtn" onclick="toSearchImgBtnClick()">搜索图片</button>
+            <label class="input-group-text" for="richPutModalImg">选择上传的图片</label>
+            <select class="form-select" id="richPutModalImg" onchange="richPutModalImgSelected()" asp-for="ImgUrl">
+            <option value="">--不选定 主动指定第三方图片url--</option>
+                @foreach (var fpItem in Model.ImgRelPaths)
+                {
+                <option value="@fpItem.FileRelPath">@fpItem.HelpName</option>
+                }
+            </select>
+            <input style="width:100%" type="text" class="form-control input-group-sm" id="richPutModalUnofficialImg" placeholder="第三方图片url(不选定时)">
+        </div>
         <input type="text" hidden itemid="imgUrlInput" placeholder="图片url" class="form-control" id="gossipPost" maxlength="120" asp-for="ImgUrl">
         <button type="submit" class="btn btn-primary" asp-action="AddGossip" asp-controller="AdminGossip">发布</button>
     </form>
@@ -87,5 +102,19 @@
     // 点击了某个文章的删除按钮 显示对应的确认删除按钮
     $(".delGossipBtn").click(function(){
         $(event.target).next().removeAttr('hidden');
+    });
+
+    // 点击了图文类型 显示搜索图片元素
+    function gossipTypeChanged(){
+        var currentSel = $('#gossipTypeSelect option:selected').val();
+        if(parseInt(currentSel)==2){
+            $('#richPutModalImgDiv').removeAttr('hidden');
+        }else{
+            $('#richPutModalImgDiv').attr('hidden','hidden');
+        }
+    }
+    // 加载完主动触发此函数是为了避免后台返回视图时选择的是"图文内容"但richPutModalImgDiv搜索图片默认是隐藏的
+    $('#richPutModalImgDiv').ready(()=>{
+        gossipTypeChanged();
     });
 </script>

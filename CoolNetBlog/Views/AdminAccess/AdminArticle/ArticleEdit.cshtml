@@ -1,9 +1,10 @@
 ﻿@model ArticleViewModel
 <div asp-validation-summary="All" class="text-danger">
 </div>
+<input  id="pt" type="hidden" value="@Model.PassToken">
 <form method="post">
     <div class="form-group">
-        <input asp-for="PassToken" id="ptValue" type="hidden" value="@Model.PassToken" class="form-control">
+        <input asp-for="PassToken" type="hidden" value="@Model.PassToken" class="form-control">
     </div>
     <div class="form-group">
         <input asp-for="Id" type="hidden" value="@Model.Id" class="form-control">
@@ -184,7 +185,7 @@
         </div>
         <div class="input-group mb-3 richPutModalDiv" id="richPutModalImgDiv">
             <input style="width:70%" type="text" class="form-control input-group-sm" id="toSearchImgKey" placeholder="输入想插入的图片关键字词">
-            <button style="width:30%" class="btn btn-outline-primary" type="button" id="toSearchImgBtn" onclick="toSearchImgBtn()">搜索图片</button>
+            <button style="width:30%" class="btn btn-outline-primary" type="button" id="toSearchImgBtn" onclick="toSearchImgBtnClick()">搜索图片</button>
             <label class="input-group-text" for="richPutModalImg">选择上传的图片</label>
             <select class="form-select" id="richPutModalImg" onchange="richPutModalImgSelected()">
             <option value="">--不选定 主动指定第三方图片url--</option>
@@ -322,10 +323,10 @@
                 if($('#richPutModalImg').val()===""){
                     richPutModalImgValue = $('#richPutModalUnofficialImg').val();//输入的第三方图片路径
                 }else{
-                    richPutModalImgValue = '/img/'+$('#richPutModalImg option:selected').val();//下拉选择的图片相对路径名
+                    richPutModalImgValue = $('#richPutModalImg option:selected').val();//下拉选择的图片相对路径名
                 }
                 // 将数据库存储的值有可能是windows'\\'目录分割的统一替换成标准斜杆，此行代码不是必须的。
-                richPutModalImgValue = richPutModalImgValue.replace('\\', '/');
+                richPutModalImgValue = richPutModalImgValue.replace(/\\/g,"/");
                 var b_htmlTextToPut = posLeftText+'<img src="'+richPutModalImgValue+'" style="width:100%;height:auto;" class="img-fluid mx-auto d-block" alt="">'+posRightText;
                 var o_htmlTextToPut = posLeftText+'<img src="'+richPutModalImgValue+'" style="max-width:100%;max-height:100%;" class="img-fluid mx-auto d-block" alt="">'+posRightText;
                 var c_htmlTextToPut = posLeftText+'<img src="'+richPutModalImgValue+'" style="width:55%;height:55%;" class="img-thumbnail rounded mx-auto d-block" alt="">'+posRightText;
@@ -363,41 +364,5 @@
 
     function richPutModalUlAdd(){
         $('#richPutModalUlAddItemBtn').before('<input style="width:100%" placeholder="输入项文字" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">');
-    }
-
-    // 插入的图片 搜索调用接口返回匹配的图片名列表项 更新选择框列表
-    function toSearchImgBtn(){
-        var pt = $('#ptValue').val();
-        var kw = $('#toSearchImgKey').val();
-        var getUrl = "/AdminFile/GetArticleEditImgPaths?pt=" +pt+ "&kw=" +kw;
-        $.ajax ({
-            url: getUrl,
-            type: "GET",
-            dataType: "json",
-            success: function(data, status){
-                // 清空图片选择列表，添加新的搜索结果集
-                $('#richPutModalImg').empty();
-                $('#richPutModalImg').append(new Option("--不选定--", ""));
-                $.each(data, function(i,item){  
-                    $('#richPutModalImg').append(new Option(item.helpName, item.fileRelPath));
-                });  
-            },
-            error: function(err){
-                alert("出错了！请重试一下吧。");
-                console.log("出错了！请重试一下吧。"+err);
-            }
-        });
-    }
-
-    // 插入选择的图片更改时
-    function richPutModalImgSelected(){
-        if($('#richPutModalImg').val()!==""){
-            // 不是空 选择的是下拉框里的内部图片 
-            $('#richPutModalUnofficialImg').val("");
-            $('#richPutModalUnofficialImg').attr("disabled", "disabled");
-        }else{
-            // 是空 选择的是'不选定' 第三方图片url输入框去除disabled
-            $('#richPutModalUnofficialImg').removeAttr("disabled");
-        }
     }
 </script>

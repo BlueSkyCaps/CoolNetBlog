@@ -79,9 +79,9 @@ namespace CoolNetBlog.Controllers.AdminAccess
 
 
                     }
-                    if ((file.Length / 1024.0) > 200)
+                    if ((file.Length / 1024.0) > 20000)
                     {
-                        TempData["Tips"] = "上传失败 图片大小大于200kb！通常，图片资源过大对于博客网站是很大的开销，建议压缩优化图片。";
+                        TempData["Tips"] = "上传失败 大小大于20MB！通常，资源过大对于博客网站是很大的开销，建议压缩资源。";
                         return RedirectToAction("FileAmManagement", "AdminFile", new { pt = sfvm.PassToken });
                     }
                     if (!Directory.Exists(Path.Combine(_environment.WebRootPath, "img")))
@@ -97,8 +97,8 @@ namespace CoolNetBlog.Controllers.AdminAccess
                     }
                     // 实际保存物理路径
                     fileRoot = Path.Combine(_environment.WebRootPath, "img",  nowDayDir, helpName + '.'+format);
-                    // 保存到数据库中的对应相对物理文件路径的名称 "当日目录/{图片助记名称}.xxx"
-                    saveDbfileRelPath = Path.Combine(nowDayDir, helpName + '.' + format);
+                    // 保存到数据库中的对应相对物理文件路径 即wwwroot根下的"/img/当日目录/{图片助记名称}.xxx"
+                    saveDbfileRelPath = Path.Combine(Path.DirectorySeparatorChar+"img", nowDayDir, helpName + '.' + format);
                 }
                 else
                 {
@@ -129,7 +129,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
 
                     // 实际保存物理路径
                     fileRoot = Path.Combine(_environment.WebRootPath, "epLinks", file.FileName);
-                    // 保存到数据库中的对应相对物理文件路径的名称
+                    // 保存到数据库中的对应相对物理文件路径的名称 只保存文件名 不包含"epLinks" 因为只存在硬epLinks目录下
                     saveDbfileRelPath = file.FileName;
 
                     if (_fileSet.Any(f=>f.FileRelPath== saveDbfileRelPath))
@@ -188,7 +188,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
             string? root;
             if (type.ToLower()=="img")
             {
-                root = Path.Combine(_environment.WebRootPath, "img", fileRelPath);
+                root = _environment.WebRootPath.TrimEnd(Path.DirectorySeparatorChar) + fileRelPath;
             }
             else
             {

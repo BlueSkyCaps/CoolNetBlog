@@ -16,11 +16,13 @@ namespace CoolNetBlog.Controllers.Admin
     {
         private static GossipViewModel sgvm = new();
         private SugarDataBaseStorage<Gossip, int> _gossipSet;
+        private SugarDataBaseStorage<FilePath, int> _filePathSet;
 
         public AdminGossipController():base()
         {
             BaseSugar baseSugar = new BaseSugar();
             _gossipSet = new SugarDataBaseStorage<Gossip, int>(baseSugar._dbHandler);
+            _filePathSet = new SugarDataBaseStorage<FilePath, int>(baseSugar._dbHandler);
         }
 
         /// <summary>
@@ -94,6 +96,10 @@ namespace CoolNetBlog.Controllers.Admin
                 ModelState.AddModelError("", "发表失败:带图片的内容请选定图片url地址");
                 return View("GossipAmManagement", sgvm);
             }
+            if (vm.Type == 1)
+            {
+                vm.ImgUrl = null;
+            }
             if (string.IsNullOrWhiteSpace(vm.Content)|| vm.Content.Length>60)
             {
                 ModelState.AddModelError("", "发表失败:内容字数无效");
@@ -129,7 +135,6 @@ namespace CoolNetBlog.Controllers.Admin
         public async Task<IActionResult> GossipAmManagement(string? pt, string? kw, int index=1, int pageCount = 30)
         {
             // 获取'闲言碎语'列表
-            sgvm.GossipesOrg.Clear();
             IList<Gossip> gossipes;
             if (!string.IsNullOrWhiteSpace(kw))
             {
@@ -149,7 +154,11 @@ namespace CoolNetBlog.Controllers.Admin
             }
 
             sgvm = new GossipViewModel { GossipesOrg = gossipes };
-            // 处理分页按钮
+
+            sgvm.ImgRelPaths = await _filePathSet.GetListBuilder().Where(f => f.Type == "img")
+                .OrderBy(f => f.UploadTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
+
+            // 处理分页按钮索引值
             sgvm.Keyword = kw;
             if (!sgvm.GossipesOrg.Any())
             {

@@ -1,0 +1,115 @@
+﻿@{
+    // 此Layout用于后台文章、后台"闲言碎语"共享，与_AdminLayout相同，多了共享的js函数。
+    // 后台文章、后台"闲言碎语"都可以选择插入图片，此功能调用的逻辑一致。
+}
+@model PassBaseViewModel
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>后台-光之使者</title>
+    @*<link rel="stylesheet" href="~/CoolNetBlog.styles.css" asp-append-version="true" />*@
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <script src="~/js/com.js" asp-append-version="true"></script>
+    <!-- bootstrap 5.1.0 cdn-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jquery 3.5.1 cdn-->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <!-- UIkit 3.10.1 cdn-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/css/uikit.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit-icons.min.js"></script>
+
+    @*<script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
+    <script>
+        var vConsole = new window.VConsole();
+    </script>*@
+
+    @await RenderSectionAsync("Scripts", required: false)
+    <style>
+
+    </style>
+</head>
+<body>
+    <div class="text-center">
+        <figure class="text-center">
+            <h4>后台管理员 ~喵咪呼啦~</h4>
+          <figcaption class="blockquote-footer">
+              <cite title="CoolNetBlog">CoolNetBlog</cite> 萌●'◡'●力驱动，简洁、高效、洒脱。
+          </figcaption>
+        </figure>
+        @{
+            //若是在登陆界面，不具有PassToken，此样式不会显示。否则后台主页具有token，因为验证通过了
+            if (!String.IsNullOrWhiteSpace(@Model?.PassToken))
+            {
+                <div>
+                <h3 >大侠你好, <mark>@Model?.AccountName</mark></h3>
+                </div>
+            }
+        }
+        @if (!string.IsNullOrWhiteSpace(@Model?.PassToken))
+        {
+            // 登录页没有PassToken 成功登陆后才有 不显示"返回后台面板"
+            <div class="btn-group" role="group" aria-label="Second group">
+                <a class="btn btn-outline-primary text text-secondary"  asp-route-pt="@Model?.PassToken" asp-action="AdminHome" asp-controller="Admin">面板</a>
+                <a class="btn btn-outline-primary text text-secondary" target="_blank" asp-action="Index" asp-controller="Home">站点</a>
+                <a class="btn btn-outline-primary text text-secondary" asp-route-pt="@Model?.PassToken" asp-action="LoginOut" asp-controller="Admin">登出</a>
+            </div>
+        }
+    </div>
+    <br>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">@@MyHeartWillGoOn 🐱后台猫の尾巴</div>
+    </footer>
+</body>
+</html>
+<script>
+    @{
+        // 全局视图用于后台文章、后台"闲言碎语"共享，嗯_AdminLayout相同，多了共享的js函数。
+        // 后台文章、后台"闲言碎语"都可以选择插入图片，此功能调用的逻辑一致。
+    }
+    // 插入的图片 搜索调用接口返回匹配的图片名列表项 更新选择框列表
+    function toSearchImgBtnClick(){
+        alert()
+        var pt = $('#pt').val();
+        var kw = $('#toSearchImgKey').val();
+        var getUrl = "/AdminFile/GetArticleEditImgPaths?pt=" +pt+ "&kw=" +kw;
+        $.ajax ({
+            url: getUrl,
+            type: "GET",
+            dataType: "json",
+            success: function(data, status){
+                // 清空图片选择列表，添加新的搜索结果集
+                $('#richPutModalImg').empty();
+                $('#richPutModalImg').append(new Option("--不选定--", ""));
+                $.each(data, function(i,item){  
+                    $('#richPutModalImg').append(new Option(item.helpName, item.fileRelPath));
+                });  
+            },
+            error: function(err){
+                alert("出错了！请重试一下吧。");
+                console.log("出错了！请重试一下吧。"+err);
+            }
+        });
+    }
+
+    // 插入选择的图片更改时
+    function richPutModalImgSelected(){
+        if($('#richPutModalImg').val()!==""){
+            // 不是空 选择的是下拉框里的内部图片 
+            $('#richPutModalUnofficialImg').val("");
+            $('#richPutModalUnofficialImg').attr("disabled", "disabled");
+        }else{
+            // 是空 选择的是'不选定' 第三方图片url输入框去除disabled
+            $('#richPutModalUnofficialImg').removeAttr("disabled");
+        }
+    }
+</script>
