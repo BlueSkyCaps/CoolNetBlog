@@ -80,25 +80,24 @@ namespace CoolNetBlog.Controllers.Admin
         {
             RemoveSomeValid();
             ModelState.Clear();
-            // 新增，赋值最后(当前)的列表数据 避免新增错误时返回视图后丢失 
-            vm.GossipesOrg = sgvm.GossipesOrg;
+            // 新增，赋值当前实体编辑的数据 避免新增错误时返回视图后丢失 
+            sgvm.Content = vm.Content;
+            sgvm.ImgUrl = vm.ImgUrl;
+            sgvm.Type = vm.Type;
             if (vm.Type<=0)
             {
                 ModelState.AddModelError("", "发表失败:请选择类型");
-                vm = (GossipViewModel)WrapMustNeedPassFields(vm);
-                return View("GossipAmManagement", vm);
+                return View("GossipAmManagement", sgvm);
             }
             if (vm.Type==2&&string.IsNullOrWhiteSpace(vm.ImgUrl))
             {
                 ModelState.AddModelError("", "发表失败:带图片的内容请选定图片url地址");
-                vm = (GossipViewModel)WrapMustNeedPassFields(vm);
-                return View("GossipAmManagement", vm);
+                return View("GossipAmManagement", sgvm);
             }
             if (string.IsNullOrWhiteSpace(vm.Content)|| vm.Content.Length>60)
             {
                 ModelState.AddModelError("", "发表失败:内容字数无效");
-                vm = (GossipViewModel)WrapMustNeedPassFields(vm);
-                return View("GossipAmManagement", vm);
+                return View("GossipAmManagement", sgvm);
             }
             Gossip editable = new Gossip();    
             editable.ImgUrl = vm.ImgUrl;
@@ -116,8 +115,7 @@ namespace CoolNetBlog.Controllers.Admin
             {
                 _gossipSet.TransRoll();
                 ModelState.AddModelError("", "发表失败:已回滚，复制输入好的的内容，返回重新再试一遍？");
-                vm = (GossipViewModel)WrapMustNeedPassFields(vm);
-                return View("GossipAmManagement", vm);
+                return View("GossipAmManagement", sgvm);
             }
             // 新增成功，直接重定向到第一页数据
             return RedirectToAction("GossipAmManagement", "AdminGossip", new { pt= sgvm.PassToken });
