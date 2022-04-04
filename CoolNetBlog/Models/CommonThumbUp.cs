@@ -26,7 +26,8 @@ namespace CoolNetBlog.Models
         /// Desc:客户端点赞文章的Ip
         /// Default:
         /// Nullable:False
-        /// </summary>           
+        /// </summary>         
+        [SugarColumn(IsPrimaryKey = true)]
         public string ClientIp { get; set; }
         public string? ClientDevice { get; set; }
         public string? ClientBrowser { get; set; }

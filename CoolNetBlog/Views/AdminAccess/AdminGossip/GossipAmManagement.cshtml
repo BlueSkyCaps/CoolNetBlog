@@ -4,28 +4,70 @@
 <div  class="btn-group" role="group" aria-label="Basic example">
     <form method="post">
       <div class="mb-3">
-        <label for="exampleInputEmail1" class="form-label">发布一条"闲言碎语"</label>
-        <input type="text" class="form-control" id="gossipPost" maxlength="70" asp-for="Content">
-        <div id="textHelp" class="form-text">闲言碎语:简单的小文字，类似心情和朋友圈的小吐槽，字数5~70字。</div>
+        <label for="exampleInputEmail1" class="form-label">发一条"闲言碎语"</label>
+        <input type="text" class="form-control" id="gossipPost" maxlength="60" asp-for="Content">
+        <div id="textHelp" class="form-text">闲言碎语:简单的小文字，类似心情和朋友圈小吐槽，字数5~60字。</div>
       </div>
       <select class="form-select" multiple asp-for="Type">
       <option selected value="1">纯文字</option>
       <option value="2">带图片的文字</option>
       </select>
+      <input type="text" hidden itemid="imgUrlInput" placeholder="图片url" class="form-control" id="gossipPost" maxlength="120" asp-for="ImgUrl">
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>
 <div >
 <form method="get">
-<input name="kw" class="form-control me-2" type="search" placeholder="" aria-label="Search">
-<input hidden name="pt" value="@Model.PassToken">
-<button class="btn btn-dark" type="submit" asp-action="ArticleAmManagement" asp-controller="AdminArticle">搜索</button>
+<input asp-for="Kw" class="form-control me-2" type="search" placeholder="关键字.." aria-label="Search">
+<a class="page-link" asp-route-pt="@Model?.PassToken" asp-action="GossipAmManagement" asp-controller="AdminGossip">搜索</a>
 </form>
 </div>
 <br>
-<input hidden id="urlHidInput"/>
-<div class="list-group">
-    
+<div class="card-group">
+    @foreach (var item in @Model.GossipesOrg)
+    {
+        if (item.Type==1)
+        {
+            <div class="card">
+            <div class="card-body">
+            <p class="card-text">内容：@(item.Content)</p>
+            <p class="card-text"><small class="text-muted">时间：@(item.AddTime)</small></p>
+             <form method="post">
+                <input hidden name="pt" value="@Model.PassToken">
+                <input hidden name="id" value="@item.Id">
+                <button class="btn btn-danger delGossipBtn" type="button">删除</button>
+                <button hidden class="btn btn-warning confirmdelGossipBtn" type="submit"  asp-action="Delete" asp-controller="AdminGossip">确认删除</button>
+            </form>
+            </div>
+            </div>
+        }
+        else
+        {
+            <div class="card">
+            <img src="@item.ImgUrl" class="card-img-top">
+            <div class="card-body">
+            <p class="card-text">内容：@(item.Content)</p>
+            <p class="card-text"><small class="text-muted">时间：@(item.AddTime)</small></p>
+            <form method="post">
+                <input hidden name="pt" value="@Model.PassToken">
+                <input hidden name="id" value="@item.Id">
+                <button class="btn btn-danger delGossipBtn" type="button">删除</button>
+                <button hidden class="btn btn-warning confirmdelGossipBtn" type="submit"  asp-action="Delete" asp-controller="AdminGossip">确认删除</button>
+            </form>
+            </div>
+            </div>
+        }
+    }
 </div>
+<nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item"><a class="page-link" asp-route-index="@Model?.NextIndex" asp-route-pt="@Model?.PassToken" asp-action="GossipAmManagement" asp-controller="AdminGossip">上页</a></li>
+    <li class="page-item"><a class="page-link" asp-route-index="@Model?.PreIndex" asp-route-pt="@Model?.PassToken" asp-action="GossipAmManagement" asp-controller="AdminGossip">下页</a></li>
+  </ul>
+</nav>
 <script>
+    // 点击了某个文章的删除按钮 显示对应的确认删除按钮
+    $(".delGossipBtn").click(function(){
+        $(event.target).next().removeAttr('hidden');
+    });
 </script>

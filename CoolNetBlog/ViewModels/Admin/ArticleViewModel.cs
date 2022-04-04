@@ -6,7 +6,8 @@ namespace CoolNetBlog.ViewModels.Admin
     /// 文章操作模型视图类
     /// </summary>
     public class ArticleViewModel : PassBaseViewModel
-    {   //----⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ POST表单属性
+    {   
+        //----⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ POST表单属性
         public int Id { get; set; }
         public int MenuId { get; set; }
         public string Title { get; set; }

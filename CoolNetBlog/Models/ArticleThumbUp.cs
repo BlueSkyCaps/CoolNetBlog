@@ -22,6 +22,7 @@ namespace CoolNetBlog.Models
         /// Default:
         /// Nullable:False
         /// </summary>           
+        [SugarColumn(IsPrimaryKey = true)]
         public string ClientIp { get; set; }
         public string? ClientDevice { get; set; }
         public string? ClientBrowser { get; set; }

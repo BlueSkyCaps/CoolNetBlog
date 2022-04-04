@@ -19,7 +19,7 @@ namespace CoolNetBlog.Base
         public void OnActionExecuting(ActionExecutingContext context)
         {
             List<string> adminExpCtrName = new List<string> { 
-                "admin","adminmenu", "adminarticle", "adminsitesetting", "adminfile", "adminlovelook","adminleavemessage" };
+                "admin","adminmenu", "adminarticle", "adminsitesetting", "adminfile", "adminlovelook","adminleavemessage","admingossip" };
 
             var controllerName = ((ControllerBase)context.Controller).ControllerContext.ActionDescriptor.ControllerName;
             var actionName = ((ControllerBase)context.Controller).ControllerContext.ActionDescriptor.ActionName;
