@@ -2,12 +2,16 @@
 <div asp-validation-summary="All" class="text-danger">
 </div>
 <div  class="btn-group" role="group" aria-label="Basic example">
-    <form>
+    <form method="post">
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">发布一条"闲言碎语"</label>
-        <input type="text" class="form-control" id="gossipPost" maxlength="70">
+        <input type="text" class="form-control" id="gossipPost" maxlength="70" asp-for="Content">
         <div id="textHelp" class="form-text">闲言碎语:简单的小文字，类似心情和朋友圈的小吐槽，字数5~70字。</div>
       </div>
+      <select class="form-select" multiple asp-for="Type">
+      <option selected value="1">纯文字</option>
+      <option value="2">带图片的文字</option>
+      </select>
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>
