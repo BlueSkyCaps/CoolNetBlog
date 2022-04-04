@@ -27,9 +27,10 @@ namespace CoolNetBlog.Controllers.Admin
         /// 根据Id删除一个"闲言碎语"
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="kw">有关键词搜索，带上关键词，删除成功后跳转带给首页过滤</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Delete([FromForm] int id) {
+        public async Task<IActionResult> Delete([FromForm] int id, [FromForm] string? kw) {
             if (id<1)
             {
                 ModelState.AddModelError("", "删除闲言碎语失败:Id无效，重启浏览器再试吧？。");
@@ -56,6 +57,7 @@ namespace CoolNetBlog.Controllers.Admin
 
                 // 删除此条实体
                 await _gossipSet.DeleteAsync(delable);
+                _gossipSet.TransCommit();
             }
             catch (Exception e)
             {
@@ -64,7 +66,7 @@ namespace CoolNetBlog.Controllers.Admin
                 return View("GossipAmManagement", sgvm);
             }
 
-            return RedirectToAction("GossipAmManagement", "AdminGossip", new { pt = sgvm.PassToken });
+            return RedirectToAction("GossipAmManagement", "AdminGossip", new { pt = sgvm.PassToken,kw= kw });
 
         }
 
@@ -74,21 +76,29 @@ namespace CoolNetBlog.Controllers.Admin
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> AddGossip(GossipViewModel vm)
+        public async Task<IActionResult> AddGossip([FromForm] GossipViewModel vm)
         {
             RemoveSomeValid();
             ModelState.Clear();
+            // 新增，将原先的列表数据赋值 避免返回视图后丢失
+            vm.GossipesOrg = sgvm.GossipesOrg;
+            if (vm.Type<=0)
+            {
+                ModelState.AddModelError("", "发表失败:请选择类型");
+                vm = (GossipViewModel)WrapMustNeedPassFields(vm);
+                return View("GossipAmManagement", vm);
+            }
             if (vm.Type==2&&string.IsNullOrWhiteSpace(vm.ImgUrl))
             {
                 ModelState.AddModelError("", "发表失败:带图片的内容请选定图片url地址");
                 vm = (GossipViewModel)WrapMustNeedPassFields(vm);
-                return View(vm);
+                return View("GossipAmManagement", vm);
             }
             if (string.IsNullOrWhiteSpace(vm.Content)|| vm.Content.Length>60)
             {
                 ModelState.AddModelError("", "发表失败:内容字数无效");
                 vm = (GossipViewModel)WrapMustNeedPassFields(vm);
-                return View(vm);
+                return View("GossipAmManagement", vm);
             }
             Gossip editable = new Gossip();    
             editable.ImgUrl = vm.ImgUrl;
@@ -107,7 +117,7 @@ namespace CoolNetBlog.Controllers.Admin
                 _gossipSet.TransRoll();
                 ModelState.AddModelError("", "发表失败:已回滚，复制输入好的的内容，返回重新再试一遍？");
                 vm = (GossipViewModel)WrapMustNeedPassFields(vm);
-                return View(vm);
+                return View("GossipAmManagement", vm);
             }
             return RedirectToAction("GossipAmManagement", "AdminGossip", new { pt= sgvm.PassToken });
         }
@@ -117,7 +127,7 @@ namespace CoolNetBlog.Controllers.Admin
         /// 管理页面入口
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> GossipAmManagement(string? pt, string? kw, int index=1, int pageCount = 10)
+        public async Task<IActionResult> GossipAmManagement(string? pt, string? kw, int index=1, int pageCount = 2)
         {
             // 获取'闲言碎语'列表
             sgvm.GossipesOrg.Clear();
