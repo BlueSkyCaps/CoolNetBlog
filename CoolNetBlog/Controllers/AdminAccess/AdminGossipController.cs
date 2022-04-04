@@ -143,7 +143,7 @@ namespace CoolNetBlog.Controllers.Admin
             sgvm.Kw = kw;
             if (!sgvm.GossipesOrg.Any())
             {
-                // 当前页没有任何数据了
+                // 当前页没有任何数据了 不改动分页索引值
                 sgvm.NextIndex = index;
                 sgvm.PreIndex = index-1;
             }

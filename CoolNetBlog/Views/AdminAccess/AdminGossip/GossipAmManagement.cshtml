@@ -23,42 +23,48 @@
 </form>
 </div>
 <br>
-<div class="card-group">
-    @foreach (var item in @Model.GossipesOrg)
-    {
-        if (item.Type==1)
+@if (!Model.GossipesOrg.Any())
+{
+    <div class="alert alert-warning" role="alert">当前页没有任何数据了，请点击上一页查看</div>
+}else
+{
+    <div class="card-group">
+        @foreach (var item in @Model.GossipesOrg)
         {
-            <div class="card">
-            <div class="card-body">
-            <p class="card-text">内容：@(item.Content)</p>
-            <p class="card-text"><small class="text-muted">时间：@(item.AddTime)</small></p>
-             <form method="post">
-                <input hidden name="pt" value="@Model.PassToken">
-                <input hidden name="id" value="@item.Id">
-                <button class="btn btn-danger delGossipBtn" type="button">删除</button>
-                <button hidden class="btn btn-warning confirmdelGossipBtn" type="submit"  asp-action="Delete" asp-controller="AdminGossip">确认删除</button>
-            </form>
-            </div>
-            </div>
+            if (item.Type==1)
+            {
+                <div class="card">
+                <div class="card-body">
+                <p class="card-text">内容：@(item.Content)</p>
+                <p class="card-text"><small class="text-muted">时间：@(item.AddTime)</small></p>
+                 <form method="post">
+                    <input hidden name="pt" value="@Model.PassToken">
+                    <input hidden name="id" value="@item.Id">
+                    <button class="btn btn-danger delGossipBtn" type="button">删除</button>
+                    <button hidden class="btn btn-warning confirmdelGossipBtn" type="submit"  asp-action="Delete" asp-controller="AdminGossip">确认删除</button>
+                </form>
+                </div>
+                </div>
+            }
+            else
+            {
+                <div class="card">
+                <img src="@item.ImgUrl" class="card-img-top">
+                <div class="card-body">
+                <p class="card-text">内容：@(item.Content)</p>
+                <p class="card-text"><small class="text-muted">时间：@(item.AddTime)</small></p>
+                <form method="post">
+                    <input hidden name="pt" value="@Model.PassToken">
+                    <input hidden name="id" value="@item.Id">
+                    <button class="btn btn-danger delGossipBtn" type="button">删除</button>
+                    <button hidden class="btn btn-warning confirmdelGossipBtn" type="submit"  asp-action="Delete" asp-controller="AdminGossip">确认删除</button>
+                </form>
+                </div>
+                </div>
+            }
         }
-        else
-        {
-            <div class="card">
-            <img src="@item.ImgUrl" class="card-img-top">
-            <div class="card-body">
-            <p class="card-text">内容：@(item.Content)</p>
-            <p class="card-text"><small class="text-muted">时间：@(item.AddTime)</small></p>
-            <form method="post">
-                <input hidden name="pt" value="@Model.PassToken">
-                <input hidden name="id" value="@item.Id">
-                <button class="btn btn-danger delGossipBtn" type="button">删除</button>
-                <button hidden class="btn btn-warning confirmdelGossipBtn" type="submit"  asp-action="Delete" asp-controller="AdminGossip">确认删除</button>
-            </form>
-            </div>
-            </div>
-        }
-    }
-</div>
+    </div>
+}  
 <nav aria-label="Page navigation example">
   <ul class="pagination">
     <li class="page-item"><a class="page-link" asp-route-index="@Model?.NextIndex" asp-route-pt="@Model?.PassToken" asp-action="GossipAmManagement" asp-controller="AdminGossip">上页</a></li>
