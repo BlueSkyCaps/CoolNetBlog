@@ -18,7 +18,7 @@ namespace CoolNetBlog.ViewModels.Admin
         // -----⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆
 
         public IList<Gossip> GossipesOrg { get; set; } = new List<Gossip>();
-        public string? Kw { get; set; }
+        public string? Keyword { get; set; }
 
         public int Index { get; set; } = 1;
         public int NextIndex { get; set; } = 2;

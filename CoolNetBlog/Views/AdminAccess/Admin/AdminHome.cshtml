@@ -14,8 +14,16 @@
 <div class="card">
   <div class="card-body">
     <h5 class="card-title">文章管理</h5>
-    <p class="card-text">发表文、操作文章，归类和加锁..</p>
+    <p class="card-text">发表、操作文章，归类和加锁..</p>
     <a  class="btn btn-primary" asp-route-pt="@Model.PassToken" asp-action="ArticleAmManagement" asp-controller="AdminArticle">前往</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">贴个"闲言碎语"</h5>
+    <p class="card-text">管理小组件"闲言碎语"中的内容..</p>
+    <a  class="btn btn-primary" asp-route-pt="@Model.PassToken" asp-action="GossipAmManagement" asp-controller="AdminGossip">前往</a>
   </div>
 </div>
 

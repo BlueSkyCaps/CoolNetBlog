@@ -140,7 +140,7 @@ namespace CoolNetBlog.Controllers.Admin
             }
 
             // 处理分页按钮
-            sgvm.Kw = kw;
+            sgvm.Keyword = kw;
             if (!sgvm.GossipesOrg.Any())
             {
                 // 当前页没有任何数据了 不改动分页索引值
