@@ -9,11 +9,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // Add services to the container.
+
+/*
+ * 默认配置下：网页中文显示正常，但源代码中文未编码
+ * 配置html源代码unicode编码中文显示问题
+ */
 builder.Services.Configure<WebEncoderOptions>(options =>
 {
     options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
 });
 
+/*
+ * 配置json中文乱码问题
+ */
 builder.Services.AddControllersWithViews().AddJsonOptions((options =>
 {
     // 配置System.Text.Json 全局Json非英文字符
