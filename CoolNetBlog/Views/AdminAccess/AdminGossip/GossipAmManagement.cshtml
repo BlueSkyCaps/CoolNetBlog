@@ -8,8 +8,8 @@
         <input hidden name="pt" value="@Model?.PassToken" class="form-control me-2" type="search" placeholder="关键字.." aria-label="Search">
         <div class="mb-3">
             <label for="exampleInputEmail1" class="form-label">发一条"闲言碎语"</label>
-            <input type="text" class="form-control" maxlength="60" asp-for="Content">
-            <div id="textHelp" class="form-text">闲言碎语:简单的小文字，类似心情和朋友圈小吐槽，字数5~60字。</div>
+            <input type="text" class="form-control" maxlength="150" asp-for="Content">
+            <div id="textHelp" class="form-text">闲言碎语:简单的小文字，类似心情和朋友圈小吐槽，字数5~150字。</div>
         </div>
         <select class="form-select form-select-sm" asp-for="Type" onchange="gossipTypeChanged()" id="gossipTypeSelect">
             <option value="1">纯文字</option>
