@@ -74,14 +74,28 @@
     <style>
         @{
             //心愿图片div固定尺寸
+            //闲言碎语图片
+
+            /*  Hide scrollbar for Chrome, Safari and Opera 
+             *  Hide scrollbar for IE, Edge and Firefox && IE and Edge Firefox
+             */
         }
         .wishPicture{
             width:150px;
             height:150px;
             object-fit:contain;
         }
-        .gossip{
+        .gossipImg{
             object-fit:contain;
+        }
+        
+        #gossipScroll::-webkit-scrollbar {
+          display: none;
+        }
+
+        #gossipScroll{
+          -ms-overflow-style: none;  
+          scrollbar-width: none; 
         }
        
     </style>
@@ -261,6 +275,7 @@
                     </div>
                     </figure>
                     <div id="gossipScroll"  class="" >
+                        <p class="text-secondary"><small>(滑动查看更多🤭)</small></p>
                     </div>
                     <br>
                 </div>
