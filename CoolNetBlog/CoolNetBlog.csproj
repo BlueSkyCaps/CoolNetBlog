@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\articleImgs\**" />
+    <Content Remove="wwwroot\articleImgs\**" />
+    <EmbeddedResource Remove="wwwroot\articleImgs\**" />
+    <None Remove="wwwroot\articleImgs\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <_WebToolingArtifacts Remove="Properties\launchSettings.json" />
   </ItemGroup>
 
@@ -18,7 +25,6 @@
     <ProjectReference Include="..\ComponentsServices\ComponentsServices.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="wwwroot\articleImgs\" />
     <Folder Include="wwwroot\img\20220404\" />
     <Folder Include="wwwroot\js\view\WarningPage\" />
     <Folder Include="wwwroot\js\view\WarningPage\" />
