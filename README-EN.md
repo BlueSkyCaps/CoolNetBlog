@@ -24,7 +24,7 @@
 #### IDE：.net core 6 sdk and asp.net core 6，visual studio 2022
 By default, this project uses mysql8.0 for development, and sqlserver requires you to verify the development by yourself.
 
-1. Select a Release version(Lasted) of the repository and download the repository code, such as v2.0.1 or v1.9.9
+1. Select a Release version and download the code, such as v2.0.1
 2. Create the file 'configs.json' in the 'CoolNetBlog' directory and copy the json content：
 ```
 {
@@ -41,14 +41,14 @@ You can then use git to make configs.json an ignored file.
 
 3. Add coolNetBlog database (version v2.0.1, similar to the rest)：
 
-Use navicat and other database management tools to connect to the mysql server, run sql statements, and the sql file is the "v199_dump_CoolNetBlog.sql" under directory.
+Use navicat and other database management tools to connect to the mysql server, run sql statements, and the sql file is the "v201_dump_CoolNetBlog.sql" under directory.
 
 Another way is that the commands can be executed sequentially in the terminal：
 ```
 mysql -u{name} -p
 CREATE DATABASE if not exists CoolNetBlog CHARACTER SET utf8 COLLATE utf8_general_ci;
 exit;
-mysql -u{name} -p{password} CoolNetBlog < v199_dump_CoolNetBlog.sql
+mysql -u{name} -p{password} CoolNetBlog < v201_dump_CoolNetBlog.sql
 ```
 This completes the addition of the CoolNetBlog database.
 

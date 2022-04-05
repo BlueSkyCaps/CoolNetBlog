@@ -23,7 +23,7 @@
 ### 运行|开发项目：
 #### 环境配置：.net core 6 sdk and asp.net core 6，visual studio 2022
 本项目默认使用mysql8.0进行开发完成，但采用Sqlsugar ORM框架，只需更改configs.json的连接字符串以使用sqlServer等，但非mysql数据库需要自行验证开发。
-1. 选择仓库的某个Release版本(Lasted)，下载仓库代码，如v1.9.9 or v2.0.1。
+1. 选择某个Release版本，下载代码，如v2.0.1。
 2. 在CoolNetBlog\目录下创建文件configs.json，并复制以下json内容：
 ```
 {
@@ -38,16 +38,16 @@
 ```
 然后可以使用git将configs.json设为忽略项
 
-3. 添加CoolNetBlog数据库(版本v1.9.9，其余类似)：
+3. 添加CoolNetBlog数据库(版本v2.0.1，其余类似)：
 
-使用navicat等数据库管理工具连接mysql服务器，运行sql语句，sql文件是本仓库下的"v199_dump_CoolNetBlog.sql"。
+使用navicat等数据库管理工具连接mysql服务器，运行sql语句，sql文件是本仓库下的"v201_dump_CoolNetBlog.sql"。
 
 或者在终端依次执行命令：
 ```
 mysql -u用户名 -p密码
 CREATE DATABASE if not exists CoolNetBlog CHARACTER SET utf8 COLLATE utf8_general_ci;
 exit;
-mysql -u用户名 -p密码 CoolNetBlog < v199_dump_CoolNetBlog.sql
+mysql -u用户名 -p密码 CoolNetBlog < v201_dump_CoolNetBlog.sql
 ```
 这样便添加CoolNetBlog数据库完毕。
 
