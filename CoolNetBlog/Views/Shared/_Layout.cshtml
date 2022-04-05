@@ -62,10 +62,12 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <!-- jquery 3.5.1 local-->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <!-- UIkit 3.10.1 local-->
-    //<link rel="stylesheet" href="~/lib/uikit/css/uikit.min.css" />
-    //<script src="~/lib/uikit/js/uikit.min.js"></script>
-    //<script src="~/lib/uikit/js/uikit-icons.min.js"></script>
+    @{
+        //<!-- UIkit 3.10.1 local-->
+        //<link rel="stylesheet" href="~/lib/uikit/css/uikit.min.css" />
+        //<script src="~/lib/uikit/js/uikit.min.js"></script>
+        //<script src="~/lib/uikit/js/uikit-icons.min.js"></script>
+    }
 
     @await RenderSectionAsync("Scripts", required: false)
 
