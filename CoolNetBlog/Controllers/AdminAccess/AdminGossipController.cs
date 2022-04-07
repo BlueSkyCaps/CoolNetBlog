@@ -105,7 +105,7 @@ namespace CoolNetBlog.Controllers.Admin
             {
                 vm.ImgUrl = null;
             }
-            if (string.IsNullOrWhiteSpace(vm.Content)|| vm.Content.Length>60)
+            if (string.IsNullOrWhiteSpace(vm.Content)|| vm.Content.Length>150)
             {
                 ModelState.AddModelError("", "发表失败:内容字数无效");
                 return View("GossipAmManagement", sgvm);
