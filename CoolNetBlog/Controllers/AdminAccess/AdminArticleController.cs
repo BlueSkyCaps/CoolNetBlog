@@ -158,7 +158,7 @@ namespace CoolNetBlog.Controllers.Admin
             }
             if (editable.IsLock&& String.IsNullOrWhiteSpace(editable.LockPassword))
             {
-                ModelState.AddModelError("", "发表失败:隐私文章必须得设置一个密码");
+                ModelState.AddModelError("", "发表失败:加锁文章必须得设置一个密码");
                 // 因为是提交表单数据，所以下拉框的值是空的，此处从事先的静态数据中取出赋值
                 vm.MenuSelectList = smvm.MenuSelectList;
                 vm = (ArticleViewModel)WrapMustNeedPassFields(vm);
@@ -168,7 +168,7 @@ namespace CoolNetBlog.Controllers.Admin
 
             if (editable.IsSpecial && (editable.IsLock|| editable.IsDraft))
             {
-                ModelState.AddModelError("", "发表失败:特殊文章不能设为隐私文章或草稿");
+                ModelState.AddModelError("", "发表失败:特殊文章不能设为加锁文章或草稿");
                 // 因为是提交表单数据，所以下拉框的值是空的，此处从事先的静态数据中取出赋值
                 vm.MenuSelectList = smvm.MenuSelectList;
                 vm = (ArticleViewModel)WrapMustNeedPassFields(vm);

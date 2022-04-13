@@ -1,4 +1,4 @@
-﻿// 隐私文章 输入密码
+﻿// 加锁文章 输入密码
 $("#toUnlockBtn").click(
     function () {
         var v = $('#inputPassword').val();

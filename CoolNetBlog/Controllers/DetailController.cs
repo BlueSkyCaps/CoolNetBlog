@@ -28,7 +28,7 @@ namespace CoolNetBlog.Controllers.Home
         }
 
         /// <summary>
-        /// 隐私文章解锁接口
+        /// 加锁文章解锁接口
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>

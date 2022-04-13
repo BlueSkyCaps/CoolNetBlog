@@ -73,14 +73,14 @@ namespace CoolNetBlog.Models
            public DateTime UpdateTime {get;set;}
 
            /// <summary>
-           /// Desc:是否隐私文章，隐私文章需在页面解锁才显示主体内容
+           /// Desc:是否加锁文章，加锁文章需在页面解锁才显示主体内容
            /// Default:b'0'
            /// Nullable:False
            /// </summary>           
            public bool IsLock {get;set;}
 
            /// <summary>
-           /// Desc:隐私文章密码
+           /// Desc:加锁文章密码
            /// Default:
            /// Nullable:true
            /// </summary>           
@@ -89,7 +89,7 @@ namespace CoolNetBlog.Models
         public bool IsDraft { get;set;}
 
         /// <summary>
-        /// 是否是特殊文章，通常"关于""友链"等内容可以定义为特殊文章，特殊文章不能设为隐私且不会被列表显示和搜索到
+        /// 是否是特殊文章，通常"关于""友链"等内容可以定义为特殊文章，特殊文章不能设为加锁且不会被列表显示和搜索到
         /// </summary>
         public bool IsSpecial { get; set; }
 

@@ -64,7 +64,7 @@ namespace CoolNetBlog.Bll
                 tmpLabelV.RemoveAll(a => string.IsNullOrWhiteSpace(a));
                 _homeGlobalView.DetailArticleData.LabelsList = tmpLabelV;
             }
-            // 是隐私文章 隐藏内容主体
+            // 是加锁文章 隐藏内容主体
             _homeGlobalView.DetailArticleData.Content = _homeGlobalView.DetailArticleData.IsLock ? 
                 "" : _homeGlobalView.DetailArticleData.Content;
             // 处理文章点赞数
@@ -90,7 +90,7 @@ namespace CoolNetBlog.Bll
 
 
         /// <summary>
-        /// 隐私文章解锁
+        /// 加锁文章解锁
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -106,7 +106,7 @@ namespace CoolNetBlog.Bll
                 {
                     return data;
                 }
-                // 若已经不是隐私文章或密码正确
+                // 若已经不是加锁文章或密码正确
                 if ((!article.IsLock) || data.Password == article.LockPassword)
                 {
                     data.Content = article.Content;

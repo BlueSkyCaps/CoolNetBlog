@@ -95,11 +95,11 @@
         </div>
     </div>
     <div class="form-group row">
-        <div class="col-sm-2">隐私文章</div>
+        <div class="col-sm-2">加锁文章</div>
         <div class="col-sm-10">
             <div class="form-check">
             <input asp-for="IsLock"  class="form-check-input" type="checkbox" onchange="LockChange()">
-            <label asp-for="IsLock" class="form-check-label" ><small>(是否隐私文章，隐私文章需在页面解锁才显示主体内容)</small></label>
+            <label asp-for="IsLock" class="form-check-label" ><small>(是否加锁文章，加锁文章需在页面解锁才显示主体内容)</small></label>
             </div>
         </div>
     </div>
@@ -115,7 +115,7 @@
     <div id="lockHidDiv" class="form-group row" @(Model.IsLock?"":"hidden='hidden'")>
         <label asp-for="LockPassword" class="col-sm-2 col-form-label"><small>密码</small></label>
         <div class="col-sm-10">
-            <input asp-for="LockPassword" type="text" class="form-control" placeholder="若设为隐私文章，请设置解锁密码">
+            <input asp-for="LockPassword" type="text" class="form-control" placeholder="若设为加锁文章，请设置解锁密码">
         </div>
     </div>
 
