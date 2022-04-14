@@ -1,19 +1,4 @@
-/*
- Navicat Premium Data Transfer
-
- Source Server         : @_fu_wu_qi
- Source Server Type    : MySQL
- Source Server Version : 80028
- Source Host           : 182.61.22.74:3306
- Source Schema         : CoolNetBlog_Test_v201
-
- Target Server Type    : MySQL
- Target Server Version : 80028
- File Encoding         : 65001
-
- Date: 13/04/2022 17:10:56
-*/
-
+﻿
 CREATE DATABASE IF NOT EXISTS CoolNetBlog CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE CoolNetBlog;
 
