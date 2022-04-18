@@ -7,7 +7,7 @@
             if (sel.Subs.Any())
             {
                 <li class="uk-parent">
-                    <a href="javascript:;" menuId="@sel.Value">@sel.Text</a>
+                    <a  menuId="@sel.Value">@sel.Text</a>
                     <ul class="uk-nav-sub">
                         @{await RecSelectDeal(sel.Subs);}
                     </ul>
@@ -15,7 +15,7 @@
             }
             else
             {
-                <li><a href="javascript:;" menuId="@sel.Value">@sel.Text</a></li>
+                <li><a  menuId="@sel.Value">@sel.Text</a></li>
             }
         }
     }
@@ -102,7 +102,10 @@
             </div>
         </div>
         <div class="col-auto my-1">
-            <button class="uk-button uk-button-default" type="button">Hover</button>
+            @{
+                var curMText = Model.RelatedMenu.Id>0?Model.RelatedMenu.Name :Model.RelatedMenu.Id==-1?"<特殊文章归档>": "点击选择▼";
+            }
+            <button class="uk-button uk-button-default" type="button" >@curMText</button>
             <div uk-dropdown>
                 <ul class="uk-nav uk-dropdown-nav">
                 @foreach (var sel in Model.MenuSelectList)
@@ -110,7 +113,7 @@
                     if (sel.Subs.Any())
                     {
                         <li class="uk-parent">
-                        <a href="javascript:;" menuId="@sel.Value">@sel.Text</a>
+                        <a  menuId="@sel.Value">@sel.Text</a>
                         <ul class="uk-nav-sub">
                             @{await RecSelectDeal(sel.Subs);}
                         </ul>
@@ -118,7 +121,7 @@
                             
                     }else
                     {
-                        <li><a href="javascript:;" menuId="@sel.Value">@sel.Text</a></li>
+                        <li><a  menuId="@sel.Value">@sel.Text</a></li>
                     }
                 }
                 </ul>

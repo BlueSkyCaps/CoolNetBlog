@@ -7,6 +7,7 @@
     {
         public int Value { get; set; }
         public string Text { get; set; }
+        public dynamic CarryData { get; set; }
         public List<SelectList> Subs { get; set; } = new List<SelectList>();
 
     }

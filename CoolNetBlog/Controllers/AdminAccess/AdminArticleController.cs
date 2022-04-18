@@ -277,14 +277,14 @@ namespace CoolNetBlog.Controllers.Admin
             //    .ToList();
 
             // 封装菜单下拉框选择列表，用于在设置归属菜单时显示
-            var allSelMenus = (await _menuSet.GetAllListAsync()).OrderBy(m=>m.OrderNumber)
-                .Select(m=>new SelectList { Value=m.Id,Text=m.Name})
+            var allMenus = (await _menuSet.GetAllListAsync()).OrderBy(m=>m.OrderNumber)
                 .ToList();
-            if (allSelMenus.Any())
+            if (allMenus.Any())
             {
                 // 先找出所有顶级菜单
-                var pSelMenus = allSelMenus.Where(m => m.Value == 0).ToList();
-                allSelMenus.RemoveAll(m => m.Value == 0);
+                var pSelMenus = allMenus.Where(m => m.PId == 0).Select(m => new SelectList { Value = m.Id, Text = m.Name, CarryData=m.PId }).ToList();
+                allMenus.RemoveAll(m => m.PId == 0);
+                var allSelMenus = allMenus.Select(m => new SelectList { Value = m.Id, Text = m.Name, CarryData = m.PId }).ToList();
                 // 迭代顶级菜单 搜索下级菜单
                 vm.MenuSelectList = BaseLogicBll.DealCommonSubMenu(pSelMenus, allSelMenus);
             }

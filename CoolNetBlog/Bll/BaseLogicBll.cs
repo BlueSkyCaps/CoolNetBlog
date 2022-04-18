@@ -61,7 +61,7 @@ namespace CoolNetBlog.Bll
         {
             foreach (var p in ps)
             {
-                p.Subs = all.Where(m => m.Value == p.Value).ToList();
+                p.Subs = all.Where(m => m.CarryData == p.Value).ToList();
                 if (p.Subs.Any())
                 {
                     DealCommonSubMenu(p.Subs, all);
