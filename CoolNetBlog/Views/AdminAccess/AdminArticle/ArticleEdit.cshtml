@@ -71,34 +71,35 @@
         </div>
     </div>
     <br/>
+
+    @{
+    //<div class="form-row align-items-center">
+    //    <div class="col-auto my-1">
+    //        <div class="custom-control custom-checkbox mr-sm-2">
+    //        <label class="custom-control-label">存放的菜单</label>
+    //        </div>
+    //    </div>
+    //    <div class="col-auto my-1">
+    //        <select class="custom-select mr-sm-2"  asp-for="MenuId" >
+    //        @foreach (var menuSel in @Model.MenuSelectList)
+    //        {
+    //            // 若文章的菜单id有值，则一定能匹配到菜单id，默认选中。没有值便是新增文章
+    //            var arr = Model.MenuId==menuSel.Value  ? "selected" : "";
+    //            <!option asp-for="MenuId" name="MenuId" value="@menuSel.Value" @arr>@menuSel.Text</!option>
+    //        }
+    //        @{
+    //            //若是特殊文章 MenuId是-1，它在Menu表中一定不存在，后台不会关联Menu。
+    //        }
+    //        <option asp-for="MenuId" name="MenuId" value="-1">-特殊文章归档-</option>
+    //        </select>
+    //    </div>
+    //</div>
+    }
+
     <div class="form-row align-items-center">
         <div class="col-auto my-1">
             <div class="custom-control custom-checkbox mr-sm-2">
             <label class="custom-control-label">存放的菜单</label>
-            </div>
-        </div>
-        <div class="col-auto my-1">
-            <select class="custom-select mr-sm-2"  asp-for="MenuId" >
-            @foreach (var menuSel in @Model.MenuSelectList)
-            {
-                // 若文章的菜单id有值，则一定能匹配到菜单id，默认选中。没有值便是新增文章
-                var arr = Model.MenuId==menuSel.Value  ? "selected" : "";
-                <!option asp-for="MenuId" name="MenuId" value="@menuSel.Value" @arr>@menuSel.Text</!option>
-            }
-            @{
-                //若是特殊文章 MenuId是-1，它在Menu表中一定不存在，后台不会关联Menu。
-            }
-            <option asp-for="MenuId" name="MenuId" value="-1">-特殊文章归档-</option>
-            </select>
-        </div>
-    </div>
-
-
-
-    <div class="form-row align-items-center">
-        <div class="col-auto my-1">
-            <div class="custom-control custom-checkbox mr-sm-2">
-            <label class="custom-control-label">存放的菜单todo</label>
             </div>
         </div>
         <input hidden asp-for="MenuId" name="MenuId" id="selMenuIdHid"/>
