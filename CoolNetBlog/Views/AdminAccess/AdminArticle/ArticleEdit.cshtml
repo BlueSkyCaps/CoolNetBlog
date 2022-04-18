@@ -23,30 +23,30 @@
     </div>
     <div class="form-group row">
     <label for="textarea">主体内容</label>
-    <textarea asp-for="Content" class="form-control" id="textarea" rows="10" maxlength="9000"></textarea>
+    <textarea asp-for="Content" class="form-control" id="textarea" rows="20" maxlength="10000"></textarea>
     </div>
     <!--富文本按钮组-->
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
         <div class="btn-group mr-2" role="group" aria-label="First group">
         <button type="button" class="btn btn-secondary" onclick="RichElementsClick('h3')">大标题</button>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('h5')">小型标题</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('h5')">小标题</button>
         <button type="button" class="btn btn-secondary" onclick="RichElementsClick('strong')">粗体</button>
         <button type="button" class="btn btn-secondary" onclick="RichElementsClick('em')">斜体</button>
         <button type="button" class="btn btn-secondary" onclick="RichElementsClick('u')">下划线</button>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('del')">中间线文本</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('del')">中间线</button>
         </div>
         <div class="btn-group mr-2" role="group" aria-label="Second group">
         <button type="button" class="btn btn-secondary" onclick="RichElementsClick('br')">另起一行</button>
         <button type="button" class="btn btn-secondary" onclick="RichElementsClick('code')">代码块</button>
         <button type="button" class="btn btn-secondary" onclick="RichElementsClick('mark')">标记</button>
-        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('a')">外链接</button>
+        <button type="button" class="btn btn-secondary" onclick="RichElementsClick('a')">超链接</button>
         <button type="button" class="btn btn-secondary" onclick="RichElementsClick('blockquote')">引用文</button>
         <button type="button" class="btn btn-secondary" onclick="RichElementsClick('ul')">列表项</button>
         </div>
         <div class="btn-group mr-2" role="group" aria-label="third group">
-            <button type="button" class="btn btn-secondary" onclick="RichElementsClick('bimg')">图片链接(放大尺寸,会损失质量)</button>
-            <button type="button" class="btn btn-secondary" onclick="RichElementsClick('oimg')">图片链接(原始尺寸)</button>
-            <button type="button" class="btn btn-secondary" onclick="RichElementsClick('cimg')">图片链接(迷你式)</button>
+            <button type="button" class="btn btn-secondary" onclick="RichElementsClick('bimg')">图片(放大尺寸,会损失质量)</button>
+            <button type="button" class="btn btn-secondary" onclick="RichElementsClick('oimg')">图片(原始尺寸)</button>
+            <button type="button" class="btn btn-secondary" onclick="RichElementsClick('cimg')">图片(迷你式)</button>
         </div>
     </div>
     <br/>
