@@ -105,7 +105,7 @@
         <input hidden asp-for="MenuId" name="MenuId" id="selMenuIdHid"/>
         <div class="col-auto my-1">
             @{
-                var curMText = Model.RelatedMenu.Id>0?Model.RelatedMenu.Name :Model.RelatedMenu.Id==-1?"<特殊文章归档>": "点击选择▼";
+                var curMText = Model.IsSpecial?"<特殊文章归档>": Model?.RelatedMenu?.Id>0?Model?.RelatedMenu?.Name :"点击选择▼";
             }
             <button id="curMBtn" class="uk-button uk-button-default" type="button" >@curMText</button>
             <div uk-dropdown id="selMenusDiv">
@@ -126,6 +126,10 @@
                         <li><a class="sel-menu-item" menuId="@sel.Value">@sel.Text</a></li>
                     }
                 }
+                @{
+                    //若是特殊文章 MenuId是-1，它在Menu表中一定不存在，后台不会关联Menu。
+                }
+                <li><a class="sel-menu-item" menuId="-1">&lt;特殊文章归档&gt;</a></li>
                 </ul>
             </div>
       

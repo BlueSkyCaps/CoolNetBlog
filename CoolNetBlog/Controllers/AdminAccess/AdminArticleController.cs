@@ -115,14 +115,14 @@ namespace CoolNetBlog.Controllers.Admin
             editable.CommentType = vm.CommentType;
             if (vm.IsSpecial&&vm.MenuId!=-1)
             {
-                ModelState.AddModelError("", "发表失败:特殊文章请选择'-特殊文章归档-'");
+                ModelState.AddModelError("", "发表失败:特殊文章请选择'<特殊文章归档>'");
                 vm.MenuSelectList = smvm.MenuSelectList;
                 vm = (ArticleViewModel)WrapMustNeedPassFields(vm);
                 return View(vm);
             }
             if (!vm.IsSpecial && vm.MenuId == -1)
             {
-                ModelState.AddModelError("", "发表失败:只有特殊文章才能选择'-特殊文章归档-'");
+                ModelState.AddModelError("", "发表失败:只有特殊文章才能选择'<特殊文章归档>'");
                 vm.MenuSelectList = smvm.MenuSelectList;
                 vm = (ArticleViewModel)WrapMustNeedPassFields(vm);
                 return View(vm);
@@ -133,6 +133,14 @@ namespace CoolNetBlog.Controllers.Admin
             if (!vm.IsSpecial)
             {
                 var belongMenu = await _menuSet.FindOneByIdAsync(editable.MenuId);
+                if (belongMenu is null)
+                {
+                    ModelState.AddModelError("", "发表失败:请选择归属菜单");
+                    vm.MenuSelectList = smvm.MenuSelectList;
+                    vm = (ArticleViewModel)WrapMustNeedPassFields(vm);
+
+                    return View(vm);
+                }
                 if (belongMenu.IsHome)
                 {
                     ModelState.AddModelError("", "发表失败:选择的菜单是主页菜单，主页菜单不能拥有文章。\r\n" +
@@ -268,27 +276,11 @@ namespace CoolNetBlog.Controllers.Admin
                 vm.MenuId = orgArticle.MenuId;
                 vm.UpdateTime = orgArticle.UpdateTime;
                 vm.Id = orgArticle.Id;
-                // 获取关联的菜单实体，编辑文章时
+                // 获取关联的菜单实体，编辑文章时 若是特殊文章是获取不到实体的，为null
                 vm.RelatedMenu = _menuSet.FindOneById(orgArticle.MenuId);
             }
-            // 封装菜单下拉框选择列表，用于在设置归属菜单时显示
-            //vm.MenuSelectList = (await _menuSet.GetAllListAsync())
-            //    .Select(m=>new SelectList { Text=m.Name, Value=m.Id})
-            //    .ToList();
 
-            // 封装菜单下拉框选择列表，用于在设置归属菜单时显示
-            var allMenus = (await _menuSet.GetAllListAsync()).OrderBy(m=>m.OrderNumber)
-                .ToList();
-            if (allMenus.Any())
-            {
-                // 先找出所有顶级菜单
-                var pSelMenus = allMenus.Where(m => m.PId == 0).Select(m => new SelectList { Value = m.Id, Text = m.Name, CarryData=m.PId }).ToList();
-                allMenus.RemoveAll(m => m.PId == 0);
-                var allSelMenus = allMenus.Select(m => new SelectList { Value = m.Id, Text = m.Name, CarryData = m.PId }).ToList();
-                // 迭代顶级菜单 搜索下级菜单
-                vm.MenuSelectList = BaseLogicBll.DealCommonSubMenu(pSelMenus, allSelMenus);
-            }
-
+            vm.MenuSelectList = smvm.MenuSelectList;
             vm.ImgRelPaths = await _filePathSet.GetListBuilder().Where(f => f.Type == "img")
                 .OrderBy(f=>f.UploadTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
             vm = (ArticleViewModel)WrapMustNeedPassFields(vm);
@@ -323,7 +315,7 @@ namespace CoolNetBlog.Controllers.Admin
                 // 若是特殊文章 MenuId是-1，它在Menu表中一定不存在，后台不会关联Menu。
                 if (item.IsSpecial)
                 {
-                    item.Ig_MenuName = "-特殊文章归档-";
+                    item.Ig_MenuName = "<特殊文章归档>";
                 }
                 else
                 {
@@ -331,9 +323,20 @@ namespace CoolNetBlog.Controllers.Admin
                 }
             }
             smvm = new ArticleViewModel { ArticlesOrg = articles };
-            smvm.MenuSelectList = (await _menuSet.GetAllListAsync())
-                .Select(m => new SelectList { Text = m.Name, Value = m.Id })
+           
+            /* 封装菜单下拉框选择列表，用于在设置归属菜单时显示 */
+            var allMenus = (await _menuSet.GetAllListAsync()).OrderBy(m => m.OrderNumber)
                 .ToList();
+            if (allMenus.Any())
+            {
+                // 先找出所有顶级菜单
+                var pSelMenus = allMenus.Where(m => m.PId == 0).Select(m => new SelectList { Value = m.Id, Text = m.Name, CarryData = m.PId }).ToList();
+                allMenus.RemoveAll(m => m.PId == 0);
+                var allSelMenus = allMenus.Select(m => new SelectList { Value = m.Id, Text = m.Name, CarryData = m.PId }).ToList();
+                // 迭代顶级菜单 搜索下级菜单
+                smvm.MenuSelectList = BaseLogicBll.DealCommonSubMenu(pSelMenus, allSelMenus);
+            }
+
             smvm.HasAnyOneMenu = await _menuSet.AnyAsync(null);
             // 自动封装已有的数据
             smvm = (ArticleViewModel)WrapMustNeedPassFields(smvm);
