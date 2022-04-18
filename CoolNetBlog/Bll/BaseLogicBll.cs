@@ -1,6 +1,7 @@
 ﻿using CommonObject.Methods;
 using ComponentsServices.Base;
 using CoolNetBlog.Models;
+using CoolNetBlog.ViewModels;
 using CoolNetBlog.ViewModels.Admin;
 using CoolNetBlog.ViewModels.Home;
 
@@ -32,6 +33,12 @@ namespace CoolNetBlog.Bll
             return hostV;
         }
 
+        /// <summary>
+        /// 递归处理前台主页导航栏菜单列表。
+        /// 虽然是递归，但业务只允许二层（菜单编辑模块），二层菜单下不会有下一层了，但都使用递归兼容
+        /// </summary>
+        /// <param name="pMenus">顶级菜单列表</param>
+        /// <param name="allMenus">不包含顶级菜单的所有下级菜单列表</param>
         public void DealSubMenu(List<HomeMenuViewModel> pMenus, List<HomeMenuViewModel> allMenus)
         {
             // 迭代顶级菜单 递归搜索下级菜单
@@ -43,6 +50,24 @@ namespace CoolNetBlog.Bll
                     DealSubMenu(pm.Subs, allMenus);
                 }
             }
+        }
+
+        /// <summary>
+        /// 用SelectList的通用下拉框递归处理
+        /// </summary>
+        /// <param name="pMenus">顶级对象列表</param>
+        /// <param name="allMenus">不包含顶级对象的所有下级对象列表</param>
+        public static List<SelectList> DealCommonSubMenu(List<SelectList> ps, List<SelectList> all)
+        {
+            foreach (var p in ps)
+            {
+                p.Subs = all.Where(m => m.Value == p.Value).ToList();
+                if (p.Subs.Any())
+                {
+                    DealCommonSubMenu(p.Subs, all);
+                }
+            }
+            return ps;
         }
 
         /// <summary>

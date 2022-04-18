@@ -1,5 +1,6 @@
 ﻿using ComponentsServices.Base;
 using CoolNetBlog.Base;
+using CoolNetBlog.Bll;
 using CoolNetBlog.Models;
 using CoolNetBlog.ViewModels;
 using CoolNetBlog.ViewModels.Admin;
@@ -271,9 +272,23 @@ namespace CoolNetBlog.Controllers.Admin
                 vm.RelatedMenu = _menuSet.FindOneById(orgArticle.MenuId);
             }
             // 封装菜单下拉框选择列表，用于在设置归属菜单时显示
-            vm.MenuSelectList = (await _menuSet.GetAllListAsync())
-                .Select(m=>new SelectList { Text=m.Name, Value=m.Id})
+            //vm.MenuSelectList = (await _menuSet.GetAllListAsync())
+            //    .Select(m=>new SelectList { Text=m.Name, Value=m.Id})
+            //    .ToList();
+
+            // 封装菜单下拉框选择列表，用于在设置归属菜单时显示
+            var allSelMenus = (await _menuSet.GetAllListAsync()).OrderBy(m=>m.OrderNumber)
+                .Select(m=>new SelectList { Value=m.Id,Text=m.Name})
                 .ToList();
+            if (allSelMenus.Any())
+            {
+                // 先找出所有顶级菜单
+                var pSelMenus = allSelMenus.Where(m => m.Value == 0).ToList();
+                allSelMenus.RemoveAll(m => m.Value == 0);
+                // 迭代顶级菜单 搜索下级菜单
+                vm.MenuSelectList = BaseLogicBll.DealCommonSubMenu(pSelMenus, allSelMenus);
+            }
+
             vm.ImgRelPaths = await _filePathSet.GetListBuilder().Where(f => f.Type == "img")
                 .OrderBy(f=>f.UploadTime, SqlSugar.OrderByType.Desc).Take(20).ToListAsync();
             vm = (ArticleViewModel)WrapMustNeedPassFields(vm);
