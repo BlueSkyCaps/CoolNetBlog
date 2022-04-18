@@ -7,7 +7,7 @@
             if (sel.Subs.Any())
             {
                 <li class="uk-parent">
-                    <a  menuId="@sel.Value">@sel.Text</a>
+                    <a class="sel-menu-item" menuId="@sel.Value">@sel.Text</a>
                     <ul class="uk-nav-sub">
                         @{await RecSelectDeal(sel.Subs);}
                     </ul>
@@ -15,7 +15,7 @@
             }
             else
             {
-                <li><a  menuId="@sel.Value">@sel.Text</a></li>
+                <li><a class="sel-menu-item" menuId="@sel.Value">@sel.Text</a></li>
             }
         }
     }
@@ -101,19 +101,20 @@
             <label class="custom-control-label">存放的菜单todo</label>
             </div>
         </div>
+        <input hidden asp-for="MenuId" name="MenuId" id="selMenuIdHid"/>
         <div class="col-auto my-1">
             @{
                 var curMText = Model.RelatedMenu.Id>0?Model.RelatedMenu.Name :Model.RelatedMenu.Id==-1?"<特殊文章归档>": "点击选择▼";
             }
-            <button class="uk-button uk-button-default" type="button" >@curMText</button>
-            <div uk-dropdown>
+            <button id="curMBtn" class="uk-button uk-button-default" type="button" >@curMText</button>
+            <div uk-dropdown id="selMenusDiv">
                 <ul class="uk-nav uk-dropdown-nav">
                 @foreach (var sel in Model.MenuSelectList)
                 {
                     if (sel.Subs.Any())
                     {
                         <li class="uk-parent">
-                        <a  menuId="@sel.Value">@sel.Text</a>
+                        <a class="sel-menu-item" menuId="@sel.Value">@sel.Text</a>
                         <ul class="uk-nav-sub">
                             @{await RecSelectDeal(sel.Subs);}
                         </ul>
@@ -121,7 +122,7 @@
                             
                     }else
                     {
-                        <li><a  menuId="@sel.Value">@sel.Text</a></li>
+                        <li><a class="sel-menu-item" menuId="@sel.Value">@sel.Text</a></li>
                     }
                 }
                 </ul>
@@ -426,4 +427,16 @@
     function richPutModalUlAdd(){
         $('#richPutModalUlAddItemBtn').before('<input style="width:100%" placeholder="输入项文字" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">');
     }
+
+    // 选择存放的菜单点击时，存储点击的菜单值
+    $('.sel-menu-item').click(()=>{
+        var selMenuId = $(event.target).attr('menuId');
+        var selMenuText = $(event.target).text();
+        // 更新当前所选的菜单文本
+        $('#curMBtn').text(selMenuText);
+        // 更新当前所选的菜单id给隐藏的input
+        $('#selMenuIdHid').val(selMenuId);
+        // 模拟按钮点击事件 隐藏菜单下拉面板
+        $('#curMBtn').click();
+    });
 </script>
