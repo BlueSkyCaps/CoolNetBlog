@@ -118,6 +118,13 @@ namespace CoolNetBlog.Controllers.Admin
                 return View("MenuAmManagement", smvm);
             }
 
+            // 若是主页菜单且不设置顶级
+            if (vm.IsHome && vm.MenuSelectedValue!=0)
+            {
+                ModelState.AddModelError("", $"更新失败:主页菜单必须是顶级菜单。");
+                return View("MenuAmManagement", smvm);
+            }
+
             orgEntity.PId = vm.MenuSelectedValue;
             orgEntity.IsHome = vm.IsHome;
             orgEntity.OrderNumber = vm.OrderNumber;
@@ -187,6 +194,13 @@ namespace CoolNetBlog.Controllers.Admin
             if (vm.IsHome && !vm.IsShow)
             {
                 ModelState.AddModelError("", $"更新失败:主页菜单，无法设置隐藏。");
+                return View("MenuAmManagement", smvm);
+            }
+
+            // 若是主页菜单且不设置顶级
+            if (vm.IsHome && vm.MenuSelectedValue != 0)
+            {
+                ModelState.AddModelError("", $"更新失败:主页菜单必须是顶级菜单。");
                 return View("MenuAmManagement", smvm);
             }
 
