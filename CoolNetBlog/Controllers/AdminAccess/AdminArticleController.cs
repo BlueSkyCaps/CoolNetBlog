@@ -113,6 +113,8 @@ namespace CoolNetBlog.Controllers.Admin
             editable.Content = vm.Content;
             editable.Labels = vm.Labels;
             editable.CommentType = vm.CommentType;
+            // 获取关联的菜单实体，编辑文章时 若是特殊文章是获取不到实体的，为null
+            vm.RelatedMenu = _menuSet.FindOneById(vm.MenuId);
             if (vm.IsSpecial&&vm.MenuId!=-1)
             {
                 ModelState.AddModelError("", "发表失败:特殊文章请选择'<特殊文章归档>'");
