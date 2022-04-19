@@ -226,7 +226,7 @@ namespace CoolNetBlog.Controllers.Admin
         {
             // 获取菜单列表
             var _menuSet = new SugarDataBaseStorage<Menu, int>();
-            var menus = await _menuSet.GetAllListAsync();
+            var menus = await _menuSet.GetListByExpAsync(m=>!m.IsHome);
             smvm = new MenuViewModel { MenusOrg = menus };
             // 封装菜单下拉框选择列表，用于在设置归属菜单时显示
             foreach (var item in menus)
