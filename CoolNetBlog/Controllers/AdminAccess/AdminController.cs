@@ -202,5 +202,23 @@ namespace CoolNetBlog.Controllers.AdminAccess
             spassVm = null;
             return RedirectToAction("Login", "Admin");
         }
+
+        /// <summary>
+        /// 备份数据库
+        /// </summary>
+        /// <param name="pt"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult BackupData(string dbUserName, string? dbPassword, string? pt)
+        {
+            ValueResult result = new ValueResult();
+            result.Code = ValueCodes.UnKnow;
+            if (string.IsNullOrWhiteSpace(dbUserName) || string.IsNullOrWhiteSpace(dbPassword))
+            {
+                result.TipMessage = "请输入数据库用户名和密码。";
+                return Json(result);
+            }
+            return RedirectToAction("Login", "Admin");
+        }
     }
 }
