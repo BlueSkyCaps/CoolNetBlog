@@ -64,11 +64,14 @@
 </p>
 <div>
     <p>
-      <a class="btn btn-secondary btn-sm" data-bs-toggle="collapse" href="#collapseMore" role="button" aria-expanded="false" aria-controls="collapseMore">
+      <a class="btn btn-secondary btn-sm" data-bs-toggle="collapse" href="#collapseMore-emailSett" role="button" aria-expanded="false" aria-controls="collapseMore-emailSett">
         邮箱配置⬇
       </a>
+      <a class="btn btn-secondary btn-sm" data-bs-toggle="collapse" href="#collapseMore-dataBack" role="button" aria-expanded="false" aria-controls="collapseMore-dataBack">
+        数据备份⬇
+      </a>
     </p>
-    <div class="collapse" id="collapseMore">
+    <div class="collapse" id="collapseMore-emailSett">
       <div class="card card-body">
           <p>请查阅您使用的邮箱服务提供商的SMTP相关文档说明。通常邮箱账户即您的发信Email账户，授权密码即邮箱密码。但诸如QQ邮箱需要使用授权码而不是QQ邮箱密码。</p>
       </div>
@@ -88,6 +91,23 @@
         <div class="row">
             <div class="col-3">
                 <button class="btn btn-primary btn-sm" type="button" onclick="smtpEmailServerUp()">确认</button>
+            </div>
+            <div class="col-9"></div>
+        </div>
+      </div>
+    </div>
+        <div class="collapse" id="collapseMore-dataBack">
+      <div class="card card-body">
+          <p>请输入数据库用户名和密码，若不明白，请咨询您的数据库提供服务商或云服务器提供商。暂时只支持MySQL数据库的备份，CoolNetBlog默认使用MySQL，若您是二次开发者请忽略。</p>
+      </div>
+      <div class="card card-body">
+        <div class="row">
+            <input style="width:50%" id="dbUserName" nmae="dbUserName" maxlength="25" type="email" class="form-control" placeholder="数据库用户名">
+            <input style="width:50%" id="dbPassword" nmae="dbPassword" maxlength="32" type="password" class="form-control" placeholder="数据库密码">
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <button class="btn btn-primary btn-sm" type="button" onclick="dataBackClick()">确认</button>
             </div>
             <div class="col-9"></div>
         </div>

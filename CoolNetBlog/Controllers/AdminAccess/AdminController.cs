@@ -209,7 +209,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
         /// <param name="pt"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult BackupData(string dbUserName, string? dbPassword, string? pt)
+        public IActionResult BackupData(string? dbUserName, string? dbPassword, string? pt)
         {
             ValueResult result = new ValueResult();
             result.Code = ValueCodes.UnKnow;
@@ -218,6 +218,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 result.TipMessage = "请输入数据库用户名和密码。";
                 return Json(result);
             }
+            var bs = BashExecute.Bash("dir",true);
             return RedirectToAction("Login", "Admin");
         }
     }
