@@ -21,6 +21,7 @@ namespace CommonObject.Methods
                 {
                     FileName = unix ? "/bin/bash" : "cmd.exe",
                     Arguments = escapedArgs,
+                    Verb = "RunAs",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,

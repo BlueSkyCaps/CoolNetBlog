@@ -17,11 +17,13 @@ namespace CoolNetBlog.Controllers.AdminAccess
     {
         protected SugarDataBaseStorage<AdminUser, int> _adminUserSet;
         protected SugarDataBaseStorage<SiteSetting, int> _siteSettingSet;
-        public AdminController() : base()
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public AdminController(IWebHostEnvironment webHostEnvironment) : base()
         {
             this._adminUserSet = new SugarDataBaseStorage<AdminUser, int>();
             this._siteSettingSet = new SugarDataBaseStorage<SiteSetting, int>();
-
+            this._webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Login(string? v)
@@ -219,7 +221,10 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 result.TipMessage = "请输入数据库用户名和密码。";
                 return Json(result);
             }
-            var bs = BashExecute.Bash("dir", RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
+            var tmpBackDataDownDir = Path.Combine(_webHostEnvironment.WebRootPath, ValueCompute.Guid16().Replace("-", ""));        
+            var dBSqlPath = Path.Combine(tmpBackDataDownDir, "CoolNetBlog-Db.sql");
+            var cmdInput = @$"mysqldump -u{dbVm.DbUserName} -p{dbVm.dbPassword} sys > {dBSqlPath}";
+            var bs = BashExecute.Bash(cmdInput, RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
             if (bs.Code!=ValueCodes.Success)
             {
                 result.Code = ValueCodes.Error;
@@ -227,6 +232,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 result.HideMessage = "数据备份执行失败："+ bs.HideMessage;
                 return Json(result);
             }
+            // mysql dump命令备份完毕 开始
             result.Code = ValueCodes.Success;
             result.TipMessage = "数据备份执行成功。";
             return Json(result);
