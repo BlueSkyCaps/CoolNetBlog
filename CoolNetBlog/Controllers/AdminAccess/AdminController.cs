@@ -6,6 +6,7 @@ using CoolNetBlog.ViewModels.Admin;
 using Microsoft.AspNetCore.Mvc;
 using CommonObject.Constructs;
 using CommonObject.Enums;
+using System.Runtime.InteropServices;
 
 namespace CoolNetBlog.Controllers.AdminAccess
 {
@@ -209,17 +210,26 @@ namespace CoolNetBlog.Controllers.AdminAccess
         /// <param name="pt"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult BackupData(string? dbUserName, string? dbPassword, string? pt)
+        public IActionResult BackupData(string? pt, [FromBody] DataBackViewModel dbVm)
         {
             ValueResult result = new ValueResult();
             result.Code = ValueCodes.UnKnow;
-            if (string.IsNullOrWhiteSpace(dbUserName) || string.IsNullOrWhiteSpace(dbPassword))
+            if (string.IsNullOrWhiteSpace(dbVm.DbUserName) || string.IsNullOrWhiteSpace(dbVm.dbPassword))
             {
                 result.TipMessage = "请输入数据库用户名和密码。";
                 return Json(result);
             }
-            var bs = BashExecute.Bash("dir",true);
-            return RedirectToAction("Login", "Admin");
+            var bs = BashExecute.Bash("dir", RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
+            if (bs.Code!=ValueCodes.Success)
+            {
+                result.Code = ValueCodes.Error;
+                result.TipMessage = "执行失败，请重试。";
+                result.HideMessage = "数据备份执行失败："+ bs.HideMessage;
+                return Json(result);
+            }
+            result.Code = ValueCodes.Success;
+            result.TipMessage = "数据备份执行成功。";
+            return Json(result);
         }
     }
 }

@@ -156,4 +156,37 @@
             }
         );
     }
+
+    // ajax调用 备份数据
+    function dataBackClick(){
+        var pt = $('#pt').val();
+        var dbUserName = $('#dbUserName').val();
+        var dbPassword = $('#dbPassword').val();
+        if(Gb_IsWhiteSpaceOrNull(dbUserName)||Gb_IsWhiteSpaceOrNull(dbPassword))
+            return;
+        var url = "/Admin/BackupData?pt="+pt;
+        $.ajax (
+            {
+                url: url,
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    "DbUserName":dbUserName,
+                    "DbPassword":dbPassword,
+                }),
+                success: function(data, status){
+                    if(data['code']==1){
+                        Gb_NotifShow("数据备份执行成功");
+                    }else{
+                        Gb_NotifShow(data['tipMessage'],"primary");
+                    }
+                },
+                error: function(err){
+                    Gb_NotifShow("备份失败err","danger");
+                    console.log(err)
+                }
+            }
+        );
+    }
 </script>
