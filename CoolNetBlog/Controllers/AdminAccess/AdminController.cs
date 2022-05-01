@@ -240,16 +240,25 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 result.HideMessage = "数据备份执行失败："+ bs.HideMessage;
                 return Json(result);
             }
-            // mysql dump命令备份完毕 开始追加sql语句到sql文件头
+
+            /*mysql dump命令备份完毕 开始追加sql语句到sql文件头*/
+            string orgSqlStr = "";
+            // 读出sql
+            using (var rf = System.IO.File.OpenText(dBSqlPath))
+            {
+                orgSqlStr = rf.ReadToEnd();
+            }
+            // 覆写sql文件
             using (FileStream sqlFile = new(dBSqlPath, FileMode.Open, FileAccess.Write))
             {
                 sqlFile.Seek(0, SeekOrigin.Begin);
                 using StreamWriter sw = new(sqlFile);
-                sw.Write("-- ------------------------------");
-                //sw.WriteLine($"-- SQL Dump By Admin Write Top {DateTime.Now}");
-                //sw.WriteLine("-- ------------------------------");
-                //sw.WriteLine("CREATE DATABASE IF NOT EXISTS CoolNetBlog CHARACTER SET utf8 COLLATE utf8_general_ci;");
-                //sw.WriteLine("USE CoolNetBlog;");
+                sw.WriteLine($"-- ------------------------------\r\n" +
+                    $"-- SQL Dump By Admin Write Top {DateTime.Now}\r\n" +
+                    $"-- ------------------------------");
+                sw.WriteLine("CREATE DATABASE IF NOT EXISTS CoolNetBlog CHARACTER SET utf8 COLLATE utf8_general_ci;");
+                sw.WriteLine("USE CoolNetBlog;");
+                sw.Write(orgSqlStr);
             }
             result.Code = ValueCodes.Success;
             result.TipMessage = "数据备份执行成功。";
