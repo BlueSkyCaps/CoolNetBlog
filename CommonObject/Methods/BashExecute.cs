@@ -9,7 +9,8 @@ namespace CommonObject.Methods
         /// <summary>
         /// 执行bash command,接收结果
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="cmdInput">纯命令文本</param>
+        /// <param name="unix">是何操作系统</param>
         /// <returns></returns>
         public static ValueResult Bash(string cmdInput, bool unix=true)
         {

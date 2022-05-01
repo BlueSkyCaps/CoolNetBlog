@@ -221,7 +221,15 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 result.TipMessage = "请输入数据库用户名和密码。";
                 return Json(result);
             }
-            var tmpBackDataDownDir = Path.Combine(_webHostEnvironment.WebRootPath, ValueCompute.Guid16().Replace("-", ""));        
+            // 事先有备份主目录BACK-COOLNETBLOG 删除
+            if (Directory.Exists(Path.Combine(_webHostEnvironment.WebRootPath, "BACK-COOLNETBLOG")))
+            {
+                Directory.Delete(Path.Combine(_webHostEnvironment.WebRootPath, "BACK-COOLNETBLOG"), true);    
+            }
+            // 创建备份主目录和下面的子目录
+            var tmpBackDataDownDir = Path.Combine(_webHostEnvironment.WebRootPath, "BACK-COOLNETBLOG", ValueCompute.Guid16().Replace("-", ""));        
+            Directory.CreateDirectory(tmpBackDataDownDir);
+            //执行备份命令，并且生成sql，类似BACK-COOLNETBLOG/{xxx}/CoolNetBlog-Db.sql
             var dBSqlPath = Path.Combine(tmpBackDataDownDir, "CoolNetBlog-Db.sql");
             var cmdInput = @$"mysqldump -u{dbVm.DbUserName} -p{dbVm.dbPassword} sys > {dBSqlPath}";
             var bs = BashExecute.Bash(cmdInput, RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
