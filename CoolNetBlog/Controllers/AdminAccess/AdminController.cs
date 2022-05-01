@@ -242,28 +242,46 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 return Json(result);
             }
 
-            /*mysql dump命令备份完毕 开始追加sql语句到sql文件头*/
-            string orgSqlStr = "";
-            // 读出sql
-            using (var rf = System.IO.File.OpenText(dBSqlPath))
+            try
             {
-                orgSqlStr = rf.ReadToEnd();
+                /*mysql dump命令备份完毕 开始追加sql语句到sql文件头*/
+                string orgSqlStr = "";
+                // 读出sql
+                using (var rf = System.IO.File.OpenText(dBSqlPath))
+                {
+                    orgSqlStr = rf.ReadToEnd();
+                }
+                // 覆写sql文件
+                using (FileStream sqlFile = new(dBSqlPath, FileMode.Open, FileAccess.Write))
+                {
+                    sqlFile.Seek(0, SeekOrigin.Begin);
+                    using StreamWriter sw = new(sqlFile);
+                    sw.WriteLine($"-- ------------------------------\r\n" +
+                        $"-- SQL Dump By Admin Write Top {DateTime.Now}\r\n" +
+                        $"-- ------------------------------");
+                    sw.WriteLine("CREATE DATABASE IF NOT EXISTS CoolNetBlog CHARACTER SET utf8 COLLATE utf8_general_ci;");
+                    sw.WriteLine("USE CoolNetBlog;");
+                    sw.Write(orgSqlStr);
+                }
+                /*sql文件完成 开始复制wwwroot文件夹、ssl-file文件夹(若有)到BACK-COOLNETBLOG文件夹下*/
+                PathProvider.CopyDir(_webHostEnvironment.WebRootPath, Path.Combine(tmpBackDataDownDir, "wwwroot"));
+                PathProvider.CopyDir(Path.Combine(_webHostEnvironment.ContentRootPath, "ssl-file"), Path.Combine(tmpBackDataDownDir, "ssl-file"));
             }
-            // 覆写sql文件
-            using (FileStream sqlFile = new(dBSqlPath, FileMode.Open, FileAccess.Write))
+            catch (Exception e)
             {
-                sqlFile.Seek(0, SeekOrigin.Begin);
-                using StreamWriter sw = new(sqlFile);
-                sw.WriteLine($"-- ------------------------------\r\n" +
-                    $"-- SQL Dump By Admin Write Top {DateTime.Now}\r\n" +
-                    $"-- ------------------------------");
-                sw.WriteLine("CREATE DATABASE IF NOT EXISTS CoolNetBlog CHARACTER SET utf8 COLLATE utf8_general_ci;");
-                sw.WriteLine("USE CoolNetBlog;");
-                sw.Write(orgSqlStr);
+                result.Code = ValueCodes.Error;
+                result.TipMessage = "执行失败，请重试。";
+                result.HideMessage = "文件io执行失败：" + e.Message;
+                return Json(result);
             }
-            // sql文件完成 开始复制wwwroot文件夹、ssl-file文件夹(若有)到BACK-COOLNETBLOG文件夹下
-            PathProvider.CopyDir(_webHostEnvironment.WebRootPath, Path.Combine(tmpBackDataDownDir, "wwwroot"));
-            PathProvider.CopyDir(Path.Combine(_webHostEnvironment.ContentRootPath, "ssl-file"), Path.Combine(tmpBackDataDownDir, "ssl-file"));
+
+            try
+            {
+                /* 开始压缩BACK-COOLNETBLOG文件夹*/
+            }
+            catch (Exception e)
+            {
+            }
             result.Code = ValueCodes.Success;
             result.TipMessage = "数据备份执行成功。";
             return Json(result);
