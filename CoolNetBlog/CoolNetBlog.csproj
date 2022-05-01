@@ -25,6 +25,7 @@
     <ProjectReference Include="..\ComponentsServices\ComponentsServices.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="wwwroot\BACK-COOLNETBLOG\" />
     <Folder Include="wwwroot\img\20220404\" />
     <Folder Include="wwwroot\js\view\WarningPage\" />
     <Folder Include="wwwroot\js\view\WarningPage\" />

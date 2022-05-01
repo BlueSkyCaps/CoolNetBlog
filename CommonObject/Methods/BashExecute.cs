@@ -49,7 +49,7 @@ namespace CommonObject.Methods
             if (process.ExitCode != 0)
             {
                 result.Code = Enums.ValueCodes.UnKnow;
-                result.HideMessage = "执行bash命令得到未知结果，code:" + process.ExitCode + ";结果: " + errPut;
+                result.HideMessage = "执行bash命令得到未知结果，code:" + process.ExitCode + ";结果: " + errPut; 
                 return result;
             }
             result.Code = Enums.ValueCodes.Success;
