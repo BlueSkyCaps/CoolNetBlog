@@ -222,14 +222,15 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 return Json(result);
             }
             // 事先有备份主目录BACK-COOLNETBLOG 删除
-            if (Directory.Exists(Path.Combine(_webHostEnvironment.WebRootPath, "BACK-COOLNETBLOG")))
+            if (Directory.Exists(Path.Combine(_webHostEnvironment.ContentRootPath, "BACK-COOLNETBLOG")))
             {
-                Directory.Delete(Path.Combine(_webHostEnvironment.WebRootPath, "BACK-COOLNETBLOG"), true);    
+                Directory.Delete(Path.Combine(_webHostEnvironment.ContentRootPath, "BACK-COOLNETBLOG"), true);    
             }
             // 创建备份主目录和下面的子目录
-            var tmpBackDataDownDir = Path.Combine(_webHostEnvironment.WebRootPath, "BACK-COOLNETBLOG", ValueCompute.Guid16().Replace("-", ""));        
+            //var tmpBackDataDownDir = Path.Combine(_webHostEnvironment.ContentRootPath, "BACK-COOLNETBLOG", ValueCompute.Guid16().Replace("-", ""));        
+            var tmpBackDataDownDir = Path.Combine(_webHostEnvironment.ContentRootPath, "BACK-COOLNETBLOG");        
             Directory.CreateDirectory(tmpBackDataDownDir);
-            //执行备份命令，并且生成sql，类似BACK-COOLNETBLOG/{xxx}/CoolNetBlog-Db.sql
+            //执行备份命令，并且生成sql，类似{ContentRootPath}/BACK-COOLNETBLOG/CoolNetBlog-Db.sql
             var dBSqlPath = Path.Combine(tmpBackDataDownDir, "CoolNetBlog-Db.sql");
             var cmdInput = @$"mysqldump -u{dbVm.DbUserName} -p{dbVm.dbPassword} CoolNetBlog > {dBSqlPath}";
             var bs = BashExecute.Bash(cmdInput, RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
@@ -260,6 +261,9 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 sw.WriteLine("USE CoolNetBlog;");
                 sw.Write(orgSqlStr);
             }
+            // sql文件完成 开始复制wwwroot文件夹、ssl-file文件夹(若有)到BACK-COOLNETBLOG文件夹下
+            PathProvider.CopyDir(_webHostEnvironment.WebRootPath, Path.Combine(tmpBackDataDownDir, "wwwroot"));
+            PathProvider.CopyDir(Path.Combine(_webHostEnvironment.ContentRootPath, "ssl-file"), Path.Combine(tmpBackDataDownDir, "ssl-file"));
             result.Code = ValueCodes.Success;
             result.TipMessage = "数据备份执行成功。";
             return Json(result);
