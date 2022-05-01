@@ -8,9 +8,13 @@
 
   <ItemGroup>
     <Compile Remove="wwwroot\articleImgs\**" />
+    <Compile Remove="wwwroot\BACK-COOLNETBLOG\**" />
     <Content Remove="wwwroot\articleImgs\**" />
+    <Content Remove="wwwroot\BACK-COOLNETBLOG\**" />
     <EmbeddedResource Remove="wwwroot\articleImgs\**" />
+    <EmbeddedResource Remove="wwwroot\BACK-COOLNETBLOG\**" />
     <None Remove="wwwroot\articleImgs\**" />
+    <None Remove="wwwroot\BACK-COOLNETBLOG\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,7 +29,6 @@
     <ProjectReference Include="..\ComponentsServices\ComponentsServices.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="wwwroot\BACK-COOLNETBLOG\" />
     <Folder Include="wwwroot\img\20220404\" />
     <Folder Include="wwwroot\js\view\WarningPage\" />
     <Folder Include="wwwroot\js\view\WarningPage\" />
