@@ -1,9 +1,7 @@
 ﻿using CommonObject.Constructs;
 using CommonObject.Enums;
-using CommonObject.Methods;
 using ComponentsServices.Base;
 using CoolNetBlog.Models;
-using CoolNetBlog.ViewModels;
 
 namespace CoolNetBlog.Bll
 {
