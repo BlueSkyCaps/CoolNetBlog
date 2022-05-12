@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using CommonObject.Constructs;
 using CommonObject.Enums;
 using System.Runtime.InteropServices;
+using System.IO.Compression;
 
 namespace CoolNetBlog.Controllers.AdminAccess
 {
@@ -226,12 +227,12 @@ namespace CoolNetBlog.Controllers.AdminAccess
             {
                 Directory.Delete(Path.Combine(_webHostEnvironment.ContentRootPath, "BACK-COOLNETBLOG"), true);    
             }
-            // 创建备份主目录和下面的子目录
+            // 创建备份主目录(位于app目录下面，不是wwwroot下面)
             //var tmpBackDataDownDir = Path.Combine(_webHostEnvironment.ContentRootPath, "BACK-COOLNETBLOG", ValueCompute.Guid16().Replace("-", ""));        
             var tmpBackDataDownDir = Path.Combine(_webHostEnvironment.ContentRootPath, "BACK-COOLNETBLOG");        
             Directory.CreateDirectory(tmpBackDataDownDir);
             //执行备份命令，并且生成sql，类似{ContentRootPath}/BACK-COOLNETBLOG/CoolNetBlog-Db.sql
-            var dBSqlPath = Path.Combine(tmpBackDataDownDir, "CoolNetBlog-Db.sql");
+            /*var dBSqlPath = Path.Combine(tmpBackDataDownDir, "CoolNetBlog-Db.sql");
             var cmdInput = @$"mysqldump -u{dbVm.DbUserName} -p{dbVm.dbPassword} CoolNetBlog > {dBSqlPath}";
             var bs = BashExecute.Bash(cmdInput, RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
             if (bs.Code!=ValueCodes.Success)
@@ -244,7 +245,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
 
             try
             {
-                /*mysql dump命令备份完毕 开始追加sql语句到sql文件头*/
+                *//*mysql dump命令备份完毕 开始追加sql语句到sql文件头*//*
                 string orgSqlStr = "";
                 // 读出sql
                 using (var rf = System.IO.File.OpenText(dBSqlPath))
@@ -263,7 +264,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
                     sw.WriteLine("USE CoolNetBlog;");
                     sw.Write(orgSqlStr);
                 }
-                /*sql文件完成 开始复制wwwroot文件夹、ssl-file文件夹(若有)到BACK-COOLNETBLOG文件夹下*/
+                *//*sql文件完成 开始复制wwwroot文件夹、ssl-file文件夹(若有)到BACK-COOLNETBLOG文件夹下*//*
                 PathProvider.CopyDir(_webHostEnvironment.WebRootPath, Path.Combine(tmpBackDataDownDir, "wwwroot"));
                 PathProvider.CopyDir(Path.Combine(_webHostEnvironment.ContentRootPath, "ssl-file"), Path.Combine(tmpBackDataDownDir, "ssl-file"));
             }
@@ -273,14 +274,26 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 result.TipMessage = "执行失败，请重试。";
                 result.HideMessage = "文件io执行失败：" + e.Message;
                 return Json(result);
-            }
+            }*/
 
             try
             {
-                /* 开始压缩BACK-COOLNETBLOG文件夹*/ 
+                /* 开始压缩BACK-COOLNETBLOG文件夹 生成压缩文件于wwwroot/BACK-COOLNETBLOG/下*/
+                var zipDir = Path.Combine(_webHostEnvironment.WebRootPath, "BACK-COOLNETBLOG");
+                Directory.CreateDirectory(zipDir);
+                var zipPath = Path.Combine(zipDir, ValueCompute.Guid16().Replace("-", "") + "-" + 
+                    DateTime.Now.ToString("yyyyMMdd") + "-back.zip");
+                // 生成zip压缩文件（注：压缩文件的父目录必须事先存在）
+                ZipFile.CreateFromDirectory(tmpBackDataDownDir, zipPath);
+                // 删除原app目录下的BACK-COOLNETBLOG
+                Directory.Delete(tmpBackDataDownDir, true);
             }
             catch (Exception e)
             {
+                result.Code = ValueCodes.Error;
+                result.TipMessage = "执行失败，请重试。";
+                result.HideMessage = "文件压缩生成执行失败：" + e.Message;
+                return Json(result);
             }
             result.Code = ValueCodes.Success;
             result.TipMessage = "数据备份执行成功。";

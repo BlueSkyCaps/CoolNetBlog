@@ -39,7 +39,6 @@
             Directory.CreateDirectory(disDir.FullName);
             foreach (FileInfo fi in srcDir.GetFiles())
             {
-                Console.WriteLine(@"Copying {0}\{1}", disDir.FullName, fi.Name);
                 fi.CopyTo(Path.Combine(disDir.FullName, fi.Name), true);
             }
 
