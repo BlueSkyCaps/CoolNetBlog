@@ -245,7 +245,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
 
             try
             {
-                *//*mysql dump命令备份完毕 开始追加sql语句到sql文件头*//*
+                // mysql dump命令备份完毕 开始追加sql语句到sql文件头
                 string orgSqlStr = "";
                 // 读出sql
                 using (var rf = System.IO.File.OpenText(dBSqlPath))
@@ -264,7 +264,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
                     sw.WriteLine("USE CoolNetBlog;");
                     sw.Write(orgSqlStr);
                 }
-                *//*sql文件完成 开始复制wwwroot文件夹、ssl-file文件夹(若有)到BACK-COOLNETBLOG文件夹下*//*
+                // sql文件完成 开始复制wwwroot文件夹、ssl-file文件夹(若有)到BACK-COOLNETBLOG文件夹下
                 PathProvider.CopyDir(_webHostEnvironment.WebRootPath, Path.Combine(tmpBackDataDownDir, "wwwroot"));
                 PathProvider.CopyDir(Path.Combine(_webHostEnvironment.ContentRootPath, "ssl-file"), Path.Combine(tmpBackDataDownDir, "ssl-file"));
             }
