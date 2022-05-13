@@ -232,14 +232,14 @@ namespace CoolNetBlog.Controllers.AdminAccess
             var tmpBackDataDownDir = Path.Combine(_webHostEnvironment.ContentRootPath, "BACK-COOLNETBLOG");        
             Directory.CreateDirectory(tmpBackDataDownDir);
             //执行备份命令，并且生成sql，类似{ContentRootPath}/BACK-COOLNETBLOG/CoolNetBlog-Db.sql
-            /*var dBSqlPath = Path.Combine(tmpBackDataDownDir, "CoolNetBlog-Db.sql");
+            var dBSqlPath = Path.Combine(tmpBackDataDownDir, "CoolNetBlog-Db.sql");
             var cmdInput = @$"mysqldump -u{dbVm.DbUserName} -p{dbVm.dbPassword} CoolNetBlog > {dBSqlPath}";
             var bs = BashExecute.Bash(cmdInput, RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
-            if (bs.Code!=ValueCodes.Success)
+            if (bs.Code != ValueCodes.Success)
             {
                 result.Code = ValueCodes.Error;
                 result.TipMessage = "执行失败，请重试。";
-                result.HideMessage = "数据备份执行失败："+ bs.HideMessage;
+                result.HideMessage = "数据备份执行失败：" + bs.HideMessage;
                 return Json(result);
             }
 
@@ -274,7 +274,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 result.TipMessage = "执行失败，请重试。";
                 result.HideMessage = "文件io执行失败：" + e.Message;
                 return Json(result);
-            }*/
+            }
 
             try
             {
