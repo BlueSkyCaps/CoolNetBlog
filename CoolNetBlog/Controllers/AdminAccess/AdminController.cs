@@ -238,8 +238,11 @@ namespace CoolNetBlog.Controllers.AdminAccess
             if (bs.Code != ValueCodes.Success)
             {
                 result.Code = ValueCodes.Error;
-                result.TipMessage = "执行失败，请重试。";
                 result.HideMessage = "数据备份执行失败：" + bs.HideMessage;
+                result.TipMessage = "执行失败，请重试。";
+                if(bs.HideMessage!=null&&bs.HideMessage.ToLower().Contains("access denied for user")){
+                    result.TipMessage = "执行失败，数据库拒绝访问。是否允许特定账户访问或密码正确？请咨询服务提供商。";
+                }
                 return Json(result);
             }
 
@@ -280,6 +283,11 @@ namespace CoolNetBlog.Controllers.AdminAccess
             {
                 /* 开始压缩BACK-COOLNETBLOG文件夹 生成压缩文件于wwwroot/BACK-COOLNETBLOG/下*/
                 var zipDir = Path.Combine(_webHostEnvironment.WebRootPath, "BACK-COOLNETBLOG");
+                if (Directory.Exists(zipDir))
+                {
+                    Directory.Delete(zipDir, true);
+                }
+                
                 Directory.CreateDirectory(zipDir);
                 var zipPath = Path.Combine(zipDir, ValueCompute.Guid16().Replace("-", "") + "-" + 
                     DateTime.Now.ToString("yyyyMMdd") + "-back.zip");
