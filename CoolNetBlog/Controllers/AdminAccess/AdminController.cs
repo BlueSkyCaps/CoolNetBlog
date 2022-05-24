@@ -12,7 +12,7 @@ using System.IO.Compression;
 namespace CoolNetBlog.Controllers.AdminAccess
 {
     /// <summary>
-    /// 管理员后台访问入口控制器
+    /// 管理员后台访问入口控制器 
     /// </summary>
     public class AdminController : BaseAdminController
     {
