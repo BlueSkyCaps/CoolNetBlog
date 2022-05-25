@@ -227,6 +227,10 @@ namespace CoolNetBlog.Controllers.AdminAccess
             {
                 Directory.Delete(Path.Combine(_webHostEnvironment.ContentRootPath, "BACK-COOLNETBLOG"), true);    
             }
+            if (Directory.Exists(Path.Combine(_webHostEnvironment.WebRootPath, "BACK-COOLNETBLOG")))
+            {
+                Directory.Delete(Path.Combine(_webHostEnvironment.WebRootPath, "BACK-COOLNETBLOG"), true);    
+            }
             // 创建备份主目录(位于app目录下面，不是wwwroot下面)
             //var tmpBackDataDownDir = Path.Combine(_webHostEnvironment.ContentRootPath, "BACK-COOLNETBLOG", ValueCompute.Guid16().Replace("-", ""));        
             var tmpBackDataDownDir = Path.Combine(_webHostEnvironment.ContentRootPath, "BACK-COOLNETBLOG");        
@@ -283,11 +287,6 @@ namespace CoolNetBlog.Controllers.AdminAccess
             {
                 /* 开始压缩BACK-COOLNETBLOG文件夹 生成压缩文件于wwwroot/BACK-COOLNETBLOG/下*/
                 var zipDir = Path.Combine(_webHostEnvironment.WebRootPath, "BACK-COOLNETBLOG");
-                if (Directory.Exists(zipDir))
-                {
-                    Directory.Delete(zipDir, true);
-                }
-                
                 Directory.CreateDirectory(zipDir);
                 zipFileName = ValueCompute.Guid16().Replace("-", "") + "-" +
                     DateTime.Now.ToString("yyyyMMdd") + "-back.zip";
