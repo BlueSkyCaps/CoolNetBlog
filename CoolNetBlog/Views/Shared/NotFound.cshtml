@@ -1,0 +1,10 @@
+﻿@model HomeViewModel
+@{
+    // 此局部视图 NotFound 显示特殊提示文本（如不存在的菜单..）继承_Layout视图
+    if (!String.IsNullOrWhiteSpace(@Model?.NotTips))
+    {
+        <div class="alert alert-warning" role="alert">
+         @Model?.NotTips
+        </div>
+    }
+}

@@ -1,4 +1,5 @@
 ﻿using CoolNetBlog.Base;
+using CoolNetBlog.BlogException;
 using CoolNetBlog.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -29,21 +30,35 @@ namespace CoolNetBlog.Controllers.Home
         /// <returns></returns>
         public async Task<IActionResult> Index(string? from, int? menuId,string? kw, int pageIndex=1, int onePageCount=5)
         {
-            _homeGlobalView.CurrentTitle = _homeGlobalView.HomeSiteSettingData.SiteName;
-            // 从配置里取设置的每页条数
-            onePageCount = _homeGlobalView.HomeSiteSettingData.OnePageCount<=0?
-                onePageCount: _homeGlobalView.HomeSiteSettingData.OnePageCount;
-            // 跳到当前页 获取文章列表
-            int c = await DealFilterData(from, menuId, kw, pageIndex, onePageCount);
-            
-            // 根据文章MenuId获取每篇文章所属菜单名
-            foreach (var item in _homeGlobalView.HomeArticleViewModels)
+            try
             {
-                item.Ig_MenuName = (await bdb._dbHandler.Queryable<Menu>().FirstAsync(m => m.Id == item.MenuId))?.Name ?? "未知菜单";
+                _homeGlobalView.CurrentTitle = _homeGlobalView.HomeSiteSettingData.SiteName;
+                // 从配置里取设置的每页条数
+                onePageCount = _homeGlobalView.HomeSiteSettingData.OnePageCount<=0?
+                    onePageCount: _homeGlobalView.HomeSiteSettingData.OnePageCount;
+                // 跳到当前页 获取文章列表
+                int c = await DealFilterData(from, menuId, kw, pageIndex, onePageCount);
+            
+                // 根据文章MenuId获取每篇文章所属菜单名
+                foreach (var item in _homeGlobalView.HomeArticleViewModels)
+                {
+                    item.Ig_MenuName = (await bdb._dbHandler.Queryable<Menu>().FirstAsync(m => m.Id == item.MenuId))?.Name ?? "未知菜单";
+                }
+                ComputePage(c, pageIndex, onePageCount);
+                return View(_homeGlobalView);
             }
-            ComputePage(c, pageIndex, onePageCount);
-
-            return View(_homeGlobalView);
+            catch (Exception e)
+            {
+                var tagExName = e.GetType().Name;
+                if (tagExName.Contains("MenuNotExistException"))
+                {
+                    // 捕获到异常MenuNotExistException，让前端显示内容。通常发生在用户故意在地址栏输入不存在的menuId，所以主动处理
+                    return View("NotFound", _homeGlobalView);
+                }
+                //...
+                // 未经预料的异常，最终抛出 转给WarningPageController
+                throw;
+            }
         }
     }
 }

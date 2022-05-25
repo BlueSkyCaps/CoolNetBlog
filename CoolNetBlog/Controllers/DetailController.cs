@@ -23,8 +23,23 @@ namespace CoolNetBlog.Controllers.Home
         [Route("{Controller}/{custUri}")]
         public async Task<IActionResult> Index(int? articleId, string? custUri)
         {
-            await _detailBll.DealArticleEntityAsync(_homeGlobalView, articleId, custUri);
-            return View(_homeGlobalView);
+            try
+            {
+                await _detailBll.DealArticleEntityAsync(_homeGlobalView, articleId, custUri);
+                return View(_homeGlobalView);
+            }
+            catch (Exception e)
+            {
+                var tagExName = e.GetType().Name;
+                if (tagExName.Contains("DetailNotExistException"))
+                {
+                    // 捕获到异常DetailNotExistException，让前端显示内容。通常发生在文章已不存在时(草稿|删除|错误articleId)，所以主动处理
+                    return View("NotFound", _homeGlobalView);
+                }
+                //...
+                // 未经预料的异常，最终抛出 转给WarningPageController
+                throw;
+            }
         }
 
         /// <summary>

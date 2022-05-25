@@ -1,5 +1,6 @@
 ﻿using CommonObject.Methods;
 using ComponentsServices.Base;
+using CoolNetBlog.BlogException;
 using CoolNetBlog.Models;
 using CoolNetBlog.ViewModels;
 using CoolNetBlog.ViewModels.Admin;
@@ -92,8 +93,15 @@ namespace CoolNetBlog.Bll
                .Skip((pageIndex - 1) * onePageCount)
                .Take(onePageCount).ToListAsync();
                 // 返回此条件下的总数量 供之后处理分页逻辑使用
-                var mn = (await bdb._dbHandler.Queryable<Menu>().FirstAsync(m => m.Id == menuId)).Name;
                 c = await bdb._dbHandler.Queryable<HomeArticleViewModel>().Where(a => a.IsDraft == false && a.IsSpecial == false && a.MenuId == menuId).CountAsync();
+                var mnObj = await bdb._dbHandler.Queryable<Menu>().FirstAsync(m => m.Id == menuId);
+                if (mnObj is null)
+                {
+                    // 没有此菜单 主动抛出异常捕获，前端显示提示文本
+                    homeGlobalView.NotTips = "找不到菜单！重试一下，你是否在地址栏输入了错误的菜单ID？！";
+                    throw new MenuNotExistException();
+                }
+                var mn = mnObj.Name;
                 homeGlobalView.LocationTip = "菜单 " + mn;
                 homeGlobalView.Location = "menu";
             }

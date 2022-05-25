@@ -1,170 +1,162 @@
 ﻿@model HomeViewModel
 @{
-    // 此局部视图Detail/Index/，是文章详细局部视图，文章详细视图模型与主页分页一样，直接继承自视图模型HomeViewModel，
-    if (Model?.DetailArticleData == null || Model.DetailArticleData.IsDraft)
+    // 此局部视图Detail/Index/，是文章详细局部视图，文章详细视图模型与主页分页一样，直接继承自视图模型HomeViewModel，父视图为_Layout
+    <input hidden type="number" class="form-control" id="inputArticleId" value="@Model.DetailArticleData.Id">
+    <input hidden type="checkbox" class="form-control" id="inputIsShowLeaveHeadImg" asp-for="@Model.HomeSiteSettingData.IsShowLeaveHeadImg">
+    <input hidden type="number" class="form-control" id="inputArticleLeavePublic" asp-for="@Model.DetailArticleData.CommentType">
+    if (@Model.DetailArticleData.IsShowTitle)
     {
-        <div class="alert alert-warning" role="alert">
-         @Model?.NotTips
+        <h4>@Model?.DetailArticleData.Title</h4>
+    }
+    if (!String.IsNullOrWhiteSpace(@Model?.DetailArticleData.Labels))
+    {
+        <figure class="text-end">
+        <blockquote class="blockquote">
+        <p>
+        <small>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-award" viewBox="0 0 16 16">
+            <path d="M9.669.864 8 0 6.331.864l-1.858.282-.842 1.68-1.337 1.32L2.6 6l-.306 1.854 1.337 1.32.842 1.68 1.858.282L8 12l1.669-.864 1.858-.282.842-1.68 1.337-1.32L13.4 6l.306-1.854-1.337-1.32-.842-1.68L9.669.864zm1.196 1.193.684 1.365 1.086 1.072L12.387 6l.248 1.506-1.086 1.072-.684 1.365-1.51.229L8 10.874l-1.355-.702-1.51-.229-.684-1.365-1.086-1.072L3.614 6l-.25-1.506 1.087-1.072.684-1.365 1.51-.229L8 1.126l1.356.702 1.509.229z"/>
+            <path d="M4 11.794V16l4-1 4 1v-4.206l-2.018.306L8 13.126 6.018 12.1 4 11.794z"/>
+        </svg>
+        @foreach (var item in @Model.DetailArticleData.LabelsList)
+        {
+            // 让标签成为关键字搜索
+            <mark>·<a class="text-dark" asp-action="Index" asp-controller="Home" asp-route-from="keyword" asp-route-kw="@item">@(item)</a></mark>
+        }
+        </small>
+        </p>
+        </blockquote>
+        </figure>
+
+    }
+    if (@Model.DetailArticleData.IsLock)
+    {
+        <div id="lockFormDiv">
+            <div>
+                <div class="alert alert-dark" role="alert">这篇文章已被上锁，你需要输入专属密码才能阅读。</div>
+                <div hidden class="alert alert-warning" role="alert" id="pwErrorTipDiv">验证错误，尝试重输或者返回看看别的吧？！</div>
+                <div class="input-group mb-3">
+                <input type="text" class="form-control input-group-sm" id="inputPassword" placeholder="专属密码" aria-label="Recipient's username" aria-describedby="button-addon2">
+                <button class="btn btn-outline-primary" type="button" id="toUnlockBtn">解锁</button>
+                </div>
+            </div>
+        </div>
+        <div class="text-start">
+        <p id="unLockContentP" class="text-start"></p>
+        </div>
+
+    }else
+    {
+        <div class="text-start">
+        <p>@Html.Raw(@Model?.DetailArticleData.Content)</p>
         </div>
     }
-    else
-    {
-        <input hidden type="number" class="form-control" id="inputArticleId" value="@Model.DetailArticleData.Id">
-        <input hidden type="checkbox" class="form-control" id="inputIsShowLeaveHeadImg" asp-for="@Model.HomeSiteSettingData.IsShowLeaveHeadImg">
-        <input hidden type="number" class="form-control" id="inputArticleLeavePublic" asp-for="@Model.DetailArticleData.CommentType">
-        if (@Model.DetailArticleData.IsShowTitle)
-        {
-            <h4>@Model?.DetailArticleData.Title</h4>
-        }
-        if (!String.IsNullOrWhiteSpace(@Model?.DetailArticleData.Labels))
-        {
-            <figure class="text-end">
-            <blockquote class="blockquote">
-            <p>
-            <small>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-award" viewBox="0 0 16 16">
-              <path d="M9.669.864 8 0 6.331.864l-1.858.282-.842 1.68-1.337 1.32L2.6 6l-.306 1.854 1.337 1.32.842 1.68 1.858.282L8 12l1.669-.864 1.858-.282.842-1.68 1.337-1.32L13.4 6l.306-1.854-1.337-1.32-.842-1.68L9.669.864zm1.196 1.193.684 1.365 1.086 1.072L12.387 6l.248 1.506-1.086 1.072-.684 1.365-1.51.229L8 10.874l-1.355-.702-1.51-.229-.684-1.365-1.086-1.072L3.614 6l-.25-1.506 1.087-1.072.684-1.365 1.51-.229L8 1.126l1.356.702 1.509.229z"/>
-              <path d="M4 11.794V16l4-1 4 1v-4.206l-2.018.306L8 13.126 6.018 12.1 4 11.794z"/>
-            </svg>
-            @foreach (var item in @Model.DetailArticleData.LabelsList)
-            {
-                // 让标签成为关键字搜索
-                <mark>·<a class="text-dark" asp-action="Index" asp-controller="Home" asp-route-from="keyword" asp-route-kw="@item">@(item)</a></mark>
-            }
-            </small>
-            </p>
-            </blockquote>
-            </figure>
-
-        }
-        if (@Model.DetailArticleData.IsLock)
-        {
-            <div id="lockFormDiv">
-                <div>
-                    <div class="alert alert-dark" role="alert">这篇文章已被上锁，你需要输入专属密码才能阅读。</div>
-                    <div hidden class="alert alert-warning" role="alert" id="pwErrorTipDiv">验证错误，尝试重输或者返回看看别的吧？！</div>
-                    <div class="input-group mb-3">
-                    <input type="text" class="form-control input-group-sm" id="inputPassword" placeholder="专属密码" aria-label="Recipient's username" aria-describedby="button-addon2">
-                    <button class="btn btn-outline-primary" type="button" id="toUnlockBtn">解锁</button>
-                    </div>
-                </div>
-            </div>
-            <div class="text-start">
-            <p id="unLockContentP" class="text-start"></p>
-            </div>
-
-        }else
-        {
-            <div class="text-start">
-            <p>@Html.Raw(@Model?.DetailArticleData.Content)</p>
-            </div>
-        }
   
-        <div>
-        <small>
-        @if (!Model.DetailArticleData.IsSpecial)
-        {
-            <span class="badge rounded-pill bg-success">来自：@Model?.DetailArticleData.Ig_MenuName</span>
+    <div>
+    <small>
+    @if (!Model.DetailArticleData.IsSpecial)
+    {
+        <span class="badge rounded-pill bg-success">来自：@Model?.DetailArticleData.Ig_MenuName</span>
             
-        }else
-        {
-            <span class="badge rounded-pill bg-dark">特殊内容</span>
-        }
+    }else
+    {
+        <span class="badge rounded-pill bg-dark">特殊内容</span>
+    }
+    <br/>
+    <span class="badge rounded-pill bg-info text-dark">更新于@(Model?.DetailArticleData.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss"))</span>
+    <span class="badge rounded-pill bg-info text-dark">发表于@(Model?.DetailArticleData.CreatedTime.ToString("yyyy-MM-dd HH:mm:ss"))</span>
+    </small>
+    </div>
+        
+    @if (Model.HomeSiteSettingData.IsOpenDetailThumb)
+    {
+        // 开启了文章点赞表态
+        <div>
         <br/>
-        <span class="badge rounded-pill bg-info text-dark">更新于@(Model?.DetailArticleData.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss"))</span>
-        <span class="badge rounded-pill bg-info text-dark">发表于@(Model?.DetailArticleData.CreatedTime.ToString("yyyy-MM-dd HH:mm:ss"))</span>
+        <small>
+        <button type="button" class="btn btn-sm position-relative"><svg t="1645800787151" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5453" width="25" height="25"><path d="M786.501 833.386l-5.686-37.883 51.059-98.45-14.579-27.326 44.128-104.773-12.042-21.509 45.723-113.362c-1.867-4.875-9.241-10.05-17.008-10.05l-1.142-0.038L582.84 400.72l-0.445-15.895c-2.138-76.36-11.697-185.078-69.781-247.327-24.309-26.052-48.021-39.823-68.574-39.823-12.801 0-22.073 5.273-27.115 9.098 0.184 35.379-0.849 178.84-27.882 277.572l-2.187 8.739L332 412.947V900h398.557c9.314 0 23.073-12.135 36.804-32.623 9.055-13.51 15.932-27.183 19.14-33.991z" fill="#FFC0C0" p-id="5454"></path><path d="M930 432.35c0-12.889-6.075-25.474-17.083-34.525-9.659-7.942-22.052-12.554-34.306-12.708l-261.915-17.17c-3.319-80.713-16.592-187.838-78.58-254.272-31.527-33.788-63.174-50.92-94.091-50.92-36.239 0-57.092 24.122-57.963 25.149l-4.245 5.013 0.113 6.571c0.027 1.637 2.37 160.553-24.291 266.94l-32.255 11.793c-8.37-14.53-24.362-24.221-42.685-24.221h-138.81C116.932 354 95 374.988 95 401.175v511.228C95 938.404 116.932 960 143.889 960h138.81c18.426 0 34.498-10 42.829-25h405.029c22.338 0 44.579-16.308 66.108-48.584 14.355-21.52 23.534-42.752 23.918-43.646l1.958-4.55-5.511-36.704 54.302-104.697-15.401-28.862 44.298-105.173-12.442-21.796L930 435.738v-3.388zM730.557 900H332V412.947l54.856-19.861 2.29-8.739c27.033-98.732 28.015-242.193 27.83-277.572 5.042-3.826 14.288-9.098 27.089-9.098 20.553 0 44.252 13.77 68.561 39.823 58.084 62.249 67.636 170.967 69.774 247.327l0.442 15.895 294.114 19.275 1.141 0.038c7.767 0 15.14 5.175 17.007 10.05l-45.723 113.362 12.041 21.509-44.128 104.773 14.579 27.326-51.059 98.45 5.686 37.883c-3.208 6.808-10.085 20.482-19.14 33.991C753.63 887.865 739.871 900 730.557 900zM130 912.404V401.175c0-6.814 6.317-12.175 13.889-12.175h138.81c7.572 0 14.301 5.361 14.301 12.175v511.228c0 6.746-6.599 12.596-14.301 12.596h-138.81C136.187 925 130 919.149 130 912.404z" fill="" p-id="5455"></path><path d="M282.699 925c7.702 0 14.301-5.851 14.301-12.596V401.175c0-6.814-6.73-12.175-14.301-12.175h-138.81c-7.572 0-13.889 5.361-13.889 12.175v511.228c0 6.746 6.187 12.596 13.889 12.596h138.81z" fill="#E0344C" p-id="5456"></path></svg>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="thumbUpTextStart">@Model?.DetailArticleData.ThumbUpNumbers["ThumbUpStart"]<span class="visually-hidden"></span></span>
+        </button>
+        <button class="btn btn-outline-primary btn-sm thumbUpBtn" id="thumbUpBtnStart" onclick="thumbUpBtnClick(this,@Model?.DetailArticleData.Id, 1)" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">感觉挺赞</button>
+        </small>
+        <small>
+        <button type="button" class="btn btn-sm position-relative"><svg t="1645843448877" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12358" width="25" height="25"><path d="M21.214 512.003a491.987 491.987 0 1 0 983.974 0 491.987 491.987 0 1 0-983.974 0z" fill="#FDDF6D" p-id="12359"></path><path d="M618.625 931.356c-271.716 0-491.985-220.269-491.985-491.985 0-145.168 62.886-275.633 162.889-365.685C130.252 155.124 21.212 320.826 21.212 512c0 271.717 220.268 491.985 491.985 491.985 126.548 0 241.924-47.794 329.097-126.298-67.104 34.312-143.123 53.67-223.669 53.67z" fill="#FCC56B" p-id="12360"></path><path d="M834.118 460.727a20 20 0 0 1-17.504-10.28c-12.842-23.052-37.188-37.372-63.543-37.372-25.702 0-50.378 14.53-64.404 37.924-5.684 9.478-17.978 12.556-27.458 6.874-9.482-5.684-12.558-17.976-6.874-27.458 21.216-35.388 59.048-57.37 98.736-57.37 40.865 0 78.613 22.192 98.513 57.922 5.38 9.656 1.91 21.846-7.744 27.222a19.86 19.86 0 0 1-9.722 2.538z m-341.457 0a20 20 0 0 1-17.504-10.28c-12.842-23.052-37.188-37.372-63.542-37.372-25.698 0-50.378 14.53-64.404 37.924-5.682 9.478-17.974 12.556-27.458 6.874-9.478-5.684-12.558-17.978-6.872-27.458 21.216-35.388 59.048-57.37 98.736-57.37 40.864 0 78.612 22.192 98.512 57.922 5.38 9.656 1.91 21.846-7.744 27.222a19.878 19.878 0 0 1-9.724 2.538z m94.43 414.687c-141.962 0-257.044-115.083-257.044-257.045h514.087c0 141.96-115.083 257.045-257.043 257.045z" fill="#7F184C" p-id="12361"></path><path d="M392.765 618.37v40.121c0 16.92 13.714 30.634 30.634 30.634h327.386c16.916 0 30.635-13.714 30.635-30.634V618.37H392.765z" fill="#F2F2F2" p-id="12362"></path><path d="M592.483 768.772c-69.48-32.28-146.588-27.59-209.108 5.89 46.984 61.234 120.864 100.748 204.014 100.748 36.64 0 71.462-7.718 103.006-21.534-23.142-35.806-56.326-65.782-97.912-85.104z" fill="#FC4C59" p-id="12363"></path><path d="M302.239 671.087c-30.032 32.846-81.005 35.13-113.853 5.098s-35.13-81.004-5.098-113.852c30.032-32.846 167.823-64.126 167.823-64.126s-18.838 140.032-48.872 172.88z m553.097-17.958c30.032 32.846 81.004 35.13 113.852 5.098s35.13-81.004 5.098-113.852c-30.032-32.846-167.822-64.126-167.822-64.126s18.842 140.036 48.872 172.88z" fill="#3FA9F5" p-id="12364"></path><path d="M753.071 373.053c-39.688 0-77.52 21.982-98.736 57.37-5.684 9.482-2.608 21.774 6.874 27.458 9.478 5.682 21.774 2.608 27.458-6.874 14.024-23.394 38.702-37.924 64.404-37.924 26.353 0 50.703 14.32 63.543 37.372a20 20 0 0 0 27.226 7.748c9.658-5.38 13.124-17.568 7.744-27.222-19.9-35.736-57.648-57.928-98.513-57.928z m-341.456 0c-39.686 0-77.518 21.982-98.736 57.37-5.684 9.478-2.608 21.774 6.872 27.458 9.484 5.682 21.776 2.608 27.458-6.874 14.026-23.394 38.706-37.924 64.404-37.924 26.352 0 50.702 14.32 63.542 37.372a20 20 0 0 0 27.226 7.748c9.658-5.38 13.124-17.568 7.744-27.222-19.898-35.736-57.644-57.928-98.51-57.928z" fill="" p-id="12365"></path><path d="M989.056 530.873c-32.608-35.666-154.132-64.684-178.162-70.14a20.016 20.016 0 0 0-24.266 22.184c2.042 15.166 9.778 68.578 23.152 115.436H352.585c10.442-41.766 16.58-84.226 18.362-97.476a20.016 20.016 0 0 0-24.266-22.184c-24.03 5.454-145.555 34.474-178.163 70.136-37.43 40.936-34.574 104.696 6.364 142.126 18.694 17.092 42.604 26.358 67.772 26.358 1.532 0 3.068-0.034 4.608-0.104 26.845-1.2 51.615-12.786 69.745-32.618 0.272-0.296 0.534-0.652 0.804-0.958 29.422 121.38 138.98 211.795 269.274 211.795 130.536 0 241.357-91.054 269.913-214.339 17.22 12.094 37.508 18.218 57.85 18.218 11.548 0 23.104-1.996 34.132-5.962-30.358 72.63-78.866 137.477-140.898 187.183-84.457 67.674-186.429 103.444-294.889 103.444-260.247 0-471.97-211.726-471.97-471.971S252.95 40.031 513.196 40.031c214.73 0 402.53 144.913 456.697 352.404 2.792 10.698 13.724 17.106 24.42 14.31 10.696-2.792 17.104-13.728 14.31-24.42C949.858 157.216 746.134 0 513.197 0 230.877 0 1.196 229.68 1.196 511.999s229.68 511.999 511.999 511.999c115.976 0 229.592-39.858 319.917-112.234 88.95-71.27 152.292-171.267 178.362-281.56a19.986 19.986 0 0 0 0.502-5.623c8.454-31.996 1.024-67.522-22.92-93.708zM245.474 677.219c-16.14 0.734-31.636-4.892-43.578-15.808-24.65-22.536-26.368-60.924-3.832-85.574 14.874-16.268 76.84-37.304 128.719-51.016-9.022 52.892-24.436 116.488-39.312 132.762-10.92 11.94-25.834 18.914-41.997 19.636z m341.613 178.179c-123.958 0-225.998-95.649-236.192-217.015h472.389c-10.202 122.118-112.929 217.015-236.197 217.015zM912.1 659.265c-16.164-0.724-31.076-7.698-41.994-19.638-2.584-2.826-5.182-7.106-7.76-12.482a19.606 19.606 0 0 0-1.264-2.724 176.69 176.69 0 0 1-4.774-11.888c-0.13-0.432-0.294-0.854-0.454-1.272-9.856-27.62-18.934-68.472-25.06-104.4 51.868 13.706 113.824 34.734 128.718 51.024 22.536 24.648 20.818 63.038-3.832 85.574-11.938 10.916-27.408 16.534-43.58 15.806z" fill="" p-id="12366"></path><path d="M982.774 452.065a20.014 20.014 0 1 0 40.028 0 20.014 20.014 0 1 0-40.028 0z" fill="" p-id="12367"></path></svg>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="thumbUpTextFun">@Model?.DetailArticleData.ThumbUpNumbers["ThumbUpFun"]<span class="visually-hidden"></span></span>
+        </button>
+        <button class="btn btn-outline-primary btn-sm thumbUpBtn" id="thumbUpBtnFun" onclick="thumbUpBtnClick(this,@Model?.DetailArticleData.Id, 2)" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">有被笑到</button>
+        </small>
+        <small>
+        <button type="button" class="btn btn-sm position-relative"><svg t="1645851513204" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1260" width="27" height="27"><path d="M498.200716 903.479089c-2.348488 0-4.696975-0.436952-6.91755-1.329275L77.014024 736.449935a18.650779 18.650779 0 0 1-11.724019-17.313318v-579.969021a18.656919 18.656919 0 0 1 8.19259-15.437597 18.685571 18.685571 0 0 1 17.367553-1.874697L505.118266 287.565415a18.659989 18.659989 0 0 1 11.724019 17.312294v579.959811a18.656919 18.656919 0 0 1-8.192589 15.437597A18.603707 18.603707 0 0 1 498.200716 903.479089zM102.574167 706.512089l376.98498 150.790308V317.503261L102.574167 166.703743v539.808346z" fill="#885F44" p-id="1261"></path><path d="M525.817704 903.479089a18.6078 18.6078 0 0 1-10.450003-3.203972 18.656919 18.656919 0 0 1-8.19259-15.437597V304.877709a18.657942 18.657942 0 0 1 11.724019-17.312294l414.250722-165.70909a18.605753 18.605753 0 0 1 17.367553 1.874697 18.656919 18.656919 0 0 1 8.19259 15.437598v579.969021a18.650779 18.650779 0 0 1-11.724019 17.313317L532.735253 902.150838a18.563798 18.563798 0 0 1-6.917549 1.328251z m18.641569-585.975828v539.799136l376.96656-150.790308V166.703743L544.459273 317.503261z" fill="#885F44" p-id="1262"></path><path d="M428.112428 390.841569c-2.311649 0-4.660136-0.436952-6.91755-1.338484L141.568273 277.652648c-9.55768-3.832282-14.217816-14.673188-10.394745-24.240078 3.823072-9.56689 14.764262-14.172791 24.230868-10.385534l279.625582 111.850437c9.55768 3.832282 14.217816 14.673188 10.394744 24.240077-2.912329 7.281847-9.921977 11.724019-17.312294 11.724019zM428.112428 502.692007c-2.311649 0-4.660136-0.436952-6.91755-1.338485L141.568273 389.503085c-9.55768-3.832282-14.217816-14.673188-10.394745-24.240077 3.823072-9.56689 14.764262-14.163581 24.230868-10.385535l279.625582 111.850437c9.55768 3.832282 14.217816 14.673188 10.394744 24.240078-2.912329 7.281847-9.921977 11.724019-17.312294 11.724019zM428.112428 614.541421c-2.311649 0-4.660136-0.436952-6.91755-1.338485L141.568273 501.353522c-9.55768-3.832282-14.217816-14.673188-10.394745-24.240077 3.823072-9.56689 14.764262-14.163581 24.230868-10.385535l279.625582 111.850438c9.55768 3.832282 14.217816 14.673188 10.394744 24.240077-2.912329 7.281847-9.921977 11.722996-17.312294 11.722996zM428.112428 726.391858c-2.311649 0-4.660136-0.436952-6.91755-1.338484L141.568273 613.20396c-9.55768-3.832282-14.217816-14.673188-10.394745-24.240078 3.823072-9.56689 14.764262-14.163581 24.230868-10.385534l279.625582 111.850437c9.55768 3.832282 14.217816 14.673188 10.394744 24.240078-2.912329 7.280824-9.921977 11.722996-17.312294 11.722995z" fill="#F7D11E" p-id="1263"></path><path d="M725.687824 670.457942c-10.30367 0-18.641569-8.347109-18.641569-18.64157V528.788361c0-10.29446 8.337899-18.641569 18.641569-18.641569 46.258557 0 83.887572-37.629016 83.887572-83.887572s-37.629016-83.887572-83.887572-83.887572c-46.258557 0-83.887572 37.629016-83.887573 83.887572 0 10.29446-8.337899 18.641569-18.641569 18.641569-10.30367 0-18.641569-8.347109-18.641569-18.641569 0-66.811662 54.359049-121.17071 121.170711-121.17071s121.17071 54.359049 121.17071 121.17071c0 60.476373-44.529169 110.74936-102.529141 119.742175v105.814977c0 10.29446-8.337899 18.641569-18.641569 18.64157z" fill="#FF713C" p-id="1264"></path><path d="M725.69294 723.590046m-30.758538 0a30.758538 30.758538 0 1 0 61.517076 0 30.758538 30.758538 0 1 0-61.517076 0Z" fill="#FF713C" p-id="1265"></path></svg>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="thumbUpTextSilence">@Model?.DetailArticleData.ThumbUpNumbers["ThumbUpSilence"]<span class="visually-hidden"></span></span>
+        </button>
+        <button class="btn btn-outline-primary btn-sm thumbUpBtn" id="thumbUpBtnSilence" onclick="thumbUpBtnClick(this,@Model?.DetailArticleData.Id,3)" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">不敢苟同</button>
         </small>
         </div>
-        
-        @if (Model.HomeSiteSettingData.IsOpenDetailThumb)
-        {
-            // 开启了文章点赞表态
-            <div>
-            <br/>
-            <small>
-            <button type="button" class="btn btn-sm position-relative"><svg t="1645800787151" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5453" width="25" height="25"><path d="M786.501 833.386l-5.686-37.883 51.059-98.45-14.579-27.326 44.128-104.773-12.042-21.509 45.723-113.362c-1.867-4.875-9.241-10.05-17.008-10.05l-1.142-0.038L582.84 400.72l-0.445-15.895c-2.138-76.36-11.697-185.078-69.781-247.327-24.309-26.052-48.021-39.823-68.574-39.823-12.801 0-22.073 5.273-27.115 9.098 0.184 35.379-0.849 178.84-27.882 277.572l-2.187 8.739L332 412.947V900h398.557c9.314 0 23.073-12.135 36.804-32.623 9.055-13.51 15.932-27.183 19.14-33.991z" fill="#FFC0C0" p-id="5454"></path><path d="M930 432.35c0-12.889-6.075-25.474-17.083-34.525-9.659-7.942-22.052-12.554-34.306-12.708l-261.915-17.17c-3.319-80.713-16.592-187.838-78.58-254.272-31.527-33.788-63.174-50.92-94.091-50.92-36.239 0-57.092 24.122-57.963 25.149l-4.245 5.013 0.113 6.571c0.027 1.637 2.37 160.553-24.291 266.94l-32.255 11.793c-8.37-14.53-24.362-24.221-42.685-24.221h-138.81C116.932 354 95 374.988 95 401.175v511.228C95 938.404 116.932 960 143.889 960h138.81c18.426 0 34.498-10 42.829-25h405.029c22.338 0 44.579-16.308 66.108-48.584 14.355-21.52 23.534-42.752 23.918-43.646l1.958-4.55-5.511-36.704 54.302-104.697-15.401-28.862 44.298-105.173-12.442-21.796L930 435.738v-3.388zM730.557 900H332V412.947l54.856-19.861 2.29-8.739c27.033-98.732 28.015-242.193 27.83-277.572 5.042-3.826 14.288-9.098 27.089-9.098 20.553 0 44.252 13.77 68.561 39.823 58.084 62.249 67.636 170.967 69.774 247.327l0.442 15.895 294.114 19.275 1.141 0.038c7.767 0 15.14 5.175 17.007 10.05l-45.723 113.362 12.041 21.509-44.128 104.773 14.579 27.326-51.059 98.45 5.686 37.883c-3.208 6.808-10.085 20.482-19.14 33.991C753.63 887.865 739.871 900 730.557 900zM130 912.404V401.175c0-6.814 6.317-12.175 13.889-12.175h138.81c7.572 0 14.301 5.361 14.301 12.175v511.228c0 6.746-6.599 12.596-14.301 12.596h-138.81C136.187 925 130 919.149 130 912.404z" fill="" p-id="5455"></path><path d="M282.699 925c7.702 0 14.301-5.851 14.301-12.596V401.175c0-6.814-6.73-12.175-14.301-12.175h-138.81c-7.572 0-13.889 5.361-13.889 12.175v511.228c0 6.746 6.187 12.596 13.889 12.596h138.81z" fill="#E0344C" p-id="5456"></path></svg>
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="thumbUpTextStart">@Model?.DetailArticleData.ThumbUpNumbers["ThumbUpStart"]<span class="visually-hidden"></span></span>
-            </button>
-            <button class="btn btn-outline-primary btn-sm thumbUpBtn" id="thumbUpBtnStart" onclick="thumbUpBtnClick(this,@Model?.DetailArticleData.Id, 1)" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">感觉挺赞</button>
-            </small>
-            <small>
-            <button type="button" class="btn btn-sm position-relative"><svg t="1645843448877" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12358" width="25" height="25"><path d="M21.214 512.003a491.987 491.987 0 1 0 983.974 0 491.987 491.987 0 1 0-983.974 0z" fill="#FDDF6D" p-id="12359"></path><path d="M618.625 931.356c-271.716 0-491.985-220.269-491.985-491.985 0-145.168 62.886-275.633 162.889-365.685C130.252 155.124 21.212 320.826 21.212 512c0 271.717 220.268 491.985 491.985 491.985 126.548 0 241.924-47.794 329.097-126.298-67.104 34.312-143.123 53.67-223.669 53.67z" fill="#FCC56B" p-id="12360"></path><path d="M834.118 460.727a20 20 0 0 1-17.504-10.28c-12.842-23.052-37.188-37.372-63.543-37.372-25.702 0-50.378 14.53-64.404 37.924-5.684 9.478-17.978 12.556-27.458 6.874-9.482-5.684-12.558-17.976-6.874-27.458 21.216-35.388 59.048-57.37 98.736-57.37 40.865 0 78.613 22.192 98.513 57.922 5.38 9.656 1.91 21.846-7.744 27.222a19.86 19.86 0 0 1-9.722 2.538z m-341.457 0a20 20 0 0 1-17.504-10.28c-12.842-23.052-37.188-37.372-63.542-37.372-25.698 0-50.378 14.53-64.404 37.924-5.682 9.478-17.974 12.556-27.458 6.874-9.478-5.684-12.558-17.978-6.872-27.458 21.216-35.388 59.048-57.37 98.736-57.37 40.864 0 78.612 22.192 98.512 57.922 5.38 9.656 1.91 21.846-7.744 27.222a19.878 19.878 0 0 1-9.724 2.538z m94.43 414.687c-141.962 0-257.044-115.083-257.044-257.045h514.087c0 141.96-115.083 257.045-257.043 257.045z" fill="#7F184C" p-id="12361"></path><path d="M392.765 618.37v40.121c0 16.92 13.714 30.634 30.634 30.634h327.386c16.916 0 30.635-13.714 30.635-30.634V618.37H392.765z" fill="#F2F2F2" p-id="12362"></path><path d="M592.483 768.772c-69.48-32.28-146.588-27.59-209.108 5.89 46.984 61.234 120.864 100.748 204.014 100.748 36.64 0 71.462-7.718 103.006-21.534-23.142-35.806-56.326-65.782-97.912-85.104z" fill="#FC4C59" p-id="12363"></path><path d="M302.239 671.087c-30.032 32.846-81.005 35.13-113.853 5.098s-35.13-81.004-5.098-113.852c30.032-32.846 167.823-64.126 167.823-64.126s-18.838 140.032-48.872 172.88z m553.097-17.958c30.032 32.846 81.004 35.13 113.852 5.098s35.13-81.004 5.098-113.852c-30.032-32.846-167.822-64.126-167.822-64.126s18.842 140.036 48.872 172.88z" fill="#3FA9F5" p-id="12364"></path><path d="M753.071 373.053c-39.688 0-77.52 21.982-98.736 57.37-5.684 9.482-2.608 21.774 6.874 27.458 9.478 5.682 21.774 2.608 27.458-6.874 14.024-23.394 38.702-37.924 64.404-37.924 26.353 0 50.703 14.32 63.543 37.372a20 20 0 0 0 27.226 7.748c9.658-5.38 13.124-17.568 7.744-27.222-19.9-35.736-57.648-57.928-98.513-57.928z m-341.456 0c-39.686 0-77.518 21.982-98.736 57.37-5.684 9.478-2.608 21.774 6.872 27.458 9.484 5.682 21.776 2.608 27.458-6.874 14.026-23.394 38.706-37.924 64.404-37.924 26.352 0 50.702 14.32 63.542 37.372a20 20 0 0 0 27.226 7.748c9.658-5.38 13.124-17.568 7.744-27.222-19.898-35.736-57.644-57.928-98.51-57.928z" fill="" p-id="12365"></path><path d="M989.056 530.873c-32.608-35.666-154.132-64.684-178.162-70.14a20.016 20.016 0 0 0-24.266 22.184c2.042 15.166 9.778 68.578 23.152 115.436H352.585c10.442-41.766 16.58-84.226 18.362-97.476a20.016 20.016 0 0 0-24.266-22.184c-24.03 5.454-145.555 34.474-178.163 70.136-37.43 40.936-34.574 104.696 6.364 142.126 18.694 17.092 42.604 26.358 67.772 26.358 1.532 0 3.068-0.034 4.608-0.104 26.845-1.2 51.615-12.786 69.745-32.618 0.272-0.296 0.534-0.652 0.804-0.958 29.422 121.38 138.98 211.795 269.274 211.795 130.536 0 241.357-91.054 269.913-214.339 17.22 12.094 37.508 18.218 57.85 18.218 11.548 0 23.104-1.996 34.132-5.962-30.358 72.63-78.866 137.477-140.898 187.183-84.457 67.674-186.429 103.444-294.889 103.444-260.247 0-471.97-211.726-471.97-471.971S252.95 40.031 513.196 40.031c214.73 0 402.53 144.913 456.697 352.404 2.792 10.698 13.724 17.106 24.42 14.31 10.696-2.792 17.104-13.728 14.31-24.42C949.858 157.216 746.134 0 513.197 0 230.877 0 1.196 229.68 1.196 511.999s229.68 511.999 511.999 511.999c115.976 0 229.592-39.858 319.917-112.234 88.95-71.27 152.292-171.267 178.362-281.56a19.986 19.986 0 0 0 0.502-5.623c8.454-31.996 1.024-67.522-22.92-93.708zM245.474 677.219c-16.14 0.734-31.636-4.892-43.578-15.808-24.65-22.536-26.368-60.924-3.832-85.574 14.874-16.268 76.84-37.304 128.719-51.016-9.022 52.892-24.436 116.488-39.312 132.762-10.92 11.94-25.834 18.914-41.997 19.636z m341.613 178.179c-123.958 0-225.998-95.649-236.192-217.015h472.389c-10.202 122.118-112.929 217.015-236.197 217.015zM912.1 659.265c-16.164-0.724-31.076-7.698-41.994-19.638-2.584-2.826-5.182-7.106-7.76-12.482a19.606 19.606 0 0 0-1.264-2.724 176.69 176.69 0 0 1-4.774-11.888c-0.13-0.432-0.294-0.854-0.454-1.272-9.856-27.62-18.934-68.472-25.06-104.4 51.868 13.706 113.824 34.734 128.718 51.024 22.536 24.648 20.818 63.038-3.832 85.574-11.938 10.916-27.408 16.534-43.58 15.806z" fill="" p-id="12366"></path><path d="M982.774 452.065a20.014 20.014 0 1 0 40.028 0 20.014 20.014 0 1 0-40.028 0z" fill="" p-id="12367"></path></svg>
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="thumbUpTextFun">@Model?.DetailArticleData.ThumbUpNumbers["ThumbUpFun"]<span class="visually-hidden"></span></span>
-            </button>
-            <button class="btn btn-outline-primary btn-sm thumbUpBtn" id="thumbUpBtnFun" onclick="thumbUpBtnClick(this,@Model?.DetailArticleData.Id, 2)" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">有被笑到</button>
-            </small>
-            <small>
-            <button type="button" class="btn btn-sm position-relative"><svg t="1645851513204" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1260" width="27" height="27"><path d="M498.200716 903.479089c-2.348488 0-4.696975-0.436952-6.91755-1.329275L77.014024 736.449935a18.650779 18.650779 0 0 1-11.724019-17.313318v-579.969021a18.656919 18.656919 0 0 1 8.19259-15.437597 18.685571 18.685571 0 0 1 17.367553-1.874697L505.118266 287.565415a18.659989 18.659989 0 0 1 11.724019 17.312294v579.959811a18.656919 18.656919 0 0 1-8.192589 15.437597A18.603707 18.603707 0 0 1 498.200716 903.479089zM102.574167 706.512089l376.98498 150.790308V317.503261L102.574167 166.703743v539.808346z" fill="#885F44" p-id="1261"></path><path d="M525.817704 903.479089a18.6078 18.6078 0 0 1-10.450003-3.203972 18.656919 18.656919 0 0 1-8.19259-15.437597V304.877709a18.657942 18.657942 0 0 1 11.724019-17.312294l414.250722-165.70909a18.605753 18.605753 0 0 1 17.367553 1.874697 18.656919 18.656919 0 0 1 8.19259 15.437598v579.969021a18.650779 18.650779 0 0 1-11.724019 17.313317L532.735253 902.150838a18.563798 18.563798 0 0 1-6.917549 1.328251z m18.641569-585.975828v539.799136l376.96656-150.790308V166.703743L544.459273 317.503261z" fill="#885F44" p-id="1262"></path><path d="M428.112428 390.841569c-2.311649 0-4.660136-0.436952-6.91755-1.338484L141.568273 277.652648c-9.55768-3.832282-14.217816-14.673188-10.394745-24.240078 3.823072-9.56689 14.764262-14.172791 24.230868-10.385534l279.625582 111.850437c9.55768 3.832282 14.217816 14.673188 10.394744 24.240077-2.912329 7.281847-9.921977 11.724019-17.312294 11.724019zM428.112428 502.692007c-2.311649 0-4.660136-0.436952-6.91755-1.338485L141.568273 389.503085c-9.55768-3.832282-14.217816-14.673188-10.394745-24.240077 3.823072-9.56689 14.764262-14.163581 24.230868-10.385535l279.625582 111.850437c9.55768 3.832282 14.217816 14.673188 10.394744 24.240078-2.912329 7.281847-9.921977 11.724019-17.312294 11.724019zM428.112428 614.541421c-2.311649 0-4.660136-0.436952-6.91755-1.338485L141.568273 501.353522c-9.55768-3.832282-14.217816-14.673188-10.394745-24.240077 3.823072-9.56689 14.764262-14.163581 24.230868-10.385535l279.625582 111.850438c9.55768 3.832282 14.217816 14.673188 10.394744 24.240077-2.912329 7.281847-9.921977 11.722996-17.312294 11.722996zM428.112428 726.391858c-2.311649 0-4.660136-0.436952-6.91755-1.338484L141.568273 613.20396c-9.55768-3.832282-14.217816-14.673188-10.394745-24.240078 3.823072-9.56689 14.764262-14.163581 24.230868-10.385534l279.625582 111.850437c9.55768 3.832282 14.217816 14.673188 10.394744 24.240078-2.912329 7.280824-9.921977 11.722996-17.312294 11.722995z" fill="#F7D11E" p-id="1263"></path><path d="M725.687824 670.457942c-10.30367 0-18.641569-8.347109-18.641569-18.64157V528.788361c0-10.29446 8.337899-18.641569 18.641569-18.641569 46.258557 0 83.887572-37.629016 83.887572-83.887572s-37.629016-83.887572-83.887572-83.887572c-46.258557 0-83.887572 37.629016-83.887573 83.887572 0 10.29446-8.337899 18.641569-18.641569 18.641569-10.30367 0-18.641569-8.347109-18.641569-18.641569 0-66.811662 54.359049-121.17071 121.170711-121.17071s121.17071 54.359049 121.17071 121.17071c0 60.476373-44.529169 110.74936-102.529141 119.742175v105.814977c0 10.29446-8.337899 18.641569-18.641569 18.64157z" fill="#FF713C" p-id="1264"></path><path d="M725.69294 723.590046m-30.758538 0a30.758538 30.758538 0 1 0 61.517076 0 30.758538 30.758538 0 1 0-61.517076 0Z" fill="#FF713C" p-id="1265"></path></svg>
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="thumbUpTextSilence">@Model?.DetailArticleData.ThumbUpNumbers["ThumbUpSilence"]<span class="visually-hidden"></span></span>
-            </button>
-            <button class="btn btn-outline-primary btn-sm thumbUpBtn" id="thumbUpBtnSilence" onclick="thumbUpBtnClick(this,@Model?.DetailArticleData.Id,3)" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">不敢苟同</button>
-            </small>
-            </div>
-            <br/>
-        }
+        <br/>
+    }
  
-        @if (Model.DetailArticleData.CommentType!=3)
-        {
-            // 此文章设置了允许评论 显示评论表单和按钮
+    @if (Model.DetailArticleData.CommentType!=3)
+    {
+        // 此文章设置了允许评论 显示评论表单和按钮
          
-            <div>
-                <div class="row">
-                    <span style="width:10%"></span>
-                    <p id="commentFormTip" style="width:80%" class="text text-secondary">
-                    发表您的评论
-                    </p>
-                    <span style="width:10%"></span>
-                </div>
-                <div class="row">
-                    <span style="width:10%"></span>
-                    <input style="width:20%" id="cNameInput" maxlength="12" type="text" class="form-control" placeholder="昵称">
-                    <input style="width:60%" id="cSiteInput" maxlength="60" type="text" class="form-control" placeholder="网址(https或http开头,选填)">
-                    <span style="width:10%"></span>
-                </div>
-                <div class="row">
-                    <span style="width:10%"></span>
-                    <input style="width:80%" id="cEmailInput" maxlength="25" type="email" class="form-control" placeholder="邮箱(我回复你会有邮件通知,它不会被显示)">
-                    <span style="width:10%"></span>
-                </div>
-                <div class="row">
-                    <span style="width:10%"></span>
-                    <textarea  style="width:80%" id="cContentInput" type="text" maxlength="150" class="form-control" placeholder="您想说的话.."></textarea>
-                    <span style="width:10%"></span>
-                </div>
-                <div class="row">
-                    <div class="text-end col-11">
-                        <button onclick="commentToggleBtnClick(1)" id="commentShowBtn" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#commentShowDiv" role="button" aria-expanded="false" aria-controls="commentShowDiv"
-                            data-bs-placement="bottom" data-bs-trigger="focus" data-bs-content="">网友的评论▼</button>
-                        <button id="toCommentBtn" class="btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">发表评论</button>
-                    </div>
-                    <span class="col-1"></span>
-                </div>
-                <br/>
-            </div>
-            <div class="collapse" id="commentShowDiv">
-                <div class="text-end" id="loadCommentBtnDiv">
-                    <button onclick="commentToggleBtnClick(0)" id="commentHideBtn" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#commentShowDiv" role="button" aria-expanded="false" aria-controls="commentShowDiv"
-                            data-bs-placement="bottom" tabindex="0" data-bs-trigger="focus" data-bs-content="">收起评论</button>
-                    <button id="loadCommentBtn" class="btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">加载评论..</button>
-                </div>
-                <br/>
-            </div>
-        }else{
+        <div>
             <div class="row">
                 <span style="width:10%"></span>
                 <p id="commentFormTip" style="width:80%" class="text text-secondary">
-                此内容暂不允许评论
+                发表您的评论
                 </p>
                 <span style="width:10%"></span>
             </div>
-        }
-        <div>
-        <input hidden type="text" id="urlHidInput">
-        <button id="urlShareBtn" onClick="copyCommand()" type="button" class="btn btn-outline-primary btn-sm">分享链接</button>
-        <button onClick="javascript:history.back(-1);" type="button" class="btn btn-outline-primary btn-sm">回到之前</button>
+            <div class="row">
+                <span style="width:10%"></span>
+                <input style="width:20%" id="cNameInput" maxlength="12" type="text" class="form-control" placeholder="昵称">
+                <input style="width:60%" id="cSiteInput" maxlength="60" type="text" class="form-control" placeholder="网址(https或http开头,选填)">
+                <span style="width:10%"></span>
+            </div>
+            <div class="row">
+                <span style="width:10%"></span>
+                <input style="width:80%" id="cEmailInput" maxlength="25" type="email" class="form-control" placeholder="邮箱(我回复你会有邮件通知,它不会被显示)">
+                <span style="width:10%"></span>
+            </div>
+            <div class="row">
+                <span style="width:10%"></span>
+                <textarea  style="width:80%" id="cContentInput" type="text" maxlength="150" class="form-control" placeholder="您想说的话.."></textarea>
+                <span style="width:10%"></span>
+            </div>
+            <div class="row">
+                <div class="text-end col-11">
+                    <button onclick="commentToggleBtnClick(1)" id="commentShowBtn" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#commentShowDiv" role="button" aria-expanded="false" aria-controls="commentShowDiv"
+                        data-bs-placement="bottom" data-bs-trigger="focus" data-bs-content="">网友的评论▼</button>
+                    <button id="toCommentBtn" class="btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">发表评论</button>
+                </div>
+                <span class="col-1"></span>
+            </div>
+            <br/>
         </div>
-        <br/>
+        <div class="collapse" id="commentShowDiv">
+            <div class="text-end" id="loadCommentBtnDiv">
+                <button onclick="commentToggleBtnClick(0)" id="commentHideBtn" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" href="#commentShowDiv" role="button" aria-expanded="false" aria-controls="commentShowDiv"
+                        data-bs-placement="bottom" tabindex="0" data-bs-trigger="focus" data-bs-content="">收起评论</button>
+                <button id="loadCommentBtn" class="btn btn-outline-primary btn-sm" data-bs-placement="bottom" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="">加载评论..</button>
+            </div>
+            <br/>
+        </div>
+    }else{
+        <div class="row">
+            <span style="width:10%"></span>
+            <p id="commentFormTip" style="width:80%" class="text text-secondary">
+            此内容暂不允许评论
+            </p>
+            <span style="width:10%"></span>
+        </div>
     }
+    <div>
+    <input hidden type="text" id="urlHidInput">
+    <button id="urlShareBtn" onClick="copyCommand()" type="button" class="btn btn-outline-primary btn-sm">分享链接</button>
+    <button onClick="javascript:history.back(-1);" type="button" class="btn btn-outline-primary btn-sm">回到之前</button>
+    </div>
+    <br/>
+  
 }
 <!--回复模态弹出层-->
 <div class="modal fade" id="ReplyModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">

@@ -1,4 +1,5 @@
 ﻿using ComponentsServices.Base;
+using CoolNetBlog.BlogException;
 using CoolNetBlog.Models;
 using CoolNetBlog.ViewModels.Detail;
 
@@ -45,8 +46,9 @@ namespace CoolNetBlog.Bll
             // 没有此文章 或文章当前是草稿
             if (_homeGlobalView.DetailArticleData is null || _homeGlobalView.DetailArticleData.IsDraft)
             {
+                // 找不到显示的文章 主动抛出异常捕获，前端显示提示文本
                 _homeGlobalView.NotTips = "找不到文章(帖子)！返回重试一下，或者关键字重新搜搜吧？！";
-                return;
+                throw new DetailNotExistException();
             }
             if(!_homeGlobalView.DetailArticleData.IsSpecial)
             {
