@@ -233,7 +233,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
             Directory.CreateDirectory(tmpBackDataDownDir);
             //执行备份命令，并且生成sql，类似{ContentRootPath}/BACK-COOLNETBLOG/CoolNetBlog-Db.sql
             var dBSqlPath = Path.Combine(tmpBackDataDownDir, "CoolNetBlog-Db.sql");
-            var cmdInput = @$"mysqldump -u{dbVm.DbUserName} -p{dbVm.dbPassword} CoolNetBlog > {dBSqlPath}";
+            var cmdInput = @$"mysqldump -u{dbVm.DbUserName} -p{dbVm.dbPassword} CoolNetBlog_Test_v202 > {dBSqlPath}";
             var bs = BashExecute.Bash(cmdInput, RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
             if (bs.Code != ValueCodes.Success)
             {
@@ -278,7 +278,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 result.HideMessage = "文件io执行失败：" + e.Message;
                 return Json(result);
             }
-
+            string zipFileName;
             try
             {
                 /* 开始压缩BACK-COOLNETBLOG文件夹 生成压缩文件于wwwroot/BACK-COOLNETBLOG/下*/
@@ -289,8 +289,9 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 }
                 
                 Directory.CreateDirectory(zipDir);
-                var zipPath = Path.Combine(zipDir, ValueCompute.Guid16().Replace("-", "") + "-" + 
-                    DateTime.Now.ToString("yyyyMMdd") + "-back.zip");
+                zipFileName = ValueCompute.Guid16().Replace("-", "") + "-" +
+                    DateTime.Now.ToString("yyyyMMdd") + "-back.zip";
+                var zipPath = Path.Combine(zipDir, zipFileName);
                 // 生成zip压缩文件（注：压缩文件的父目录必须事先存在）
                 ZipFile.CreateFromDirectory(tmpBackDataDownDir, zipPath);
                 // 删除原app目录下的BACK-COOLNETBLOG
@@ -305,6 +306,8 @@ namespace CoolNetBlog.Controllers.AdminAccess
             }
             result.Code = ValueCodes.Success;
             result.TipMessage = "数据备份执行成功。";
+            // 带回wwwroot/BACK-COOLNETBLOG/下的备份文件相对地址
+            result.Data = $"/BACK-COOLNETBLOG/{zipFileName}";
             return Json(result);
         }
     }

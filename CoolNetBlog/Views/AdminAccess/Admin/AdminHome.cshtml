@@ -178,6 +178,8 @@
                 success: function(data, status){
                     if(data['code']==1){
                         Gb_NotifShow("数据备份执行成功");
+                        // 跳转下载链接
+                        window.location.href=data['data'];
                     }else{
                         Gb_NotifShow(data['tipMessage'],"primary");
                     }
