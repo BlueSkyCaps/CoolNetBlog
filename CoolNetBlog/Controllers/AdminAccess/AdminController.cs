@@ -237,7 +237,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
             Directory.CreateDirectory(tmpBackDataDownDir);
             //执行备份命令，并且生成sql，类似{ContentRootPath}/BACK-COOLNETBLOG/CoolNetBlog-Db.sql
             var dBSqlPath = Path.Combine(tmpBackDataDownDir, "CoolNetBlog-Db.sql");
-            var cmdInput = @$"mysqldump -u{dbVm.DbUserName} -p{dbVm.dbPassword} CoolNetBlog_Test_v202 > {dBSqlPath}";
+            var cmdInput = @$"mysqldump -u{dbVm.DbUserName} -p{dbVm.dbPassword} CoolNetBlog > {dBSqlPath}";
             var bs = BashExecute.Bash(cmdInput, RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
             if (bs.Code != ValueCodes.Success)
             {

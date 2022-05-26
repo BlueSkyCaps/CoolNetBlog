@@ -20,10 +20,11 @@ function searchInputEnterDown(target) {
 }
 
 let _scrollPos= 0;
+let _scrollingUp = false;
 
-// 固定顶部导航栏在顶部位置 当页面滚动时
+// 固定顶部导航栏在顶部位置 当页面向上滚动时
 function navFixedHandler(_scrollPos) {
-    if (_scrollPos > 100) {
+    if (_scrollingUp && _scrollPos != 0) {
         $('#topNav').addClass('fixed-top');
     } else {
         $('#topNav').removeClass('fixed-top');
@@ -34,6 +35,9 @@ function navFixedHandler(_scrollPos) {
 window.addEventListener('scroll', function () {
     _scrollPos = window.scrollY;
     navFixedHandler(_scrollPos);
+});
+window.addEventListener('wheel', (e) => {
+    _scrollingUp = event.deltaY < 0 ? true : false;
 });
 
 // 根据设备设置"闲言碎语"滚动区域的高度
