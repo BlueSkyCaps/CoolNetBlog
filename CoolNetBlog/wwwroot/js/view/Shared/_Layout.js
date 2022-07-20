@@ -32,13 +32,13 @@ function navFixedHandler(_scrollPos) {
 }
 
 // 当页面滚动时 触发事件
-window.addEventListener('scroll', function () {
+window.addEventListener('wheel', function () {
     _scrollPos = window.scrollY;
+    _scrollingUp = event.deltaY < 0 ? true : false;
     navFixedHandler(_scrollPos);
 });
-window.addEventListener('wheel', (e) => {
-    _scrollingUp = event.deltaY < 0 ? true : false;
-});
+
+
 
 // 根据设备设置"闲言碎语"滚动区域的高度
 function setGossipScrollStyle() {
