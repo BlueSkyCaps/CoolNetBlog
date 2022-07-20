@@ -98,8 +98,8 @@ function debounceBase(func, wait, immediate) {
 // 防抖 "闲言碎语"滚动区 控制当滑动停下来时执行最后的判断 而不是频繁执行滑动事件
 var gossipScrollDebounce = debounceBase(function () {
     var div = $('#gossipScroll');
-    var scrollDivH = div.height(); //滚动区域的固定高度
-    var scrollTopCurrnetH = div.scrollTop(); //当前在滚动区域滚动位置的高度
+    var scrollDivH = div.height(); //滚动区域的固定高度 
+    var scrollTopCurrnetH = div.scrollTop()+1; //当前在滚动区域滚动位置的高度, +1步入小数位上一位，避免误差到底了不执行调用
     var scrollAllDeepH = div[0].scrollHeight; //滚动区域内部能达到的整个高度(固定高度+未显示的高度)
     if (scrollDivH + scrollTopCurrnetH >= scrollAllDeepH) {
         gossipDataCall();
