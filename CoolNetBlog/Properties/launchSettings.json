@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "CoolNetBlog": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production"
+      },
+      "applicationUrl": "https://odin:5001;http://odin:5000"
+    }
+  }
+}
