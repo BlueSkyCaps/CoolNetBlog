@@ -19,11 +19,17 @@ function searchInputEnterDown(target) {
     }
 }
 
-let _scrollPos= 0;
-let _scrollingUp = false;
 
-// 固定顶部导航栏在顶部位置 当页面向上滚动时
-function navFixedHandler(_scrollPos) {
+let _scrollPos = 0;
+let _curScrollPos = 0;
+let _scrollingUp = false;
+let alerdyFirst = false
+
+// PC端 固定顶部导航栏在顶部位置 当页面向上滚动时
+function navFixedHandler(event) {
+
+    _scrollPos = window.scrollY;
+    _scrollingUp = event.deltaY < 0 ? true : false;
     if (_scrollingUp && _scrollPos != 0) {
         $('#topNav').addClass('fixed-top');
     } else {
@@ -31,29 +37,58 @@ function navFixedHandler(_scrollPos) {
     }
 }
 
-// 当页面滚动时 触发事件
-window.addEventListener('wheel', function () {
-    _scrollPos = window.scrollY;
-    _scrollingUp = event.deltaY < 0 ? true : false;
-    navFixedHandler(_scrollPos);
-});
+// 移动端 固定顶部导航栏在顶部位置 当页面向上滚动时
+function navFixedHandlerMoblie(event) {
+    if (!alerdyFirst) {
+        alerdyFirst = true
+        _scrollPos = window.scrollY
+    } else {
+        _curScrollPos = window.scrollY
+        _scrollingUp = _curScrollPos < _scrollPos ? true : false;
+        if (_scrollingUp && _curScrollPos != 0) {
+            $('#topNav').addClass('fixed-top');
+        } else {
+            $('#topNav').removeClass('fixed-top');
+        }
+        _scrollPos = _curScrollPos
+    }
+   
+}
+
+var needH = "0px";
+
+$(() => {
+    var wid = document.body.clientWidth;
+
+    if (wid <= 768) {
+        //small or Medium devices
+        needH = "200px";
+        // 移动设备当页面触摸滚动时 触发事件
+        window.addEventListener('scroll', function (event) {
+            navFixedHandlerMoblie(event);
+        });
+    } else if (wid <= 1200) {
+        //Large devices
+        needH = "300px";
+        // 移动设备当页面触摸滚动时 触发事件
+        window.addEventListener('scroll', function (event) {
+            navFixedHandlerMoblie(event);
+        });
+    } else {
+        // desktops
+        needH = "400px";
+        // 桌面PC鼠标滚轮滚动时 触发事件
+        window.addEventListener('wheel', function (event) {
+            navFixedHandler(event);
+        });
+    }
+})
+
 
 
 
 // 根据设备设置"闲言碎语"滚动区域的高度
 function setGossipScrollStyle() {
-    var wid = document.body.clientWidth;
-    var needH = "200px";
-    if (wid <= 768) {
-        //small or Medium devices
-        needH = "200px";
-    } else if (wid <= 1200) {
-        //Large devices
-        needH = "300px";
-    } else {
-        // desktops
-        needH = "400px";
-    }
     $("#gossipScroll").css({
         "width": "100%",
         "height": needH,
@@ -99,8 +134,11 @@ function debounceBase(func, wait, immediate) {
 var gossipScrollDebounce = debounceBase(function () {
     var div = $('#gossipScroll');
     var scrollDivH = div.height(); //滚动区域的固定高度 
+    console.log("scrollDivH:" + scrollDivH)
     var scrollTopCurrnetH = div.scrollTop()+1; //当前在滚动区域滚动位置的高度, +1步入小数位上一位，避免误差到底了不执行调用
+    console.log("scrollTopCurrnetH:" + scrollTopCurrnetH)
     var scrollAllDeepH = div[0].scrollHeight; //滚动区域内部能达到的整个高度(固定高度+未显示的高度)
+    console.log("scrollAllDeepH:" + scrollAllDeepH)
     if (scrollDivH + scrollTopCurrnetH >= scrollAllDeepH) {
         gossipDataCall();
     }
