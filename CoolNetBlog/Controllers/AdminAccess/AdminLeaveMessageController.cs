@@ -188,7 +188,7 @@ namespace CoolNetBlog.Controllers.Admin
                         !String.IsNullOrWhiteSpace(tmpMessagerRelatedArt.Title) ? tmpMessagerRelatedArt.Title : "无题链接" : "无题链接";
                     var n = !string.IsNullOrWhiteSpace(siteSett.SiteName) ? "-"+siteSett.SiteName : "";
                     var distinctionText = !isPub ? "，经过审核此条发言已被<i>公开</i>" : "，我对此进行了回复";
-                    tmpAdmToMessagerContent = $"您在内容为<a href='{siteSett.Domain.TrimEnd('/')}/Detail?articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言" +
+                    tmpAdmToMessagerContent = $"您在内容为<a href='{siteSett.Domain.TrimEnd('/')}/detail?articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言" +
                         $"{distinctionText}，并且特意向您抄送这封邮件已表达我对此的兴趣。我的回复内容如下：" +
                         $"<br><p><mark>{tmpAdmToMessagerContent}</mark></p><br>您的发言原内容：<br><small>{tmpMessagerOrgContent}</small>" +
                         $"<br>您使用的昵称为：<small>{tmpMessagerName}</small>" +
@@ -315,7 +315,7 @@ namespace CoolNetBlog.Controllers.Admin
                     var t = tmpMessagerRelatedArt.IsShowTitle ? 
                         !String.IsNullOrWhiteSpace(tmpMessagerRelatedArt.Title)?tmpMessagerRelatedArt.Title : "无题链接" : "无题链接";
                     var n = !string.IsNullOrWhiteSpace(siteSett.SiteName) ? "-" + siteSett.SiteName : "";
-                    tmpAdmToMessagerContent = $"您在内容为<a href='{siteSett.Domain.TrimEnd('/')}/Detail?articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言，" +
+                    tmpAdmToMessagerContent = $"您在内容为<a href='{siteSett.Domain.TrimEnd('/')}/detail?articleId={tmpMessagerRelatedArt.Id}'><b>{t}</b></a>上进行了发言，" +
                         $"经过决定此条发言已被<i>删除</i>，并且特意向您抄送这封邮件提示。删除原因如下：" +
                         $"<br><p><mark>{vm.Message}</mark></p><br>您被删除的发言原内容：<br><small>{tmpMessagerOrgContent}</small>" +
                         $"<br>您使用的昵称为：<small>{tmpMessagerName}</small>" + 
@@ -359,7 +359,7 @@ namespace CoolNetBlog.Controllers.Admin
                 if (cmv.SourceType==1)
                 {
                     cmv.RelatedArticle = await _articleReader.FindOneByIdAsync(cmv.SourceId);
-                    cmv.RelatedArticleUrl = "/Detail?articleId="+ cmv.SourceId;
+                    cmv.RelatedArticleUrl = "/detail?articleId="+ cmv.SourceId;
                 }
             }
 
@@ -371,7 +371,7 @@ namespace CoolNetBlog.Controllers.Admin
                 if (replyTmp.RelatedComment.SourceType == 1)
                 {
                     replyTmp.RelatedArticle = await _articleReader.FindOneByIdAsync(replyTmp.RelatedComment.SourceId);
-                    replyTmp.RelatedArticleUrl = "/Detail?articleId=" + replyTmp.RelatedComment.SourceId;
+                    replyTmp.RelatedArticleUrl = "/detail?articleId=" + replyTmp.RelatedComment.SourceId;
                 }
                 slvm.NotPassReplies?.Add(replyTmp);
             }
@@ -398,7 +398,7 @@ namespace CoolNetBlog.Controllers.Admin
                     if (cmv.SourceType == 1)
                     {
                         cmv.RelatedArticle = await _articleReader.FindOneByIdAsync(cmv.SourceId);
-                        cmv.RelatedArticleUrl = "/Detail?articleId=" + cmv.SourceId;
+                        cmv.RelatedArticleUrl = "/detail?articleId=" + cmv.SourceId;
                     }
                 }
                 result.Code = ValueCodes.Success;
@@ -434,7 +434,7 @@ namespace CoolNetBlog.Controllers.Admin
                     if (replyTmp.RelatedComment.SourceType == 1)
                     {
                         replyTmp.RelatedArticle = await _articleReader.FindOneByIdAsync(replyTmp.RelatedComment.SourceId);
-                        replyTmp.RelatedArticleUrl = "/Detail?articleId=" + replyTmp.RelatedComment.SourceId;
+                        replyTmp.RelatedArticleUrl = "/detail?articleId=" + replyTmp.RelatedComment.SourceId;
                     }
                     notPassReplies.Add(replyTmp);
                 }
@@ -474,7 +474,7 @@ namespace CoolNetBlog.Controllers.Admin
                 if (cmv.SourceType == 1)
                 {
                     cmv.RelatedArticle = await _articleReader.FindOneByIdAsync(cmv.SourceId);
-                    cmv.RelatedArticleUrl = "/Detail?articleId=" + cmv.SourceId;
+                    cmv.RelatedArticleUrl = "/detail?articleId=" + cmv.SourceId;
                 }
             }
 
@@ -486,7 +486,7 @@ namespace CoolNetBlog.Controllers.Admin
                 if (replyTmp.RelatedComment.SourceType == 1)
                 {
                     replyTmp.RelatedArticle = await _articleReader.FindOneByIdAsync(replyTmp.RelatedComment.SourceId);
-                    replyTmp.RelatedArticleUrl = "/Detail?articleId=" + replyTmp.RelatedComment.SourceId;
+                    replyTmp.RelatedArticleUrl = "/detail?articleId=" + replyTmp.RelatedComment.SourceId;
                 }
                 slvm.PublicReplies?.Add(replyTmp);
             }
@@ -512,7 +512,7 @@ namespace CoolNetBlog.Controllers.Admin
                     if (cmv.SourceType == 1)
                     {
                         cmv.RelatedArticle = await _articleReader.FindOneByIdAsync(cmv.SourceId);
-                        cmv.RelatedArticleUrl = "/Detail?articleId=" + cmv.SourceId;
+                        cmv.RelatedArticleUrl = "/detail?articleId=" + cmv.SourceId;
                     }
                 }
                 result.Code = ValueCodes.Success;
@@ -548,7 +548,7 @@ namespace CoolNetBlog.Controllers.Admin
                     if (replyTmp.RelatedComment.SourceType == 1)
                     {
                         replyTmp.RelatedArticle = await _articleReader.FindOneByIdAsync(replyTmp.RelatedComment.SourceId);
-                        replyTmp.RelatedArticleUrl = "/Detail?articleId=" + replyTmp.RelatedComment.SourceId;
+                        replyTmp.RelatedArticleUrl = "/detail?articleId=" + replyTmp.RelatedComment.SourceId;
                     }
                     publicReplies.Add(replyTmp);
                 }

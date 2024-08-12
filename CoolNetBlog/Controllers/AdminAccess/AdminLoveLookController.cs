@@ -58,7 +58,7 @@ namespace CoolNetBlog.Controllers.AdminAccess
                 {
                     if (!saveModel.RelHref.ToLower().StartsWith("detail"))
                     {
-                        ModelState.AddModelError("", "添加失败，内部文章链接格式错误，文章详细链接应该是 'Detail' 开头的值(忽略单引号)，请重新查看一下你的文章详情uri。");
+                        ModelState.AddModelError("", "添加失败，内部文章链接格式错误，文章详细链接应该是 'detail' 开头的值(忽略单引号)，请重新查看一下你的文章详情uri。");
                         return View("LoveLookAmManagement", slvm);
                     };
                     // 组成 供点击访问

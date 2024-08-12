@@ -15,9 +15,9 @@
 @if (!string.IsNullOrWhiteSpace(@item.CustUri))
 {   
     // 若自定义uri不为空 指定uri获取文章，否则，用文章Id
-    <a class="btn btn-outline-dark" asp-route-custUri="@item.CustUri" asp-controller="Detail" asp-action="Index" >阅读更多</a>
+    <a class="btn btn-outline-dark" asp-route-custUri="@item.CustUri" asp-controller="detail" asp-action="Index" >阅读更多</a>
 }else{
-    <a class="btn btn-outline-dark" asp-route-articleId="@item.Id" asp-controller="Detail" asp-action="Index" >阅读更多</a>
+    <a class="btn btn-outline-dark" asp-route-articleId="@item.Id" asp-controller="detail" asp-action="Index" >阅读更多</a>
 }
 </div>
 <div class="card-footer text-muted"><span class="badge bg-success">@(item.Ig_MenuName)</span> <small class="text-primary"><span class="badge rounded-pill bg-info text-dark">更新于@(item.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss"))</span></small>
@@ -39,11 +39,11 @@
     @{
         //获取上下文查询参数 直接传递当前from参数的值 且获取menuId和kw关键字的值，因为当前是菜单分页的话，kw就是null，反之亦然，控制器逻辑已经判断
     }
-    <a class="page-link" asp-route-from="@Context.Request.Query["from"].FirstOrDefault()" asp-route-menuId="@Context.Request.Query["menuId"].FirstOrDefault()" asp-route-kw="@Context.Request.Query["kw"].FirstOrDefault()" asp-action="Index" asp-controller="Home" asp-route-PageIndex="@Model.PageCompute.PreIndex">上翻</a>
+                <a class="page-link" asp-route-from="@Context.Request.Query["from"].FirstOrDefault()" asp-route-menuId="@Context.Request.Query["menuId"].FirstOrDefault()" asp-route-kw="@Context.Request.Query["kw"].FirstOrDefault()" asp-action="Index" asp-controller="Home" asp-route-pageIndex="@Model.PageCompute.PreIndex">上翻</a>
 </li>
 <li class="page-item"><a class="page-link text-black-50">@Model.PageCompute.PageIndex</a></li>
 <li class="page-item @(Model.PageCompute.ShowNextIndex?"":"disabled")">
-    <a class="page-link" asp-route-from="@Context.Request.Query["from"].FirstOrDefault()" asp-route-menuId="@Context.Request.Query["menuId"].FirstOrDefault()" asp-route-kw="@Context.Request.Query["kw"].FirstOrDefault()" asp-action="Index" asp-controller="Home" asp-route-PageIndex="@Model.PageCompute.NextIndex">下翻</a>
+                <a class="page-link" asp-route-from="@Context.Request.Query["from"].FirstOrDefault()" asp-route-menuId="@Context.Request.Query["menuId"].FirstOrDefault()" asp-route-kw="@Context.Request.Query["kw"].FirstOrDefault()" asp-action="Index" asp-controller="Home" asp-route-pageIndex="@Model.PageCompute.NextIndex">下翻</a>
 </li>
 </ul>
 </nav>
@@ -59,7 +59,7 @@
       <div class="modal-body">
         @for (var i = 1; i <= Model.PageCompute.PagesChangeMax; i++)
         {
-            <a class="list-group-item text text-primary" asp-route-from="@Context.Request.Query["from"].FirstOrDefault()" asp-route-menuId="@Context.Request.Query["menuId"].FirstOrDefault()" asp-route-kw="@Context.Request.Query["kw"].FirstOrDefault()" asp-action="Index" asp-controller="Home" asp-route-PageIndex="@i">第@(i)页</a>
+            <a class="list-group-item text text-primary" asp-route-from="@Context.Request.Query["from"].FirstOrDefault()" asp-route-menuId="@Context.Request.Query["menuId"].FirstOrDefault()" asp-route-kw="@Context.Request.Query["kw"].FirstOrDefault()" asp-action="Index" asp-controller="Home" asp-route-pageIndex="@i">第@(i)页</a>
         }
       </div>
     </div>
